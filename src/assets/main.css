@@ -1,0 +1,63 @@
+/* src/assets/main.css */
+
+/* DIRECTIVAS DE TAILWIND */
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * CLAVE DEL LUJO: Definimos colores y fuentes usando la sintaxis @theme 
+ * compatible con la versión de Tailwind de tu proyecto funcional.
+ */
+@theme {
+    /* Definición de Fuentes de Lujo */
+    --font-serif-elegant: "Cormorant Garamond", ui-serif, Georgia; 
+    --font-sans-luxury: "Montserrat", ui-sans-serif, system-ui; 
+    
+    /* Colores de CUSHION */
+    --color-brand-black: #1E1E1E;   
+    --color-brand-primary: #4C7F62; /* Esmeralda (Principal) */
+    --color-brand-gold: #B89B6A;    /* Dorado */
+    --color-brand-white: #F5F5F5;   /* Blanco Roto/Texto */
+    
+    /* ********************************************** */
+    /* ¡NUEVO COLOR PARA EL FONDO DEL FOOTER! */
+    --color-brand-emerald-dark: #005C4D; 
+    /* ********************************************** */
+
+    /* Mapeo de colores para usarlos con las clases de Tailwind */
+    --color-black: var(--color-brand-black);
+    --color-white: var(--color-brand-white);
+    --color-gold: var(--color-brand-gold);
+    --color-primary: var(--color-brand-primary);
+    
+    /* CLAVE: Mapeamos el nuevo color oscuro para usarlo en Tailwind */
+    --color-emerald-dark: var(--color-brand-emerald-dark);
+}
+
+/* Fuerza el color de fondo en el cuerpo HTML */
+html, body {
+    background-color: var(--color-brand-black); 
+    min-height: 100vh;
+}
+
+/* CLASES DE UTILIDAD PARA USAR LAS NUEVAS FUENTES */
+@layer base {
+  .font-serif-elegant {
+    font-family: var(--font-serif-elegant);
+  }
+  .font-sans-luxury {
+    font-family: var(--font-sans-luxury);
+  }
+}
+
+/* Otras utilidades que definimos antes */
+@layer utilities {
+    .nav-link {
+        color: var(--color-brand-white) !important; 
+        letter-spacing: 0.2em;
+        padding-bottom: 3px;
+        border-bottom: 1px solid transparent;
+        /* Estilo de hover en Tailwind para color */
+    }
+}
