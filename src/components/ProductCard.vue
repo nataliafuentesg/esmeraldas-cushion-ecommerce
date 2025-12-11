@@ -22,30 +22,33 @@ const currentImage = computed(() => {
 
 </script>
 
-<template>
-  <RouterLink :to="`/detalle/${product.slug}`" 
-      class="block bg-brand-black group overflow-hidden relative shadow-lg 
-             border border-brand-primary/10 transition-shadow duration-300"
-      @mouseenter="isHovering = true"
-      @mouseleave="isHovering = false">
-      
-      <div class="aspect-square relative overflow-hidden bg-brand-white/5">
-          <img 
-              :src="`/src/assets/images/products/${currentImage}`" 
-              :alt="product.name" 
-              class="w-full h-full object-cover transition-transform duration-500 
-                     group-hover:scale-105"
-          />
-      </div>
 
-      <div class="p-4 text-center">
-          <h3 class="text-sm uppercase font-sans-luxury text-brand-white 
-                     group-hover:text-brand-gold transition-colors duration-300">
-              {{ product.name }}
-          </h3>
-          <p class="text-lg font-serif-elegant text-brand-gold mt-1">
-              $ {{ product.price.toLocaleString() }}
-          </p>
-      </div>
-  </RouterLink>
+<template>
+    <RouterLink 
+        :to="{ name: 'product-detail', params: { slug: product.slug } }"
+        class="group block bg-brand-black text-brand-white transition-shadow duration-300 relative overflow-hidden"
+    >
+        <div class="w-full aspect-square relative overflow-hidden">
+            <img 
+                :src="`/src/assets/images/products/${product.mainImage}`" 
+                :alt="product.name" 
+                class="w-full h-full object-cover transition-opacity duration-700 ease-in-out group-hover:opacity-0"
+            />
+            <img 
+                :src="`/src/assets/images/products/${product.hoverImage}`" 
+                :alt="product.name + ' - Vista alternativa'" 
+                class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-opacity duration-700 ease-in-out group-hover:opacity-100"
+            />
+        </div>
+
+        <div class="p-4 text-center">
+            <h3 class="text-xl font-serif-elegant mb-1 tracking-wider group-hover:text-brand-gold transition-colors duration-300">
+                {{ product.name }}
+            </h3>
+            <p class="text-lg font-sans-luxury text-brand-white/70">
+                $ {{ product.price.toLocaleString() }}
+            </p>
+        </div>
+        
+    </RouterLink>
 </template>
