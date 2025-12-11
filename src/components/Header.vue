@@ -1,6 +1,9 @@
 <script setup>
 import TopBar from '@/components/TopBar.vue'
 import MainNav from '@/components/MainNav.vue'
+import UtilityBar from '@/components/UtilityBar.vue'
+
+
 </script>
 
 <template>
@@ -9,7 +12,7 @@ import MainNav from '@/components/MainNav.vue'
     <TopBar />
     
     <MainNav />
-    
+    <UtilityBar />
   </header>
 </template>
 

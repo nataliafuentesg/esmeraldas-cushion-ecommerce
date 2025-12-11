@@ -4,30 +4,39 @@ import { RouterLink } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
 const cartStore = useCartStore()
-const totalItems = computed(() => cartStore.totalItems)
+const totalItems = computed(() => cartStore.cartCount) 
 
 const isMenuOpen = ref(false)
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
 
-const navItemsLeft = [
-  { name: 'Home', path: '/' },
-  { name: 'Esmeraldas', path: '/esmeraldas' },
-]
-const navItemsRight = [
-  { name: 'Nuestra Historia', path: '/nosotros' },
-  { name: 'Contacto', path: '/contacto' },
+const toggleCart = () => {
+    cartStore.toggleOffCanvas(); 
+};
+
+// Nueva y simétrica estructura de 4 enlaces
+const navItems = [
+  { name: 'HOME', path: '/' },
+  { name: 'ESMERALDAS', path: '/esmeraldas' },
+  { name: 'JOYAS', path: '/joyas' }, 
+  { name: 'CONTACTO', path: '/contacto' },
 ]
 
-const mobileNavItems = [...navItemsLeft, ...navItemsRight];
+// División simétrica: 2 y 2
+const navItemsLeft = navItems.slice(0, 2);
+const navItemsRight = navItems.slice(2, 4);
+
+const mobileNavItems = navItems;
 </script>
 
 <template>
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-5 
               flex justify-between items-center relative">
     
-    <div class="flex items-center justify-start lg:pl-10 xl:pl-20"> <button @click="toggleMenu" class="lg:hidden text-brand-white z-50">
+    <div class="flex items-center justify-start lg:pl-10 xl:pl-20"> 
+        
+        <button @click="toggleMenu" class="lg:hidden text-brand-white z-50">
           <svg v-if="!isMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7" />
           </svg>
@@ -50,31 +59,34 @@ const mobileNavItems = [...navItemsLeft, ...navItemsRight];
     </div>
 
     <RouterLink to="/" 
-      class="absolute left-1/2 transform -translate-x-1/2 z-50"> 
+      class="absolute left-1/2 transform -translate-x-1/2 z-50 px-2 sm:px-4 md:px-6"> 
       <img src="@/assets/images/logo-cushion-white.png" alt="Cushion Joyas & Esmeraldas" class="h-14 md:h-16 p-2">
     </RouterLink>
 
-    <div class="flex items-center space-x-6 justify-end lg:pr-10 xl:pr-20"> <nav class="hidden lg:flex space-x-12 xl:space-x-16">
-        <RouterLink 
-          v-for="item in navItemsRight" 
-          :key="item.name" 
-          :to="item.path"
-          class="nav-link text-brand-white hover:text-brand-gold transition-colors 
-                 uppercase font-sans-luxury text-xs"
-        >
-          {{ item.name }}
-        </RouterLink>
-      </nav>
+    <div class="flex items-center justify-end lg:pr-10 xl:pr-20"> 
+        
+        <nav class="hidden lg:flex space-x-12 xl:space-x-16">
+            <RouterLink 
+              v-for="item in navItemsRight" 
+              :key="item.name" 
+              :to="item.path"
+              class="nav-link text-brand-white hover:text-brand-gold transition-colors 
+                     uppercase font-sans-luxury text-xs"
+            >
+              {{ item.name }}
+            </RouterLink>
+        </nav>
       
-      <RouterLink to="/carrito" class="relative">
-        <svg class="w-6 h-6 text-brand-white hover:text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-        </svg>
-        <span v-if="totalItems > 0" class="absolute -top-2 -right-2 bg-brand-primary text-brand-black 
-           rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold">
-          {{ totalItems }}
-        </span>
-      </RouterLink>
+        <button @click="toggleCart" class="relative text-brand-white hover:text-brand-gold ml-6 lg:ml-12 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span v-if="totalItems > 0" class="absolute -top-2 -right-2 bg-brand-primary text-brand-black 
+                rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold">
+                {{ totalItems }}
+            </span>
+        </button>
+        
     </div>
   </div>
 
