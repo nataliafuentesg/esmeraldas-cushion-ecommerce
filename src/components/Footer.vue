@@ -69,7 +69,7 @@ const socialMedia = [
         
         <div class="col-span-2 md:col-span-1">
           <RouterLink to="/" class="block mb-4">
-              <img src="@/assets/images/logo-cushion-white.jpg" alt="Cushion Joyas & Esmeraldas" class="h-10">
+              <img src="@/assets/images/logo-cushion-white.png" alt="Cushion Joyas & Esmeraldas" class="h-10">
           </RouterLink>
           <p class="text-sm font-sans-luxury leading-relaxed max-w-xs">
             La belleza eterna de la esmeralda, diseñada con precisión moderna.
