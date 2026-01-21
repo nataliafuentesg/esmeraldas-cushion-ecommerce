@@ -6,6 +6,7 @@ import { Icon } from '@iconify/vue';
 
 const cartStore = useCartStore();
 
+// Sincronización reactiva con el store de Pinia
 const cartItems = computed(() => cartStore.items);
 const cartTotal = computed(() => cartStore.cartTotal);
 const isOffCanvasOpen = computed(() => cartStore.isOffCanvasOpen);
@@ -42,7 +43,7 @@ const closeCart = () => {
       <div v-if="cartItems.length === 0" class="p-6 text-center pt-20">
         <Icon icon="lucide:shopping-cart" class="w-12 h-12 mx-auto mb-4 text-brand-gold" />
         <p class="font-sans-luxury text-brand-white/70">Tu carrito está vacío.</p>
-        <RouterLink to="/esmeraldas" @click="closeCart" class="mt-6 inline-block text-sm font-bold text-brand-gold hover:text-brand-primary transition-colors uppercase">
+        <RouterLink to="/coleccion" @click="closeCart" class="mt-6 inline-block text-sm font-bold text-brand-gold hover:text-brand-primary transition-colors uppercase">
             Explorar Colección
         </RouterLink>
       </div>
@@ -50,7 +51,7 @@ const closeCart = () => {
       <div v-else>
         <ul class="divide-y divide-brand-white/10">
           <li v-for="item in cartItems" :key="item.product.id" class="flex p-4 items-center hover:bg-brand-black/50 transition-colors">
-            <img :src="`/src/assets/images/products/${item.product.mainImage}`" :alt="item.product.name" class="w-16 h-16 object-cover mr-4 border border-brand-white/20">
+            <img :src="item.product.mainImage" :alt="item.product.name" class="w-16 h-16 object-cover mr-4 border border-brand-white/20">
             
             <div class="flex-grow">
               <p class="font-serif-elegant text-base text-brand-white uppercase truncate">{{ item.product.name }}</p>
@@ -81,11 +82,13 @@ const closeCart = () => {
         Ver Carrito Completo
       </RouterLink>
       
-      <button 
-        class="block w-full text-center px-6 py-3 border border-brand-primary text-brand-primary uppercase font-bold text-sm tracking-widest hover:bg-brand-primary/10 transition-colors duration-300"
+      <RouterLink 
+        to="/finalizar-compra"
+        @click="closeCart"
+        class="block w-full text-center px-6 py-3 border border-brand-primary text-brand-primary uppercase font-bold text-sm tracking-widest hover:bg-brand-primary hover:text-brand-black transition-colors duration-300"
       >
         Finalizar Compra
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>

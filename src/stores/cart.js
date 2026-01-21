@@ -1,42 +1,50 @@
-// src/stores/cart.js
-
 import { defineStore } from 'pinia';
+import api from '@/api/axios';
+import { v4 as uuidv4 } from 'uuid'; // Esto es lo que causaba el error
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
     items: [],
-    isOffCanvasOpen: false, // ¡Asegúrate de que este estado existe!
+    total: 0,
+    sessionId: localStorage.getItem('cart_session') || null
   }),
-  getters: {
-    cartTotal: (state) => state.items.reduce((acc, item) => acc + item.product.price * item.quantity, 0),
-    cartCount: (state) => state.items.reduce((acc, item) => acc + item.quantity, 0),
-  },
+
   actions: {
-    addItem(product, quantity = 1) {
-      const existingItem = this.items.find(item => item.product.id === product.id);
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        this.items.push({ product, quantity });
+    async initSession() {
+      // Si el usuario entra por primera vez, le asignamos su "ID de maleta"
+      if (!this.sessionId) {
+        this.sessionId = uuidv4();
+        localStorage.setItem('cart_session', this.sessionId);
       }
-      this.isOffCanvasOpen = true; 
+      await this.loadCart();
     },
-    removeItem(productId) {
-      this.items = this.items.filter(item => item.product.id !== productId);
-    },
-    updateQuantity(productId, quantity) {
-      const item = this.items.find(item => item.product.id === productId);
-      if (item) {
-        item.quantity = quantity;
-        if (item.quantity <= 0) {
-          this.removeItem(productId);
-        }
+
+    async loadCart() {
+      if (!this.sessionId) return;
+      try {
+        const res = await api.get(`/cart/${this.sessionId}`);
+        this.items = res.data.items || [];
+        this.total = res.data.total || 0;
+      } catch (e) {
+        console.error("Error cargando carrito desde el back");
       }
     },
-    
-    // 📢 CLAVE: ASEGÚRATE DE QUE ESTA ACCIÓN ESTÉ PRESENTE
-    toggleOffCanvas() { 
-      this.isOffCanvasOpen = !this.isOffCanvasOpen;
+
+    async addItem(product, quantity) {
+      if (!this.sessionId) await this.initSession();
+      
+      try {
+        const res = await api.post(`/cart/${this.sessionId}/add`, {
+          productId: product.id,
+          quantity: quantity
+        });
+        
+        // El backend nos devuelve el carrito actualizado con los precios y totales
+        this.items = res.data.items;
+        this.total = res.data.total;
+      } catch (e) {
+        console.error("Error al persistir el item en el back");
+      }
     }
-  },
+  }
 });

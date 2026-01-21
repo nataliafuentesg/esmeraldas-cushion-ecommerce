@@ -1,16 +1,32 @@
 <script setup>
 import ProductCard from '@/components/ProductCard.vue'
-import { products } from '@/data/products' 
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import api from '@/api/axios' // Importamos la configuración de axios que creamos
 
-const availableCategories = ['Anillos', 'Collares', 'Pendientes', 'Pulseras']
+const products = ref([]) // Estado reactivo para los productos del backend
+const loading = ref(true)
 const selectedCategory = ref('Todos')
+
+// Las categorías se mantienen para el filtrado en el front
+const availableCategories = ['Anillos', 'Collares', 'Aretes', 'Pulseras']
+
+// Cargamos los productos al montar el componente
+onMounted(async () => {
+  try {
+    const response = await api.get('/products')
+    products.value = response.data
+  } catch (error) {
+    console.error("Error cargando la colección:", error)
+  } finally {
+    loading.value = false
+  }
+})
 
 const filteredProducts = computed(() => {
   if (selectedCategory.value === 'Todos') {
-    return products
+    return products.value
   }
-  return products.filter(p => p.category === selectedCategory.value)
+  return products.value.filter(p => p.category === selectedCategory.value)
 })
 
 const changeCategory = (category) => {
@@ -25,7 +41,13 @@ const changeCategory = (category) => {
         Colección de Esmeraldas Finas
       </h1>
 
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div v-if="loading" class="text-center py-20">
+        <p class="text-brand-gold animate-pulse font-sans-luxury tracking-widest">
+          CARGANDO PIEZAS EXCLUSIVAS...
+        </p>
+      </div>
+
+      <div v-else class="grid grid-cols-1 lg:grid-cols-4 gap-8">
         
         <aside class="lg:col-span-1 p-6 bg-brand-black shadow-2xl rounded-lg h-fit sticky top-20 border border-brand-gold/20">
           <h2 class="text-xl font-serif-elegant text-brand-gold mb-4 border-b border-brand-gold/30 pb-2">
