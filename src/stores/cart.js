@@ -1,17 +1,17 @@
 import { defineStore } from 'pinia';
 import api from '@/api/axios';
-import { v4 as uuidv4 } from 'uuid'; // Esto es lo que causaba el error
+import { v4 as uuidv4 } from 'uuid';
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
     items: [],
     total: 0,
+    isOffCanvasOpen: false,
     sessionId: localStorage.getItem('cart_session') || null
   }),
 
   actions: {
     async initSession() {
-      // Si el usuario entra por primera vez, le asignamos su "ID de maleta"
       if (!this.sessionId) {
         this.sessionId = uuidv4();
         localStorage.setItem('cart_session', this.sessionId);
@@ -26,24 +26,68 @@ export const useCartStore = defineStore('cart', {
         this.items = res.data.items || [];
         this.total = res.data.total || 0;
       } catch (e) {
-        console.error("Error cargando carrito desde el back");
+        console.error("Error cargando carrito");
       }
     },
 
     async addItem(product, quantity) {
       if (!this.sessionId) await this.initSession();
-      
       try {
         const res = await api.post(`/cart/${this.sessionId}/add`, {
           productId: product.id,
           quantity: quantity
         });
-        
-        // El backend nos devuelve el carrito actualizado con los precios y totales
         this.items = res.data.items;
         this.total = res.data.total;
       } catch (e) {
-        console.error("Error al persistir el item en el back");
+        console.error("Error al añadir producto");
+      }
+    },
+
+    async updateQuantity(productId, delta) {
+      const item = this.items.find(i => i.productId === productId);
+      if (!item) return;
+
+      const newQty = item.quantity + delta;
+      if (newQty < 1) return;
+      if (delta > 0 && item.stock !== undefined && newQty > item.stock) {
+        alert("Lo sentimos, no hay más existencias disponibles.");
+        return;
+      }
+
+      try {
+        const res = await api.post(`/cart/${this.sessionId}/add`, {
+          productId: productId,
+          quantity: delta
+        });
+        this.items = res.data.items;
+        this.total = res.data.total;
+      } catch (e) {
+        console.error("Error al actualizar: Posible falta de stock en servidor");
+      }
+    },
+
+    async removeItem(productId) {
+      const item = this.items.find(i => i.productId === productId);
+      if (!item) return;
+      try {
+        await api.post(`/cart/${this.sessionId}/add`, {
+          productId: productId,
+          quantity: -item.quantity
+        });
+        await this.loadCart();
+      } catch (e) {
+        console.error("Error al eliminar item");
+      }
+    },
+
+    async clearCart() {
+      try {
+        await api.delete(`/cart/${this.sessionId}`);
+        this.items = [];
+        this.total = 0;
+      } catch (e) {
+        console.error("Error al vaciar carrito");
       }
     }
   }
