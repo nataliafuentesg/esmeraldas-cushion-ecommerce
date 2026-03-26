@@ -24,8 +24,8 @@ const toggleCart = () => {
 // Estructura de navegación
 const navItems = [
   { name: 'HOME', path: '/' },
-  { name: 'ESMERALDAS', path: '/esmeraldas' },
-  { name: 'JOYAS', path: '/joyas' }, 
+  { name: 'ESMERALDAS', path: '/coleccion/esmeraldas' }, 
+  { name: 'JOYAS', path: '/coleccion/joyas' }, 
   { name: 'CONTACTO', path: '/contacto' },
 ]
 

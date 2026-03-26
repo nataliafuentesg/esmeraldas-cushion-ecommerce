@@ -18,12 +18,18 @@ const router = createRouter({
       path: '/producto/:slug',
       name: 'product-detail',
       component: () => import('@/views/ProductDetail.vue'),
-      props: true 
+      props: true
     },
     {
       path: '/finalizar-compra',
       name: 'checkout',
       component: () => import('@/views/CheckoutView.vue')
+    },
+    {
+      path: '/coleccion/:category',
+      name: 'category-view',
+      component: () => import('@/views/CollectionView.vue'),
+      props: true
     }
   ],
   scrollBehavior(to, from, savedPosition) {

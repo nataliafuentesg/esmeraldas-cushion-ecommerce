@@ -1,5 +1,4 @@
 <script setup>
-// No necesita lógica en el script por ahora, solo presentación.
 </script>
 
 <template>

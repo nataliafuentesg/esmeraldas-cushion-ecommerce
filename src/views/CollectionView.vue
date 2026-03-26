@@ -1,29 +1,53 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router'; // <--- IMPORTANTE
 import { useCartStore } from '@/stores/cart';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
 
+const route = useRoute(); // Para acceder a /coleccion/:category
 const cartStore = useCartStore();
 
 const products = ref([]);
 const loading = ref(true);
-
 const selectedCategory = ref('Todas');
+
+// Categorías para los botones de filtro interno
 const categories = ['Todas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares'];
 
-onMounted(async () => {
+// Función para cargar productos
+const loadData = async () => {
+  loading.value = true;
   try {
     const response = await api.get('/products');
-    products.value = response.data;
+    let allProducts = response.data;
+
+    // LÓGICA DE FILTRADO POR URL:
+    // Si la URL es /coleccion/esmeraldas, filtramos solo esmeraldas
+    const urlCategory = route.params.category?.toLowerCase();
+    
+    if (urlCategory === 'esmeraldas') {
+      products.value = allProducts.filter(p => p.category.toLowerCase().includes('esmeralda') || p.category === 'Piedras Sueltas');
+    } else if (urlCategory === 'joyas') {
+      products.value = allProducts.filter(p => p.category !== 'Piedras Sueltas');
+    } else {
+      products.value = allProducts;
+    }
   } catch (error) {
-    console.error("Error al conectar con la colección de esmeraldas:", error);
+    console.error("Error al cargar la colección:", error);
   } finally {
     loading.value = false;
   }
+};
+
+// Re-cargar datos si el parámetro de la URL cambia
+watch(() => route.params.category, () => {
+  selectedCategory.value = 'Todas'; // Resetear filtro interno
+  loadData();
 });
 
-// Función auxiliar para obtener la imagen principal del array que manda el back
+onMounted(loadData);
+
 const getProductImage = (product) => {
   return product.images && product.images.length > 0 
     ? product.images[0].imageUrl 
@@ -36,11 +60,7 @@ const filteredProducts = computed(() => {
 });
 
 const addToCart = (product) => {
-  // Ojo: mapeamos la imagen principal al objeto que va al carrito para que el OffCanvas la vea
-  const productWithImage = {
-    ...product,
-    mainImage: getProductImage(product)
-  };
+  const productWithImage = { ...product, mainImage: getProductImage(product) };
   cartStore.addItem(productWithImage, 1);
 };
 </script>
@@ -49,8 +69,8 @@ const addToCart = (product) => {
   <div class="bg-brand-black min-h-screen pt-10 pb-20">
     <header class="container mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-widest uppercase">
-        Nuestra Colección
-      </h1>
+  {{ route.params.category ? route.params.category : 'Nuestra Colección' }}
+</h1>
       <p class="text-brand-white/60 font-sans-luxury max-w-2xl mx-auto uppercase text-xs tracking-[0.3em]">
         Selección curada de las esmeraldas colombianas más finas y joyería artesanal.
       </p>
