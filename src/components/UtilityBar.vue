@@ -1,12 +1,21 @@
 <script setup>
 import { Icon } from '@iconify/vue';
+import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const startSearch = () => {
     alert("Iniciando Búsqueda...");
 };
 
 const goToProfile = () => {
-    alert("Navegando a Mi Cuenta...");
+    if (authStore.isAuthenticated) {
+        router.push('/perfil');
+    } else {
+        router.push('/auth');
+    }
 };
 </script>
 

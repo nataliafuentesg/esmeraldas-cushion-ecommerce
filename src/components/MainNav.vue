@@ -1,14 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart'
 
+const authStore = useAuthStore();
 const cartStore = useCartStore()
-
-/** * LÓGICA CORREGIDA:
- * 1. totalItems: Ahora cuenta los items que vienen del backend (CartItemDTO).
- * 2. toggleCart: Ahora cambia el estado isOffCanvasOpen para que el carrito se abra.
- */
 const totalItems = computed(() => cartStore.items.length) 
 
 const isMenuOpen = ref(false)
@@ -17,11 +14,9 @@ const toggleMenu = () => {
 }
 
 const toggleCart = () => {
-    // Cambiamos directamente el estado reactivo del Store
     cartStore.isOffCanvasOpen = !cartStore.isOffCanvasOpen; 
 };
 
-// Estructura de navegación
 const navItems = [
   { name: 'HOME', path: '/' },
   { name: 'ESMERALDAS', path: '/coleccion/esmeraldas' }, 
@@ -33,6 +28,8 @@ const navItems = [
 const navItemsLeft = navItems.slice(0, 2);
 const navItemsRight = navItems.slice(2, 4);
 const mobileNavItems = navItems;
+
+
 </script>
 
 <template>

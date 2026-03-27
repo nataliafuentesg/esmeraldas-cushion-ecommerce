@@ -30,6 +30,26 @@ const router = createRouter({
       name: 'category-view',
       component: () => import('@/views/CollectionView.vue'),
       props: true
+    },
+    {
+      path: '/auth',
+      name: 'auth',
+      component: () => import('@/views/AuthView.vue')
+    },
+    {
+      path: '/contacto',
+      name: 'contacto',
+      component: () => import('@/views/ContactView.vue')
+    },
+    {
+      path: '/perfil',
+      name: 'perfil',
+      component: () => import('@/views/ProfileView.vue')
+    },
+    {
+      path: '/admin',
+      name: 'admin-dashboard',
+      component: () => import('@/views/AdminDashboardView.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {
