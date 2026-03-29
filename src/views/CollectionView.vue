@@ -1,38 +1,28 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router'; // <--- IMPORTANTE
-import { useCartStore } from '@/stores/cart';
-import { Icon } from '@iconify/vue';
+import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/axios';
+import ProductCard from '../components/ProductCard.vue'; // Reutilizamos lo que funciona
 
-const route = useRoute(); // Para acceder a /coleccion/:category
-const cartStore = useCartStore();
+const route = useRoute();
+const router = useRouter();
 
 const products = ref([]);
 const loading = ref(true);
+
+// Categorías reales en tu Base de Datos
+const realCategories = ['Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras'];
+// Categorías para el menú (incluimos "Todas" y "Joyas" como conceptos visuales)
+const filterMenu = ['Todas', 'Joyas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras'];
+
 const selectedCategory = ref('Todas');
 
-// Categorías para los botones de filtro interno
-const categories = ['Todas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares'];
-
-// Función para cargar productos
 const loadData = async () => {
   loading.value = true;
   try {
     const response = await api.get('/products');
-    let allProducts = response.data;
-
-    // LÓGICA DE FILTRADO POR URL:
-    // Si la URL es /coleccion/esmeraldas, filtramos solo esmeraldas
-    const urlCategory = route.params.category?.toLowerCase();
-    
-    if (urlCategory === 'esmeraldas') {
-      products.value = allProducts.filter(p => p.category.toLowerCase().includes('esmeralda') || p.category === 'Piedras Sueltas');
-    } else if (urlCategory === 'joyas') {
-      products.value = allProducts.filter(p => p.category !== 'Piedras Sueltas');
-    } else {
-      products.value = allProducts;
-    }
+    products.value = response.data;
+    applyUrlFilter();
   } catch (error) {
     console.error("Error al cargar la colección:", error);
   } finally {
@@ -40,57 +30,80 @@ const loadData = async () => {
   }
 };
 
-// Re-cargar datos si el parámetro de la URL cambia
-watch(() => route.params.category, () => {
-  selectedCategory.value = 'Todas'; // Resetear filtro interno
-  loadData();
-});
+// --- LÓGICA DE FILTRADO MEJORADA ---
+const applyUrlFilter = () => {
+  const urlParam = route.params.category?.toLowerCase();
+  
+  if (!urlParam) {
+    selectedCategory.value = 'Todas';
+    return;
+  }
 
-onMounted(loadData);
-
-const getProductImage = (product) => {
-  return product.images && product.images.length > 0 
-    ? product.images[0].imageUrl 
-    : 'https://via.placeholder.com/400x500?text=Cushion+Jewelry';
+  if (urlParam === 'esmeraldas') {
+    selectedCategory.value = 'Piedras Sueltas';
+  } else if (urlParam === 'joyas') {
+    selectedCategory.value = 'Joyas';
+  } else {
+    // Busca coincidencia exacta (ej: anillos, collares)
+    const match = filterMenu.find(cat => cat.toLowerCase() === urlParam);
+    selectedCategory.value = match || 'Todas';
+  }
 };
 
+const setCategory = (cat) => {
+  selectedCategory.value = cat;
+  // Actualizamos la URL para que el usuario pueda compartir el link filtrado
+  if (cat === 'Todas') router.replace('/coleccion');
+  else if (cat === 'Piedras Sueltas') router.replace('/coleccion/esmeraldas');
+  else if (cat === 'Joyas') router.replace('/coleccion/joyas');
+  else router.replace(`/coleccion/${cat.toLowerCase()}`);
+};
+
+// --- EL FILTRO INTELIGENTE ---
 const filteredProducts = computed(() => {
-  if (selectedCategory.value === 'Todas') return products.value;
+  if (selectedCategory.value === 'Todas') {
+    return products.value;
+  }
+  
+  if (selectedCategory.value === 'Joyas') {
+    // EXCLUYE Piedras Sueltas, incluye el resto
+    return products.value.filter(p => p.category !== 'Piedras Sueltas');
+  }
+
+  // Filtro por categoría exacta
   return products.value.filter(p => p.category === selectedCategory.value);
 });
 
-const addToCart = (product) => {
-  const productWithImage = { ...product, mainImage: getProductImage(product) };
-  cartStore.addItem(productWithImage, 1);
-};
+watch(() => route.params.category, applyUrlFilter);
+onMounted(loadData);
 </script>
 
 <template>
   <div class="bg-brand-black min-h-screen pt-10 pb-20">
-    <header class="container mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16">
-      <h1 class="text-4xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-widest uppercase">
-  {{ route.params.category ? route.params.category : 'Nuestra Colección' }}
-</h1>
-      <p class="text-brand-white/60 font-sans-luxury max-w-2xl mx-auto uppercase text-xs tracking-[0.3em]">
-        Selección curada de las esmeraldas colombianas más finas y joyería artesanal.
-      </p>
+    <header class="container mx-auto px-4 text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-[0.2em] uppercase">
+        <span v-if="selectedCategory === 'Todas'">Nuestra Colección</span>
+        <span v-else-if="selectedCategory === 'Piedras Sueltas'">Esmeraldas</span>
+        <span v-else>{{ selectedCategory }}</span>
+      </h1>
+      <div class="h-[1px] w-20 bg-brand-gold mx-auto mb-6"></div>
     </header>
 
     <div v-if="loading" class="text-center py-20">
-      <p class="text-brand-gold animate-pulse font-sans-luxury tracking-[0.3em] uppercase text-xs">
+      <p class="text-brand-gold animate-pulse font-sans-luxury tracking-[0.3em] uppercase text-[10px]">
         Cargando Tesoros...
       </p>
     </div>
 
     <template v-else>
-      <section class="container mx-auto px-4 sm:px-6 lg:px-8 mb-12 border-b border-brand-white/10 pb-8">
-        <div class="flex flex-wrap justify-center gap-8">
+      <section class="container mx-auto px-4 mb-16 overflow-x-auto">
+        <div class="flex justify-center gap-8 min-w-max pb-4 border-b border-brand-white/10">
           <button 
-            v-for="cat in categories" 
+            v-for="cat in filterMenu" 
             :key="cat"
-            @click="selectedCategory = cat"
-            class="text-xs uppercase tracking-[0.2em] transition-colors duration-300"
-            :class="selectedCategory === cat ? 'text-brand-gold border-b border-brand-gold pb-1' : 'text-brand-white/50 hover:text-brand-gold'"
+            @click="setCategory(cat)"
+            class="filter-btn"
+            :class="{ 'active': selectedCategory === cat }"
           >
             {{ cat }}
           </button>
@@ -98,46 +111,16 @@ const addToCart = (product) => {
       </section>
 
       <main class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-          <div 
+        <div v-if="filteredProducts.length === 0" class="empty-state">
+           <p>No se encontraron piezas en esta selección.</p>
+        </div>
+        
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+          <ProductCard 
             v-for="product in filteredProducts" 
             :key="product.id"
-            class="group relative"
-          >
-            <div class="aspect-[3/4] overflow-hidden bg-brand-white/5 relative border border-brand-white/5">
-              <img 
-                :src="getProductImage(product)" 
-                :alt="product.name"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-              
-              <span v-if="product.featured" class="absolute top-4 left-4 bg-brand-gold/90 text-brand-black px-3 py-1 text-[10px] uppercase font-bold tracking-tighter">
-                Exclusivo
-              </span>
-
-              <div class="absolute inset-0 bg-brand-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <button 
-                  @click="addToCart(product)"
-                  class="bg-brand-white text-brand-black px-6 py-3 uppercase text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold transition-colors duration-300 flex items-center space-x-2"
-                >
-                  <Icon icon="lucide:shopping-bag" class="w-4 h-4" />
-                  <span>Añadir al Carrito</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="mt-6 text-center">
-              <p class="text-[10px] text-brand-gold uppercase tracking-[0.2em] mb-1">{{ product.category }}</p>
-              <h3 class="text-brand-white font-serif-elegant text-lg tracking-wider mb-2 group-hover:text-brand-gold transition-colors">
-                {{ product.name }}
-              </h3>
-              <p class="text-brand-white/80 font-sans-luxury text-sm tracking-widest">
-                ${{ product.price.toLocaleString() }}
-              </p>
-            </div>
-
-            <RouterLink :to="`/producto/${product.slug}`" class="absolute inset-x-0 top-0 h-[80%] z-0" />
-          </div>
+            :product="product" 
+          />
         </div>
       </main>
     </template>
@@ -145,7 +128,32 @@ const addToCart = (product) => {
 </template>
 
 <style scoped>
-.group {
-  transition: all 0.4s ease-in-out;
+@reference "../assets/main.css";
+
+.filter-btn {
+  @apply text-[10px] uppercase tracking-[0.2em] transition-all duration-300 text-brand-white/40 pb-2 border-b border-transparent;
+}
+
+.filter-btn:hover {
+  @apply text-brand-gold;
+}
+
+.filter-btn.active {
+  @apply text-brand-gold border-brand-gold;
+}
+
+.empty-state {
+  @apply text-center py-20 border border-brand-white/5 bg-brand-white/[0.02] 
+         text-brand-white/30 font-sans-luxury text-[10px] uppercase tracking-widest;
+}
+
+/* Animación de entrada de la grilla */
+.grid {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>

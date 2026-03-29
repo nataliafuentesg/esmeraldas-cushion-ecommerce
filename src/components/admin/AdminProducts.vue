@@ -1,11 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
 
 const products = ref([]);
 const loading = ref(true);
 
+// --- ESTADOS PARA FILTROS Y BÚSQUEDA ---
+const searchQuery = ref('');
+const filterCategory = ref('Todas');
+const filterStock = ref('Todos');
+
+// Modal y edición
 const showProductModal = ref(false);
 const isEditing = ref(false);
 
@@ -31,6 +37,24 @@ const loadProducts = async () => {
     loading.value = false;
   }
 };
+
+// --- MAGIA REACTIVA: PRODUCTOS FILTRADOS ---
+const filteredProducts = computed(() => {
+  return products.value.filter(product => {
+    // 1. Filtro por Búsqueda (Texto)
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+    
+    // 2. Filtro por Categoría
+    const matchesCategory = filterCategory.value === 'Todas' || product.category === filterCategory.value;
+    
+    // 3. Filtro por Stock
+    const matchesStock = filterStock.value === 'Todos' || 
+                         (filterStock.value === 'Con Stock' && product.stock > 0) ||
+                         (filterStock.value === 'Agotados' && product.stock === 0);
+                         
+    return matchesSearch && matchesCategory && matchesStock;
+  });
+});
 
 const openModalNew = () => {
   isEditing.value = false;
@@ -89,27 +113,70 @@ const deleteProduct = async (id, name) => {
 
 <template>
   <div>
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-brand-white/10 pb-4 gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-brand-white/10 pb-4 gap-4">
       <h3 class="text-2xl font-serif-elegant text-brand-white tracking-widest uppercase">Catálogo de Alta Joyería</h3>
       <button @click="openModalNew" class="bg-brand-white text-brand-black px-4 py-2 uppercase text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold transition-colors flex items-center space-x-2">
         <Icon icon="lucide:plus" class="w-4 h-4" /><span>Añadir Joya</span>
       </button>
     </div>
 
-    <div v-if="loading" class="text-brand-gold uppercase tracking-widest text-xs animate-pulse">Cargando...</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-brand-white/5 p-4 border border-brand-white/10">
+      
+      <div class="relative">
+        <Icon icon="lucide:search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-brand-white/50" />
+        <input v-model="searchQuery" type="text" placeholder="Buscar por nombre..." 
+               class="w-full bg-brand-black border border-brand-white/20 pl-10 pr-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none transition-colors placeholder:text-brand-white/30">
+      </div>
+
+      <div>
+        <select v-model="filterCategory" class="w-full bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
+          <option value="Todas" class="bg-brand-black">Todas las Categorías</option>
+          <option value="Anillos" class="bg-brand-black">Anillos</option>
+          <option value="Aretes" class="bg-brand-black">Aretes</option>
+          <option value="Collares" class="bg-brand-black">Collares</option>
+          <option value="Pulseras" class="bg-brand-black">Pulseras</option>
+          <option value="Piedras Sueltas" class="bg-brand-black">Piedras Sueltas</option>
+        </select>
+      </div>
+
+      <div>
+        <select v-model="filterStock" class="w-full bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
+          <option value="Todos" class="bg-brand-black">Cualquier Stock</option>
+          <option value="Con Stock" class="bg-brand-black">Disponibles</option>
+          <option value="Agotados" class="bg-brand-black">Agotados</option>
+        </select>
+      </div>
+    </div>
+
+    <div v-if="loading" class="text-brand-gold uppercase tracking-widest text-xs animate-pulse">Cargando catálogo...</div>
+
+    <div v-else-if="filteredProducts.length === 0" class="text-center py-12 border border-brand-white/10 bg-brand-white/5">
+      <p class="text-brand-white/50 font-sans-luxury text-sm tracking-widest uppercase">
+        No se encontraron joyas que coincidan con tu búsqueda.
+      </p>
+    </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="product in products" :key="product.id" class="border border-brand-white/10 bg-brand-black/50 p-6 relative group">
-        <div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div v-for="product in filteredProducts" :key="product.id" class="border border-brand-white/10 bg-brand-black/50 p-6 relative group transition-all hover:border-brand-gold/50">
+        
+        <div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
           <button @click="openModalEdit(product)" class="bg-brand-white/20 text-white p-2 hover:bg-brand-gold transition-colors"><Icon icon="lucide:edit" class="w-4 h-4" /></button>
           <button @click="deleteProduct(product.id, product.name)" class="bg-red-900/80 text-white p-2 hover:bg-red-600 transition-colors"><Icon icon="lucide:trash-2" class="w-4 h-4" /></button>
         </div>
-        <p class="text-brand-gold text-[10px] uppercase tracking-[0.2em] mb-1">{{ product.category }}</p>
-        <h4 class="text-brand-white font-serif-elegant text-lg mb-1 truncate">{{ product.name }}</h4>
+        
+        <div class="flex justify-between items-start mb-1">
+          <p class="text-brand-gold text-[10px] uppercase tracking-[0.2em]">{{ product.category }}</p>
+          <span v-if="product.featured" class="bg-brand-gold/20 text-brand-gold text-[8px] px-2 py-0.5 uppercase tracking-widest border border-brand-gold/30">Destacado</span>
+        </div>
+        
+        <h4 class="text-brand-white font-serif-elegant text-lg mb-1 truncate pr-16">{{ product.name }}</h4>
         <p class="text-[10px] text-brand-white/50 uppercase tracking-[0.2em] mb-4">{{ product.gemstoneType || 'Sin gema' }} | {{ product.metalType || 'Metal' }}</p>
-        <div class="flex justify-between items-end mt-4">
+        
+        <div class="flex justify-between items-end mt-4 pt-4 border-t border-brand-white/10">
           <p class="text-brand-white/80 font-sans-luxury tracking-widest">${{ product.price.toLocaleString() }}</p>
-          <p class="text-[10px] uppercase tracking-[0.2em]" :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'">Stock: {{ product.stock }}</p>
+          <p class="text-[10px] font-bold uppercase tracking-[0.2em]" :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'">
+            {{ product.stock > 0 ? `Stock: ${product.stock}` : 'AGOTADO' }}
+          </p>
         </div>
       </div>
     </div>
@@ -149,7 +216,7 @@ const deleteProduct = async (id, name) => {
               <div class="flex items-end pb-2">
                 <label class="flex items-center space-x-2 cursor-pointer">
                   <input type="checkbox" v-model="currentProduct.featured" class="form-checkbox text-brand-gold bg-transparent border-brand-white/20">
-                  <span class="text-[10px] text-brand-white uppercase tracking-[0.2em]">Destacar</span>
+                  <span class="text-[10px] text-brand-white uppercase tracking-[0.2em]">Destacar en Inicio</span>
                 </label>
               </div>
             </div>
