@@ -59,19 +59,20 @@ const setCategory = (cat) => {
   else router.replace(`/coleccion/${cat.toLowerCase()}`);
 };
 
-// --- EL FILTRO INTELIGENTE ---
 const filteredProducts = computed(() => {
+  const inStockProducts = products.value.filter(p => p.stock > 0);
+
   if (selectedCategory.value === 'Todas') {
-    return products.value;
+    return inStockProducts;
   }
   
   if (selectedCategory.value === 'Joyas') {
     // EXCLUYE Piedras Sueltas, incluye el resto
-    return products.value.filter(p => p.category !== 'Piedras Sueltas');
+    return inStockProducts.filter(p => p.category !== 'Piedras Sueltas');
   }
 
   // Filtro por categoría exacta
-  return products.value.filter(p => p.category === selectedCategory.value);
+  return inStockProducts.filter(p => p.category === selectedCategory.value);
 });
 
 watch(() => route.params.category, applyUrlFilter);
