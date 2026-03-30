@@ -1,75 +1,102 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   images: {
     type: Array,
     required: true,
+    default: () => []
   },
   productName: {
     type: String,
     required: true,
+    default: 'Joya Cushion'
   }
 });
 
-const activeImage = ref(props.images[0]?.src || '');
-const activeAlt = ref(props.images[0]?.alt || '');
-// Estado para controlar el overlay de zoom
-const isZoomed = ref(false); 
+const activeImage = ref('');
+const fallbackImage = 'https://images.unsplash.com/photo-1588444837495-c6cfaf50c8a9?q=80&w=800';
+
+watch(() => props.images, (newImages) => {
+  if (newImages && newImages.length > 0) {
+    activeImage.value = newImages[0].imageUrl;
+  } else {
+    activeImage.value = fallbackImage;
+  }
+}, { immediate: true });
 
 const setActiveImage = (image) => {
-    activeImage.value = image.src;
-    activeAlt.value = image.alt;
+    activeImage.value = image.imageUrl; 
 };
 
-// Función que abre y cierra el overlay de zoom
-const toggleZoom = () => {
-    isZoomed.value = !isZoomed.value;
+// --- ✨ LA MAGIA DEL ZOOM NATIVO ✨ ---
+const isZooming = ref(false);
+const zoomStyle = ref({});
+
+// Esta función calcula dónde está tu mouse y mueve la imagen
+const handleMouseMove = (event) => {
+  // Obtenemos las dimensiones de la caja de la foto
+  const { left, top, width, height } = event.target.getBoundingClientRect();
+  
+  // Calculamos el porcentaje X y Y donde está el mouse
+  const x = ((event.clientX - left) / width) * 100;
+  const y = ((event.clientY - top) / height) * 100;
+  
+  // Aplicamos el zoom y el origen del movimiento
+  zoomStyle.value = {
+    transformOrigin: `${x}% ${y}%`,
+    transform: 'scale(2.5)' // Nivel de aumento (250%). ¡Puedes subirlo a 3 o bajarlo a 2!
+  };
+};
+
+const handleMouseEnter = () => {
+  isZooming.value = true;
+};
+
+const handleMouseLeave = () => {
+  isZooming.value = false;
+  // Reiniciamos la foto a su estado normal
+  zoomStyle.value = {
+    transformOrigin: 'center center',
+    transform: 'scale(1)'
+  };
 };
 </script>
 
 <template>
   <div class="flex flex-col-reverse lg:flex-row gap-4">
     
-    <div class="flex lg:flex-col space-x-3 lg:space-x-0 lg:space-y-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-      <div v-for="image in images" :key="image.id" 
+    <div v-if="images && images.length > 1" class="flex lg:flex-col space-x-3 lg:space-x-0 lg:space-y-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
+      <div v-for="(image, index) in images" :key="index" 
            @click="setActiveImage(image)"
            class="flex-shrink-0 w-20 h-20 border cursor-pointer transition-all duration-200"
-           :class="{'border-brand-gold': activeImage === image.src, 'border-brand-white/20': activeImage !== image.src}">
-        <img :src="`/src/assets/images/products/${image.src}`" 
-             :alt="image.alt" 
-             class="w-full h-full object-cover">
+           :class="{'border-brand-gold': activeImage === image.imageUrl, 'border-brand-white/20': activeImage !== image.imageUrl}">
+        <img :src="image.imageUrl" :alt="`${productName} - vista ${index + 1}`" class="w-full h-full object-cover">
       </div>
     </div>
     
-    <div class="relative flex-1 bg-brand-white/5 aspect-square">
-        <img :src="`/src/assets/images/products/${activeImage}`" 
-             :alt="productName + ' - ' + activeAlt" 
-             class="w-full h-full object-contain transition-transform duration-500">
+    <div class="relative flex-1 bg-brand-black/5 aspect-square overflow-hidden border border-brand-white/10 cursor-crosshair"
+         @mousemove="handleMouseMove"
+         @mouseenter="handleMouseEnter"
+         @mouseleave="handleMouseLeave">
         
-        <button @click="toggleZoom" 
-                class="absolute bottom-4 right-4 p-3 bg-brand-black/70 rounded-full 
-                       text-brand-white hover:bg-brand-gold transition-colors duration-300 z-10">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <img :src="activeImage" 
+             :alt="productName" 
+             class="w-full h-full object-cover transition-transform duration-150 ease-out"
+             :style="isZooming ? zoomStyle : {}"
+        />
+        
+        <div class="absolute bottom-4 right-4 bg-brand-black/80 p-3 rounded-full border border-brand-white/10 text-brand-gold transition-opacity duration-300 pointer-events-none"
+             :class="isZooming ? 'opacity-0' : 'opacity-100'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 7v3m0 0v3m0-3h3m-3 0H7" />
             </svg>
-        </button>
+        </div>
     </div>
-  </div>
-    
-  <div v-if="isZoomed" @click="toggleZoom" 
-       class="fixed inset-0 bg-brand-black/95 z-50 flex justify-center items-center cursor-zoom-out p-4">
-      <div class="relative max-w-5xl max-h-full">
-          <img :src="`/src/assets/images/products/${activeImage}`" 
-               :alt="productName + ' - Zoom'" 
-               class="w-full h-auto max-h-[90vh] object-contain shadow-2xl border border-brand-gold/50"
-          >
-          <button @click.stop="toggleZoom" class="absolute top-4 right-4 text-brand-white hover:text-brand-gold text-4xl font-light leading-none">
-              &times;
-          </button>
-          <p class="text-center text-brand-white/70 mt-4 text-sm font-sans-luxury">
-             Clic en cualquier parte para cerrar. (Aquí iría la imagen de alta resolución para inspección).
-          </p>
-      </div>
   </div>
 </template>
+
+<style scoped>
+/* Sin librerías extras, el código se mantiene limpio y veloz */
+</style>
