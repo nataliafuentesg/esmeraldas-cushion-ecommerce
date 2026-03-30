@@ -20,28 +20,26 @@ const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1
       </picture>
 
       <div class="absolute inset-0 bg-gradient-to-b from-brand-black/60 via-transparent to-brand-black/60"></div>
-
-      <div class="absolute inset-0 bg-[#4C7F62]/5 mix-blend-overlay"></div>
     </div>
 
     <div class="relative z-10 text-center px-4 max-w-4xl -translate-y-16 md:-translate-y-20">
       
       <h1 class="text-7xl md:text-9xl text-brand-white font-serif-elegant 
                  tracking-widest leading-none mb-6"
-          style="letter-spacing: 0.15em; text-shadow: 0px 4px 20px rgba(0,0,0,0.8);">
+          style="letter-spacing: 0.15em; text-shadow: 0px 4px 20px rgba(0,0,0,0.9), 0px 0px 10px rgba(0,0,0,0.6);">
         CUSHION
       </h1>
       
-      <p class="text-xl md:text-3xl text-brand-gold font-sans-luxury uppercase 
+      <p class="text-xl md:text-3xl text-brand-white font-sans-luxury uppercase 
                 tracking-widest mb-10"
-         style="text-shadow: 0px 2px 12px rgba(0,0,0,0.9);">
+         style="text-shadow: 0px 4px 15px rgba(0,0,0,1), 0px 0px 8px rgba(0,0,0,0.8);">
         Joyas & Esmeraldas
       </p>
       
       <RouterLink to="/coleccion" 
-        class="inline-block px-10 py-4 border border-brand-gold text-brand-gold 
+        class="inline-block px-10 py-4 border border-brand-white text-brand-white 
                uppercase text-xs font-bold font-sans-luxury tracking-[0.3em] 
-               hover:bg-brand-gold hover:text-brand-black transition-all duration-500
+               hover:bg-brand-white hover:text-brand-black transition-all duration-500
                backdrop-blur-sm bg-black/30 shadow-2xl">
         Explorar Colección
       </RouterLink>
