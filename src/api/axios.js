@@ -3,7 +3,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://157.180.125.245:8080/api', 
+  baseURL: 'https://api.cushionjewelry.com/api', 
 });
 
 api.interceptors.request.use(
