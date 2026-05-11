@@ -11,9 +11,9 @@ const products = ref([]);
 const loading = ref(true);
 
 // Categorías reales en tu Base de Datos
-const realCategories = ['Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras'];
+const realCategories = ['Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras', 'Dije'];
 // Categorías para el menú (incluimos "Todas" y "Joyas" como conceptos visuales)
-const filterMenu = ['Todas', 'Joyas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras'];
+const filterMenu = ['Todas', 'Joyas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras', 'Dijes'];
 
 const selectedCategory = ref('Todas');
 
@@ -59,7 +59,9 @@ const setCategory = (cat) => {
   else router.replace(`/coleccion/${cat.toLowerCase()}`);
 };
 
+// --- EL FILTRO INTELIGENTE MEJORADO ---
 const filteredProducts = computed(() => {
+  // 1. Descartamos los agotados
   const inStockProducts = products.value.filter(p => p.stock > 0);
 
   if (selectedCategory.value === 'Todas') {
@@ -67,12 +69,17 @@ const filteredProducts = computed(() => {
   }
   
   if (selectedCategory.value === 'Joyas') {
-    // EXCLUYE Piedras Sueltas, incluye el resto
     return inStockProducts.filter(p => p.category !== 'Piedras Sueltas');
   }
+  const dbCategoryName = selectedCategory.value === 'Dijes' 
+    ? 'dije' 
+    : selectedCategory.value.toLowerCase();
 
-  // Filtro por categoría exacta
-  return inStockProducts.filter(p => p.category === selectedCategory.value);
+  // 2. Filtramos comparando la BD en minúsculas con nuestra búsqueda en minúsculas
+  return inStockProducts.filter(p => 
+    p.category && p.category.toLowerCase() === dbCategoryName
+  );
+
 });
 
 watch(() => route.params.category, applyUrlFilter);
