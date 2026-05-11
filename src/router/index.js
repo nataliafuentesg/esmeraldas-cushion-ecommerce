@@ -18,7 +18,7 @@ const router = createRouter({
       path: '/revista',
       name: 'Revista',
       component: () => import('@/views/Catalog.vue'),
-      meta: { title: 'Lookbook Editorial | Cushion Jewelry' } 
+      meta: { title: 'Lookbook Editorial | Cushion Joyería' } 
     },
     {
       path: '/coleccion',
