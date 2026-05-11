@@ -207,6 +207,8 @@ const deleteProduct = async (id, name) => {
                   <option value="Collares" class="bg-brand-black">Collares</option>
                   <option value="Pulseras" class="bg-brand-black">Pulseras</option>
                   <option value="Piedras Sueltas" class="bg-brand-black">Piedras Sueltas</option>
+                  <option value="dije" class="bg-brand-black">Dije</option>
+
                 </select>
               </div>
               <div>

@@ -4,10 +4,12 @@ import { RouterLink } from 'vue-router';
 // Array de categorías para el carrusel
 // NOTA: Asume que las imágenes existen en src/assets/images/
 const categories = [
-    { name: 'Anillos', image: 'category-anillos.jpg', path: '/coleccion/anillos' },
-    { name: 'Collares', image: 'category-collares.jpg', path: '/coleccion/collares' },
-    { name: 'Aretes', image: 'category-aretes.jpg', path: '/coleccion/aretes' },
-    { name: 'Pulseras', image: 'category-pulseras.jpg', path: '/coleccion/pulseras' },
+    { name: 'Anillos', image: 'categoria-anillos.jpg', path: '/coleccion/anillos' },
+    { name: 'Collares', image: 'categoria-collares.jpg', path: '/coleccion/collares' },
+    { name: 'Aretes', image: 'categoria-aretes.png', path: '/coleccion/aretes' },
+    { name: 'Pulseras', image: 'categoria-pulseras.jpg', path: '/coleccion/pulseras' },
+        { name: 'Dijes', image: 'categoria-dije.jpg', path: '/coleccion/dijes' },
+
 ];
 </script>
 
@@ -29,7 +31,7 @@ const categories = [
           class="relative overflow-hidden aspect-square group block"
         >
           <img 
-            :src="`/src/assets/images/${category.image}`" 
+            :src="`/images/category/${category.image}`" 
             :alt="category.name" 
             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />

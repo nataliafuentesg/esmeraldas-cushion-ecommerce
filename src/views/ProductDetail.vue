@@ -75,8 +75,16 @@ const submitReview = async () => {
 };
 
 const relatedProducts = computed(() => {
-  if (!product.value) return [];
-  return allProducts.value.filter(p => p.category === product.value.category && p.id !== product.value.id).slice(0, 4);
+  if (!product.value || !allProducts.value) return [];
+  
+  const inStock = allProducts.value.filter(p => p.stock > 0 && p.id !== product.value.id);
+  
+  const sameCategory = inStock.filter(p => p.category === product.value.category);
+    if (sameCategory.length > 0) {
+    return sameCategory.slice(0, 4);
+  } else {
+    return inStock.slice(0, 4); 
+  }
 });
 
 watch(() => props.slug, fetchProduct);
