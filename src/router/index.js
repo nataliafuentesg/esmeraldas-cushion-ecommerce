@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import { useAuthStore } from '@/stores/auth' // IMPORTANTE: Importamos tu tienda de autenticación
+import { useAuthStore } from '@/stores/auth'
+import Catalog from '@/views/Catalog.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,11 @@ const router = createRouter({
         title: 'Cushion | Alta Joyería y Esmeraldas Colombianas',
         description: 'Descubre Cushion. Colección exclusiva de alta joyería, anillos de compromiso y las más finas esmeraldas colombianas extraídas éticamente. Envíos internacionales.'
       }
+    },
+    {
+      path: '/revista',
+      name: 'Revista',
+      component: Catalog
     },
     {
       path: '/coleccion',
@@ -91,7 +97,7 @@ const router = createRouter({
   ],
   scrollBehavior(to, from, savedPosition) {
     // Esto hace que al cambiar de página, siempre suba al inicio
-    return { top: 0 } 
+    return { top: 0 }
   }
 })
 
@@ -99,7 +105,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // 1. MOTOR SEO: Actualizar el título de la pestaña y la meta descripción
   document.title = to.meta.title || 'Cushion | Alta Joyería';
-  
+
   let metaDescription = document.querySelector('meta[name="description"]');
   if (metaDescription) {
     metaDescription.setAttribute('content', to.meta.description || 'Alta joyería colombiana.');
@@ -121,7 +127,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next('/auth'); // ¡Intruso! Lo mandamos a que inicie sesión.
     }
-  } 
+  }
   else if (to.path.startsWith('/perfil')) {
     // ¿Va para su Perfil? Validamos que al menos tenga sesión iniciada
     if (authStore.isAuthenticated) {
@@ -129,10 +135,10 @@ router.beforeEach((to, from, next) => {
     } else {
       next('/auth');
     }
-  } 
+  }
   else {
     // Rutas públicas (Home, Catálogo, etc.), pase libre
-    next(); 
+    next();
   }
 })
 

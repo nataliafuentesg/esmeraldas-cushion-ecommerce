@@ -13,7 +13,6 @@ import CategoryShowcase from '@/components/CategoryShowcase.vue';
     
     <HeroSection />
     <FeaturedSection />
-    <StorytellingSection />
     <CategoryShowcase />    
   </main>
 </template>
