@@ -6,7 +6,6 @@ const categories = [
     { name: 'Aretes', image: 'categoria-aretes.png', path: '/coleccion/aretes' },
     { name: 'Pulseras', image: 'categoria-pulseras.jpg', path: '/coleccion/pulseras' },
     { name: 'Dijes', image: 'categoria-dije.jpg', path: '/coleccion/dije' }, // 'dije' en singular para coincidir con BD
-    { name: 'Esmeraldas', image: 'categoria-esmeraldas.jpg', path: '/coleccion/esmeraldas' }, // ¡Nuevo ingreso estratégico!
 ];
 </script>
 

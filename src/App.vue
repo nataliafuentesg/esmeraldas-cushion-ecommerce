@@ -22,7 +22,7 @@ onMounted(() => {
     <Header v-if="!isAdminRoute" />
     
     <main class="flex-grow">
-      <RouterView /> 
+      <RouterView :key="$route.fullPath"/> 
     </main>
     
     <Footer v-if="!isAdminRoute" />

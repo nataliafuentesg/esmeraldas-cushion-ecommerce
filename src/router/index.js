@@ -18,7 +18,7 @@ const router = createRouter({
       path: '/revista',
       name: 'Revista',
       component: () => import('@/views/Catalog.vue'),
-      meta: { title: 'Lookbook Editorial | Cushion Joyería' } 
+      meta: { title: 'Lookbook Editorial | Cushion Joyería' }
     },
     {
       path: '/coleccion',
@@ -84,6 +84,11 @@ const router = createRouter({
         title: 'Mi Perfil | Cushion',
         description: 'Gestiona tu cuenta, revisa el estado de tus pedidos de joyería y actualiza tu información de envío.'
       }
+    },
+    {
+      path: '/buscar',
+      name: 'search',
+      component: () => import('@/views/SearchView.vue')
     },
     {
       path: '/admin',

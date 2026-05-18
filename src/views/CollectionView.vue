@@ -13,7 +13,7 @@ const loading = ref(true);
 
 // --- MENÚS DE FILTRADO ---
 // Filtros por Tipo de Joya
-const typeFilters = ['Todas', 'Joyas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras', 'Dije'];
+const typeFilters = ['Todas', 'Joyas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras', 'Dijes'];
 // ✨ NUEVO: Filtros por Ocasión/Colección Especial
 const occasionFilters = ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Regalo'];
 
@@ -45,7 +45,7 @@ const applyUrlFilter = () => {
   if (urlParam === 'esmeraldas') {
     selectedCategory.value = 'Piedras Sueltas';
   } else if (urlParam === 'dijes') {
-    selectedCategory.value = 'Dije'; // Lo empatamos con la DB
+    selectedCategory.value = 'Dijes'; // Lo empatamos con la DB
   } else {
     // Buscamos si el parámetro coincide con un tipo o una ocasión
     const allFilters = [...typeFilters, ...occasionFilters];
@@ -59,7 +59,7 @@ const setCategory = (cat) => {
   selectedCategory.value = cat;
   if (cat === 'Todas') router.replace('/coleccion');
   else if (cat === 'Piedras Sueltas') router.replace('/coleccion/esmeraldas');
-  else if (cat === 'Dije') router.replace('/coleccion/dijes');
+  else if (cat === 'Dijes') router.replace('/coleccion/dijes');
   else router.replace(`/coleccion/${cat.toLowerCase()}`);
 };
 
