@@ -1,0 +1,18 @@
+User-agent: *
+
+# Permitir indexación del catálogo público
+Allow: /
+Allow: /coleccion
+Allow: /buscar
+Allow: /productos/
+
+# Restringir rutas privadas y administrativas (evita desperdicio de rastreo)
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /perfil
+Disallow: /carrito
+Disallow: /auth/
+Disallow: /api/
+
+# Enlace oficial al mapa del sitio
+Sitemap: https://cushionjewelry.com/sitemap.xml

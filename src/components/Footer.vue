@@ -2,12 +2,9 @@
 import { RouterLink } from 'vue-router'
 import { Icon } from '@iconify/vue'; 
 
-// ... (El resto del script, navItems, commitmentIcons, socialMedia, etc., permanece igual) ...
-// ... (asegúrate de que los arrays y constantes siguen arriba) ...
-
 const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'Esmeraldas', path: '/esmeraldas' },
+    { name: 'Esmeraldas', path: '/coleccion/esmeraldas' },
     { name: 'Nuestra Historia', path: '/nosotros' },
     { name: 'Contacto', path: '/contacto' },
 ];
@@ -19,23 +16,24 @@ const supportItems = [
     { name: 'Términos y Condiciones', path: '/terminos' },
 ];
 
-const whatsappLink = 'https://wa.me/573001234567?text=Hola%2C%20me%20gustaría%20personalizar%20una%20joya%20Cushion.';
+const whatsappLink = 'https://wa.me/573136133822?text=Hola%2C%20me%20gustaría%20personalizar%20una%20joya%20Cushion.';
 
 const commitmentIcons = [
     { name: 'Certificación GIA', iconName: 'lucide:gem', description: 'Cada esmeralda CUSHION es verificada y viene con un certificado de autenticidad y origen expedido por laboratorios de prestigio.' },
     { name: 'Envío Asegurado', iconName: 'lucide:truck', description: 'Su joya será enviada de forma discreta, con seguro a todo riesgo y solo requiere firma al recibir, garantizando su tranquilidad.' },
-    { name: 'Soporte de Lujo', iconName: 'lucide:phone-call', description: 'Nuestro equipo de asesores personales está disponible 24 horas al día, 7 días a la semana, para resolver cualquier duda.' },
+    { name: 'Soporte de Lujo', iconName: 'lucide:phone-call', description: 'Nuestro equipo de asesores personales está disponible para resolver cualquier duda y guiar su compra.' },
 ];
 
 const socialMedia = [
-    { name: 'Instagram', iconName: 'lucide:instagram', link: 'https://instagram.com/cushionjoyas' },
-    { name: 'Facebook', iconName: 'lucide:facebook', link: 'https://facebook.com/cushionjoyas' },
-    { name: 'Pinterest', iconName: 'lucide:pinterest', link: 'https://pinterest.com/cushionjoyas' },
+    { name: 'Instagram', iconName: 'lucide:instagram', link: 'https://www.instagram.com/joyasyesmeraldas/' },
+    { name: 'Facebook', iconName: 'lucide:facebook', link: 'https://www.facebook.com/cushionjewels' },
+    { name: 'TikTok', iconName: 'ic:baseline-tiktok', link: 'https://www.tiktok.com/@cushion.joyas.esmeraldas' },
 ];
 </script>
 
 <template>
-<footer class="bg-emerald-dark text-brand-white pt-16 mt-12 border-t border-brand-white/10 emerald-texture">    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <footer class="bg-emerald-dark text-brand-white pt-16 mt-12 border-t border-brand-white/10 emerald-texture">    
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center mb-12 border-b border-brand-white/20 pb-10">
           <h3 class="text-2xl md:text-3xl font-serif-elegant mb-4">
@@ -65,45 +63,15 @@ const socialMedia = [
         </div>
       </div>
       
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-10 pb-16 border-t border-brand-white/20 pt-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-16 border-t border-brand-white/20 pt-10">
         
-        <div class="col-span-2 md:col-span-1">
+        <div class="col-span-1">
           <RouterLink to="/" class="block mb-4">
               <img src="@/assets/images/logo-cushion-white.png" alt="Cushion Joyas & Esmeraldas" class="h-10">
           </RouterLink>
-          <p class="text-sm font-sans-luxury leading-relaxed max-w-xs">
+          <p class="text-sm font-sans-luxury leading-relaxed mb-6">
             La belleza eterna de la esmeralda, diseñada con precisión moderna.
           </p>
-        </div>
-        
-        <div>
-          <h4 class="text-lg font-serif-elegant mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Navegación</h4>
-          <ul class="space-y-3 font-sans-luxury text-sm">
-            <li v-for="item in navItems" :key="item.name">
-              <RouterLink :to="item.path" class="hover:text-brand-gold transition-colors">
-                {{ item.name }}
-              </RouterLink>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="text-lg font-serif-elegant mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Soporte</h4>
-          <ul class="space-y-3 font-sans-luxury text-sm">
-            <li v-for="item in supportItems" :key="item.name">
-              <RouterLink :to="item.path" class="hover:text-brand-gold transition-colors">
-                {{ item.name }}
-              </RouterLink>
-            </li>
-          </ul>
-        </div>
-
-        <div class="md:col-span-1">
-          <h4 class="text-lg font-serif-elegant mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Contáctanos</h4>
-          <ul class="space-y-3 font-sans-luxury text-sm">
-            <li>Email: <a href="mailto:info@cushion.com" class="hover:text-brand-gold transition-colors">info@cushion.com</a></li>
-            <li>Teléfono: <a href="tel:+5715555555" class="hover:text-brand-gold transition-colors">+57 (1) 555-5555</a></li>
-          </ul>
           
           <h4 class="text-lg font-serif-elegant mt-6 mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Síguenos</h4>
           <div class="flex space-x-5 text-brand-white">
@@ -114,12 +82,51 @@ const socialMedia = [
           </div>
         </div>
         
+        <div>
+          <h4 class="text-lg font-serif-elegant mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Ubicación</h4>
+          <ul class="space-y-3 font-sans-luxury text-sm text-brand-white/80">
+            <li class="flex items-start">
+              <Icon icon="lucide:map-pin" class="w-4 h-4 mr-2 mt-1 text-brand-gold shrink-0" />
+              <span>Emerald Trade Center<br>Avenida Jimenez 5-43, Local 216<br>Bogotá, Colombia</span>
+            </li>
+            <li class="flex items-center">
+              <Icon icon="lucide:phone" class="w-4 h-4 mr-2 text-brand-gold shrink-0" />
+              <a href="tel:+573136133822" class="hover:text-brand-gold transition-colors">+57 313 6133822</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-serif-elegant mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Horario</h4>
+          <ul class="space-y-2 font-sans-luxury text-sm text-brand-white/80">
+            <li class="flex justify-between"><span>Lunes - Viernes:</span> <span>9:00 a.m. - 6:00 p.m.</span></li>
+            <li class="flex justify-between"><span>Sábado:</span> <span>9:00 a.m. - 5:00 p.m.</span></li>
+            <li class="flex justify-between text-brand-white/50"><span>Domingo:</span> <span>Cerrado</span></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-serif-elegant mb-4 uppercase tracking-widest border-b border-brand-gold pb-1">Enlaces Útiles</h4>
+          <ul class="space-y-3 font-sans-luxury text-sm">
+            <li v-for="item in supportItems" :key="item.name">
+              <RouterLink :to="item.path" class="hover:text-brand-gold transition-colors">
+                {{ item.name }}
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+        
       </div>
       
-      <div class="border-t border-brand-white/20 pt-6 pb-8 text-center">
-        <p class="text-xs font-sans-luxury text-brand-white/70">
-          © 2025 CUSHION Joyas & Esmeraldas. Todos los derechos reservados.
+      <div class="border-t border-brand-white/20 pt-8 pb-8 text-center flex flex-col items-center justify-center">
+        <p class="text-xs font-sans-luxury text-brand-white/70 mb-2">
+          © {{ new Date().getFullYear() }} CUSHION Joyas & Esmeraldas. Todos los derechos reservados.
         </p>
+        
+        <a href="https://marcapro.agency" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] font-sans-luxury uppercase tracking-widest text-brand-white/40 hover:text-brand-gold transition-colors duration-300">
+          Desarrollado por MarcaPro
+          <Icon icon="lucide:external-link" class="w-3 h-3 opacity-70" />
+        </a>
       </div>
       
     </div>
@@ -127,17 +134,13 @@ const socialMedia = [
 </template>
 
 <style scoped>
-/* 2. CLASE DE TEXTURA PERSONALIZADA */
 .emerald-texture {
-  /* Simula una textura de líneas muy sutiles, como un patrón de diamante o chevron */
   background-image: repeating-linear-gradient(
     45deg,
-    rgba(255, 255, 255, 0.03), /* Líneas de luz muy tenues */
+    rgba(255, 255, 255, 0.03), 
     rgba(255, 255, 255, 0.03) 1px,
     transparent 1px,
     transparent 10px
   );
 }
-
-/* El resto de estilos scoped, si tienes alguno, se mantiene aquí */
 </style>

@@ -66,17 +66,10 @@ const fetchProduct = async () => {
   }
 };
 
-const addToCart = () => {
+const addToCart = async () => {
   if (!product.value) return;
-  cartStore.addItem({
-    id: product.value.id,
-    name: product.value.name,
-    price: product.value.price,
-    image: product.value.images?.[0] || '',
-    slug: product.value.slug,
-    quantity: selectedQuantity.value
-  });
-  // Opcional: Aquí puedes agregar una notificación visual de éxito
+  await cartStore.addItem(product.value, selectedQuantity.value);
+  cartStore.isOffCanvasOpen = true; 
 };
 
 const relatedProducts = computed(() => {

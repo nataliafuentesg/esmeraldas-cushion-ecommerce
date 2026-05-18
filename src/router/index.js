@@ -91,6 +91,30 @@ const router = createRouter({
       component: () => import('@/views/SearchView.vue')
     },
     {
+      path: '/garantias',
+      name: 'garantias',
+      component: () => import('@/views/GarantiasView.vue'),
+      meta: { title: 'Garantías y Certificados | Cushion' }
+    },
+    {
+      path: '/envios',
+      name: 'envios',
+      component: () => import('@/views/EnviosView.vue'),
+      meta: { title: 'Políticas de Envío Seguro | Cushion' }
+    },
+    {
+      path: '/faq',
+      name: 'faq',
+      component: () => import('@/views/FaqView.vue'),
+      meta: { title: 'Preguntas Frecuentes | Cushion' }
+    },
+    {
+      path: '/terminos',
+      name: 'terminos',
+      component: () => import('@/views/TerminosView.vue'),
+      meta: { title: 'Términos y Condiciones Legales | Cushion' }
+    },
+    {
       path: '/admin',
       name: 'admin-dashboard',
       component: () => import('@/views/AdminDashboardView.vue'),
@@ -101,40 +125,21 @@ const router = createRouter({
     }
   ],
   scrollBehavior(to, from, savedPosition) {
-    // Esto hace que al cambiar de página, siempre suba al inicio
     return { top: 0 }
   }
 })
 
-// --- MAGIA: EL GUARDIÁN MULTIUSOS ---
 router.beforeEach((to, from, next) => {
-  // 1. MOTOR SEO: Actualizar el título de la pestaña y la meta descripción
-  document.title = to.meta.title || 'Cushion | Alta Joyería';
-
-  let metaDescription = document.querySelector('meta[name="description"]');
-  if (metaDescription) {
-    metaDescription.setAttribute('content', to.meta.description || 'Alta joyería colombiana.');
-  } else {
-    // Si la etiqueta no existe en el index.html, la crea dinámicamente
-    metaDescription = document.createElement('meta');
-    metaDescription.name = 'description';
-    metaDescription.content = to.meta.description || 'Alta joyería colombiana.';
-    document.head.appendChild(metaDescription);
-  }
-
-  // 2. MOTOR DE SEGURIDAD: Proteger rutas privadas
   const authStore = useAuthStore();
 
   if (to.path.startsWith('/admin')) {
-    // ¿Va para el Admin? Validamos Token Y Rol
     if (authStore.isAuthenticated && authStore.isAdmin) {
-      next(); // Pasa, es el jefe.
+      next();
     } else {
-      next('/auth'); // ¡Intruso! Lo mandamos a que inicie sesión.
+      next('/auth');
     }
   }
   else if (to.path.startsWith('/perfil')) {
-    // ¿Va para su Perfil? Validamos que al menos tenga sesión iniciada
     if (authStore.isAuthenticated) {
       next();
     } else {
@@ -142,7 +147,6 @@ router.beforeEach((to, from, next) => {
     }
   }
   else {
-    // Rutas públicas (Home, Catálogo, etc.), pase libre
     next();
   }
 })
