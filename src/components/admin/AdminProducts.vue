@@ -9,6 +9,7 @@ const loading = ref(true);
 const searchQuery = ref('');
 const filterCategory = ref('Todas');
 const filterStock = ref('Todos');
+const filterDate = ref(''); // ✨ Nuevo estado para la fecha
 
 const showProductModal = ref(false);
 const isEditing = ref(false);
@@ -59,12 +60,21 @@ const loadProducts = async () => {
 
 const filteredProducts = computed(() => {
   return products.value.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.value.toLowerCase());
+    const query = searchQuery.value.toLowerCase();
+    // ✨ Ahora busca en el nombre O en la descripción (referencia)
+    const matchesSearch = product.name.toLowerCase().includes(query) || 
+                          (product.description && product.description.toLowerCase().includes(query));
+    
     const matchesCategory = filterCategory.value === 'Todas' || product.category === filterCategory.value;
+    
     const matchesStock = filterStock.value === 'Todos' || 
                          (filterStock.value === 'Con Stock' && product.stock > 0) ||
                          (filterStock.value === 'Agotados' && product.stock === 0);
-    return matchesSearch && matchesCategory && matchesStock;
+                         
+    // ✨ Filtro por fecha (Asume que el backend envía 'createdAt' tipo '2026-05-18T...')
+    const matchesDate = !filterDate.value || (product.createdAt && product.createdAt.startsWith(filterDate.value));
+
+    return matchesSearch && matchesCategory && matchesStock && matchesDate;
   });
 });
 
@@ -133,55 +143,82 @@ const deleteProduct = async (id, name) => {
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-brand-white/5 p-4 border border-brand-white/10">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-brand-white/5 p-4 border border-brand-white/10">
       <div class="relative">
         <Icon icon="lucide:search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-brand-white/50" />
-        <input v-model="searchQuery" type="text" placeholder="Buscar por nombre..." class="w-full bg-brand-black border border-brand-white/20 pl-10 pr-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none transition-colors placeholder:text-brand-white/30">
+        <input v-model="searchQuery" type="text" placeholder="Buscar ref o nombre..." class="w-full bg-brand-black border border-brand-white/20 pl-10 pr-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none transition-colors placeholder:text-brand-white/30">
       </div>
+      
       <select v-model="filterCategory" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
         <option value="Todas">Todas las Categorías</option>
         <option value="Anillos">Anillos</option>
         <option value="Aretes">Aretes</option>
         <option value="Collares">Collares</option>
+        <option value="Gargantillas">Gargantillas</option>
         <option value="Pulseras">Pulseras</option>
+        <option value="Sets">Sets</option>
         <option value="Piedras Sueltas">Piedras Sueltas</option>
         <option value="Dije">Dije</option>
       </select>
+      
       <select v-model="filterStock" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
         <option value="Todos">Cualquier Stock</option>
         <option value="Con Stock">Disponibles</option>
         <option value="Agotados">Agotados</option>
       </select>
+
+      <div class="relative">
+        <input v-model="filterDate" type="date" class="w-full bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none transition-colors cursor-pointer [color-scheme:dark]">
+      </div>
     </div>
 
     <div v-if="loading" class="text-brand-gold uppercase tracking-widest text-xs animate-pulse text-center py-20">Analizando archivos...</div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="product in filteredProducts" :key="product.id" class="border border-brand-white/10 bg-brand-black/50 p-6 relative group hover:border-brand-gold/50 transition-all">
-        <div class="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-          <button @click="openModalEdit(product)" class="bg-brand-white/20 text-white p-2 hover:bg-brand-gold transition-colors"><Icon icon="lucide:edit" class="w-4 h-4" /></button>
-          <button @click="deleteProduct(product.id, product.name)" class="bg-red-900/80 text-white p-2 hover:bg-red-600 transition-colors"><Icon icon="lucide:trash-2" class="w-4 h-4" /></button>
-        </div>
-        
-        <p class="text-brand-gold text-[10px] uppercase tracking-[0.2em] mb-1">{{ product.category }}</p>
-        <h4 class="text-brand-white font-serif-elegant text-lg mb-1 truncate pr-16">{{ product.name }}</h4>
-        <p class="text-[9px] text-brand-white/40 uppercase tracking-widest mb-4">
-          {{ product.gemstoneType }} {{ product.caratWeight ? `(${product.caratWeight})` : '' }}
-        </p>
-        
-        <div class="flex flex-wrap gap-1 mb-4" v-if="product.occasions && product.occasions.length">
-          <span v-for="occ in product.occasions" :key="occ" class="bg-brand-white/10 text-brand-white/70 text-[8px] px-2 py-1 uppercase tracking-widest">
-            {{ occ }}
-          </span>
-        </div>
-
-        <div class="flex justify-between items-end mt-4 pt-4 border-t border-brand-white/10">
-          <p class="text-brand-white/80 font-sans-luxury tracking-widest text-sm">${{ product.price.toLocaleString() }}</p>
-          <p class="text-[10px] font-bold uppercase tracking-widest" :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'">
-            Stock: {{ product.stock }}
-          </p>
-        </div>
-      </div>
+    <div v-else class="overflow-x-auto border border-brand-white/10 bg-brand-black/50">
+      <table class="w-full text-left border-collapse whitespace-nowrap">
+        <thead class="bg-brand-white/5 text-[10px] uppercase tracking-[0.2em] text-brand-white/60">
+          <tr>
+            <th class="p-4 border-b border-brand-white/10 font-medium">Joya / Referencia</th>
+            <th class="p-4 border-b border-brand-white/10 font-medium">Categoría</th>
+            <th class="p-4 border-b border-brand-white/10 font-medium">Gema Principal</th>
+            <th class="p-4 border-b border-brand-white/10 font-medium">Precio</th>
+            <th class="p-4 border-b border-brand-white/10 font-medium">Stock</th>
+            <th class="p-4 border-b border-brand-white/10 font-medium text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm font-sans-luxury text-brand-white">
+          <tr v-if="filteredProducts.length === 0">
+            <td colspan="6" class="p-8 text-center text-brand-white/40 text-xs uppercase tracking-widest">No se encontraron piezas con esos filtros.</td>
+          </tr>
+          <tr v-for="product in filteredProducts" :key="product.id" class="border-b border-brand-white/5 hover:bg-brand-white/[0.02] transition-colors group">
+            <td class="p-4">
+              <div class="font-serif-elegant text-base uppercase text-brand-white">{{ product.name }}</div>
+              <div class="text-[10px] text-brand-white/40 uppercase tracking-widest truncate max-w-[250px] mt-1">{{ product.description }}</div>
+            </td>
+            <td class="p-4 text-[10px] uppercase tracking-[0.2em] text-brand-gold">{{ product.category }}</td>
+            <td class="p-4 text-[10px] uppercase tracking-widest text-brand-white/70">
+              {{ product.gemstoneType || 'N/A' }} 
+              <span v-if="product.caratWeight" class="text-brand-white/40 ml-1">({{ product.caratWeight }})</span>
+            </td>
+            <td class="p-4 tracking-widest text-brand-white/90">$ {{ product.price.toLocaleString() }}</td>
+            <td class="p-4">
+              <span :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'" class="text-[10px] font-bold uppercase tracking-widest">
+                {{ product.stock }}
+              </span>
+            </td>
+            <td class="p-4 text-right">
+              <div class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button @click="openModalEdit(product)" class="bg-brand-white/10 text-brand-white p-2 hover:bg-brand-gold hover:text-brand-black transition-colors" title="Editar Pieza">
+                  <Icon icon="lucide:edit" class="w-4 h-4" />
+                </button>
+                <button @click="deleteProduct(product.id, product.name)" class="bg-red-900/40 text-brand-white p-2 hover:bg-red-600 transition-colors" title="Eliminar Pieza">
+                  <Icon icon="lucide:trash-2" class="w-4 h-4" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div v-if="showProductModal" class="fixed inset-0 bg-brand-black/98 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
@@ -207,7 +244,9 @@ const deleteProduct = async (id, name) => {
                 <option value="Anillos">Anillos</option>
                 <option value="Aretes">Aretes</option>
                 <option value="Collares">Collares</option>
+                <option value="Gargantillas">Gargantillas</option>
                 <option value="Pulseras">Pulseras</option>
+                <option value="Sets">Sets</option>
                 <option value="Piedras Sueltas">Piedras Sueltas</option>
                 <option value="Dijes">Dijes</option>
               </select>
@@ -215,7 +254,7 @@ const deleteProduct = async (id, name) => {
           </div>
           
           <div>
-            <label class="label-admin">Descripción de la Joya</label>
+            <label class="label-admin">Descripción de la Joya (Incluir Referencia)</label>
             <textarea v-model="currentProduct.description" rows="2" class="input-admin resize-none"></textarea>
           </div>
 
@@ -306,7 +345,6 @@ const deleteProduct = async (id, name) => {
 </template>
 
 <style scoped>
-/* ✨ SOLUCIÓN DEL ERROR DE VITE: Usando el alias '@' para apuntar a src ✨ */
 @reference "../../assets/main.css";
 
 .label-admin {
@@ -319,5 +357,15 @@ const deleteProduct = async (id, name) => {
 
 .checkbox-admin {
   @apply h-4 w-4 accent-brand-gold cursor-pointer;
+}
+
+/* Oculta la rueda del input date por defecto en algunos navegadores */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
 }
 </style>

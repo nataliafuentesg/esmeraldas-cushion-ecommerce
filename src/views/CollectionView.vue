@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/axios';
 import ProductCard from '@/components/ProductCard.vue';
@@ -11,13 +11,26 @@ const router = useRouter();
 const products = ref([]);
 const loading = ref(true);
 
-// --- MENÚS DE FILTRADO ---
-// Filtros por Tipo de Joya
-const typeFilters = ['Todas', 'Joyas', 'Piedras Sueltas', 'Anillos', 'Aretes', 'Collares', 'Pulseras', 'Dijes'];
-// ✨ NUEVO: Filtros por Ocasión/Colección Especial
-const occasionFilters = ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Regalo'];
+// Estados para Paginación y Scroll
+const displayLimit = ref(12);
+const showBackToTop = ref(false);
 
 const selectedCategory = ref('Todas');
+
+// --- MENÚS DE FILTRADO DINÁMICOS ---
+// Extrae categorías únicas directamente de los productos cargados
+const typeFilters = computed(() => {
+  const cats = products.value.map(p => p.category).filter(Boolean);
+  const uniqueCats = [...new Set(cats)].sort();
+  // 'Todas' y 'Joyas' siempre irán de primeras por diseño
+  return ['Todas', 'Joyas', ...uniqueCats.filter(c => c !== 'Piedras Sueltas'), 'Piedras Sueltas'];
+});
+
+// Extrae colecciones/ocasiones únicas de los arreglos de ocasiones
+const occasionFilters = computed(() => {
+  const occs = products.value.flatMap(p => p.occasions || []).filter(Boolean);
+  return [...new Set(occs)].sort();
+});
 
 const loadData = async () => {
   loading.value = true;
@@ -32,7 +45,6 @@ const loadData = async () => {
   }
 };
 
-// Leer la URL para pre-seleccionar filtros
 const applyUrlFilter = () => {
   const urlParam = route.params.category?.toLowerCase();
   
@@ -41,25 +53,22 @@ const applyUrlFilter = () => {
     return;
   }
 
-  // Mapeo especial para amigabilidad URL
   if (urlParam === 'esmeraldas') {
     selectedCategory.value = 'Piedras Sueltas';
-  } else if (urlParam === 'dijes') {
-    selectedCategory.value = 'Dijes'; // Lo empatamos con la DB
   } else {
-    // Buscamos si el parámetro coincide con un tipo o una ocasión
-    const allFilters = [...typeFilters, ...occasionFilters];
+    // Busca en los filtros dinámicos
+    const allFilters = [...typeFilters.value, ...occasionFilters.value];
     const match = allFilters.find(cat => cat.toLowerCase() === urlParam);
     selectedCategory.value = match || 'Todas';
   }
 };
 
-// Cambiar filtro y actualizar URL
 const setCategory = (cat) => {
   selectedCategory.value = cat;
+  displayLimit.value = 12; // Reiniciar el límite al cambiar de categoría
+  
   if (cat === 'Todas') router.replace('/coleccion');
   else if (cat === 'Piedras Sueltas') router.replace('/coleccion/esmeraldas');
-  else if (cat === 'Dijes') router.replace('/coleccion/dijes');
   else router.replace(`/coleccion/${cat.toLowerCase()}`);
 };
 
@@ -73,22 +82,48 @@ const filteredProducts = computed(() => {
     return inStock.filter(p => p.category !== 'Piedras Sueltas');
   }
 
-  // ✨ LA MAGIA DE LAS OCASIONES ✨
-  // Si la selección actual es una ocasión (ej: "Bodas"), revisamos el array 'occasions'
-  if (occasionFilters.includes(selectedCategory.value)) {
+  if (occasionFilters.value.includes(selectedCategory.value)) {
     return inStock.filter(p => p.occasions && p.occasions.includes(selectedCategory.value));
   }
 
-  // Filtrado normal por categoría base
   return inStock.filter(p => p.category && p.category.toLowerCase() === selectedCategory.value.toLowerCase());
 });
 
-watch(() => route.params.category, applyUrlFilter);
-onMounted(loadData);
+// --- MOTOR DE PAGINACIÓN ---
+const displayedProducts = computed(() => {
+  return filteredProducts.value.slice(0, displayLimit.value);
+});
+
+const loadMore = () => {
+  displayLimit.value += 12;
+};
+
+// --- LÓGICA DE SCROLL ---
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 400;
+};
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+watch(() => route.params.category, () => {
+  applyUrlFilter();
+  displayLimit.value = 12; // Al navegar por URL, volver a 12 items
+});
+
+onMounted(() => {
+  loadData();
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <template>
-  <div class="bg-brand-black min-h-screen pt-10 pb-20 font-sans">
+  <div class="bg-brand-black min-h-screen pt-10 pb-20 font-sans relative">
     
     <header class="container mx-auto px-4 text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-[0.2em] uppercase">
@@ -116,21 +151,21 @@ onMounted(loadData);
           <div class="mb-10">
             <h3 class="text-brand-white font-serif-elegant text-lg uppercase tracking-widest mb-6 border-b border-brand-white/10 pb-4">Tipo de Pieza</h3>
             <ul class="flex flex-row lg:flex-col gap-4 overflow-x-auto pb-4 lg:pb-0 hide-scrollbar">
-              <li v-for="cat in typeFilters" :key="cat" class="shrink-0">
+              <li v-for="cat in [...new Set(typeFilters)]" :key="cat" class="shrink-0">
                 <button 
                   @click="setCategory(cat)" 
                   class="text-[10px] uppercase tracking-[0.2em] transition-all duration-300 w-full text-left flex items-center group"
                   :class="selectedCategory === cat ? 'text-brand-gold font-bold' : 'text-brand-white/50 hover:text-brand-white'"
                 >
-                  <span v-if="selectedCategory === cat" class="w-1.5 h-1.5 bg-brand-gold rounded-full mr-2"></span>
-                  <span v-else class="w-1.5 h-1.5 bg-transparent rounded-full mr-2 group-hover:bg-brand-white/30 transition-colors"></span>
+                  <span v-if="selectedCategory === cat" class="w-1.5 h-1.5 bg-brand-gold rounded-full mr-2 shrink-0"></span>
+                  <span v-else class="w-1.5 h-1.5 bg-transparent rounded-full mr-2 group-hover:bg-brand-white/30 transition-colors shrink-0"></span>
                   {{ cat }}
                 </button>
               </li>
             </ul>
           </div>
 
-          <div>
+          <div v-if="occasionFilters.length > 0">
             <h3 class="text-brand-white font-serif-elegant text-lg uppercase tracking-widest mb-6 border-b border-brand-white/10 pb-4">Colecciones</h3>
             <ul class="flex flex-row lg:flex-col gap-4 overflow-x-auto pb-4 lg:pb-0 hide-scrollbar">
               <li v-for="occ in occasionFilters" :key="occ" class="shrink-0">
@@ -139,8 +174,8 @@ onMounted(loadData);
                   class="text-[10px] uppercase tracking-[0.2em] transition-all duration-300 w-full text-left flex items-center group"
                   :class="selectedCategory === occ ? 'text-brand-gold font-bold' : 'text-brand-white/50 hover:text-brand-white'"
                 >
-                  <span v-if="selectedCategory === occ" class="w-1 h-1 bg-brand-gold transform rotate-45 mr-2"></span>
-                  <span v-else class="w-1 h-1 border border-brand-white/30 transform rotate-45 mr-2 group-hover:border-brand-white transition-colors"></span>
+                  <span v-if="selectedCategory === occ" class="w-1 h-1 bg-brand-gold transform rotate-45 mr-2 shrink-0"></span>
+                  <span v-else class="w-1 h-1 border border-brand-white/30 transform rotate-45 mr-2 group-hover:border-brand-white transition-colors shrink-0"></span>
                   {{ occ }}
                 </button>
               </li>
@@ -159,25 +194,46 @@ onMounted(loadData);
             </button>
           </div>
           
-          <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 fadeIn">
-            <ProductCard 
-              v-for="product in filteredProducts" 
-              :key="product.id"
-              :product="product" 
-            />
+          <div v-else>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 fadeIn">
+              <ProductCard 
+                v-for="product in displayedProducts" 
+                :key="product.id"
+                :product="product" 
+              />
+            </div>
+
+            <div v-if="displayedProducts.length < filteredProducts.length" class="mt-20 flex justify-center">
+              <button 
+                @click="loadMore"
+                class="border border-brand-gold/50 text-brand-gold px-10 py-3 text-[10px] uppercase font-bold tracking-[0.2em] hover:bg-brand-gold hover:text-brand-black transition-colors duration-300"
+              >
+                Explorar más piezas ({{ filteredProducts.length - displayedProducts.length }} restantes)
+              </button>
+            </div>
           </div>
         </main>
 
       </div>
     </div>
+
+    <Transition name="fade">
+      <button 
+        v-if="showBackToTop" 
+        @click="scrollToTop" 
+        class="fixed bottom-8 right-8 z-40 bg-brand-black border border-brand-gold text-brand-gold p-3 shadow-lg shadow-black/50 hover:bg-brand-gold hover:text-brand-black transition-all duration-300 group"
+        aria-label="Volver arriba"
+      >
+        <Icon icon="lucide:arrow-up" class="w-5 h-5 transform group-hover:-translate-y-1 transition-transform" />
+      </button>
+    </Transition>
+
   </div>
 </template>
 
 <style scoped>
-/* Asegura conexión con main.css (Tailwind v4) */
 @reference "../assets/main.css";
 
-/* Ocultar barra de scroll en el menú móvil (queda deslizable pero sin la fea barra) */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -193,5 +249,16 @@ onMounted(loadData);
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Transición suave para el botón flotante */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 </style>
