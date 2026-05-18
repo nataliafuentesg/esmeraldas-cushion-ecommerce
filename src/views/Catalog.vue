@@ -78,7 +78,7 @@ onMounted(loadData);
 
 const goNext = () => pageFlipInstance?.flipNext();
 const goPrev = () => pageFlipInstance?.flipPrev();
-const goToDetail = (slug) => router.push(`/productos/${slug}`);
+const goToDetail = (slug) => router.push(`/producto/${slug}`);
 </script>
 
 <template>

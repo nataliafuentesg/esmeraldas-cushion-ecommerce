@@ -9,18 +9,10 @@ const props = defineProps({
   }
 });
 
-// Datos simulados (mock) para las opiniones
-const mockReviews = [
-  { id: 1, rating: 5, author: 'Sofia C.', date: 'Diciembre 1, 2025', text: 'La calidad del oro rosado y el brillo de la esmeralda superaron mis expectativas. El servicio de asesoría fue impecable. Una pieza de arte.' },
-  { id: 2, rating: 5, author: 'Andrés M.', date: 'Noviembre 20, 2025', text: 'Compré el anillo de compromiso y es, sin duda, la joya más hermosa que he visto. El certificado GIA da mucha tranquilidad.' },
-  { id: 3, rating: 5, author: 'Laura T.', date: 'Noviembre 5, 2025', text: 'Me encanta el corte Cushion. El envío fue discreto y asegurado, tal como prometieron. El único detalle es que llegó un día antes de lo esperado.' },
-];
 
-// Función para generar las estrellas visuales
 const getStarIcons = (rating) => {
   const stars = [];
   for (let i = 0; i < 5; i++) {
-    // Usamos 'lucide:star' para estrella llena y 'lucide:star-outline' para vacía
     stars.push(i < rating ? 'lucide:star' : 'lucide:star-outline');
   }
   return stars;
@@ -57,7 +49,7 @@ const getStarIcons = (rating) => {
         
         <div class="text-center mt-12">
             <button class="px-8 py-3 bg-brand-black border border-brand-white/50 text-brand-white uppercase font-bold text-sm tracking-widest hover:border-brand-gold hover:text-brand-gold transition-colors duration-300">
-                Ver Todas las 58 Opiniones
+                Ver Todas las Opiniones
             </button>
         </div>
         
