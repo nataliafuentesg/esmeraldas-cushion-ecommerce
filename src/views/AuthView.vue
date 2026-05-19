@@ -1,9 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
+import { Icon } from '@iconify/vue'; // 👈 Centralizamos el uso de Iconify
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
 // --- ESTADOS DE INTERFAZ ---
@@ -17,6 +19,9 @@ const showConfirmPassword = ref(false);
 const errorMsg = ref('');
 const successMsg = ref('');
 
+// ✨ NOTIFICACIÓN ELEGANTE DE SESIÓN EXPIRADA
+const showExpiryToast = ref(false);
+
 // --- MODELO DEL FORMULARIO ---
 const form = ref({
   firstName: '',
@@ -25,6 +30,22 @@ const form = ref({
   email: '',
   password: '',
   confirmPassword: ''
+});
+
+// --- CAPTURAR EXPIRACIÓN AL MONTAR ---
+onMounted(() => {
+  // Si venimos expulsados por el guardián de Axios interceptor (?reason=expired)
+  if (route.query.reason === 'expired') {
+    showExpiryToast.value = true;
+    
+    // Limpiamos la URL de inmediato para estética y evitar que reaparezca si recargan
+    router.replace({ query: null });
+
+    // Desvanece el aviso automáticamente a los 5 segundos
+    setTimeout(() => {
+      showExpiryToast.value = false;
+    }, 5000);
+  }
 });
 
 // --- VALIDACIONES ---
@@ -65,7 +86,6 @@ const handleSubmit = async () => {
   successMsg.value = '';
   loading.value = true;
 
-  // NORMALIZACIÓN: El email siempre a minúsculas, la contraseña se queda tal cual
   const cleanEmail = form.value.email.trim().toLowerCase();
 
   try {
@@ -78,7 +98,6 @@ const handleSubmit = async () => {
       router.push(authStore.isAdmin ? '/admin' : '/perfil');
     } 
     else {
-      // Registro con email normalizado
       const registrationData = { ...form.value, email: cleanEmail };
       await authStore.register(registrationData);
       router.push('/perfil');
@@ -92,7 +111,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="bg-brand-black min-h-screen pt-28 pb-20 flex items-center justify-center px-4">
+  <div class="bg-brand-black min-h-screen pt-28 pb-20 flex items-center justify-center px-4 relative">
     <div class="w-full max-w-md border border-brand-white/10 p-8 md:p-12 bg-brand-black/50 backdrop-blur-sm shadow-2xl">
       
       <header class="mb-10 text-center">
@@ -133,13 +152,7 @@ const handleSubmit = async () => {
                    placeholder="Contraseña" required 
                    class="input-luxury pr-12">
             <button type="button" @click="showPassword = !showPassword" class="eye-btn">
-              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
-              </svg>
+              <Icon :icon="showPassword ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
             </button>
           </div>
 
@@ -158,13 +171,7 @@ const handleSubmit = async () => {
                    :class="{'border-red-500/70': !passwordsMatch && form.confirmPassword}"
                    class="input-luxury pr-12">
             <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="eye-btn">
-               <svg v-if="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
-              </svg>
+              <Icon :icon="showConfirmPassword ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -185,20 +192,33 @@ const handleSubmit = async () => {
       </footer>
 
     </div>
+
+    <Transition name="toast-slide">
+      <div v-if="showExpiryToast" 
+           class="fixed top-24 right-4 md:right-8 z-50 flex items-center gap-4 px-6 py-4 bg-brand-black/95 border border-brand-gold/40 text-brand-gold shadow-2xl backdrop-blur-md max-w-sm">
+        
+        <Icon icon="lucide:shield-alert" class="w-5 h-5 shrink-0 text-brand-gold animate-pulse" />
+        <div>
+          <h4 class="font-serif-elegant uppercase tracking-wider text-xs mb-0.5">Sesión Finalizada</h4>
+          <p class="font-sans-luxury text-[10px] text-brand-white/70 uppercase tracking-widest leading-relaxed">
+            Por su seguridad, su sesión ha expirado. Por favor, ingrese nuevamente.
+          </p>
+        </div>
+      </div>
+    </Transition>
+
   </div>
 </template>
 
 <style scoped>
 @reference "../assets/main.css";
 
-/* Unificamos el ancho aquí */
 .input-luxury {
   @apply w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury 
          focus:outline-none focus:border-brand-gold transition-all duration-500 
          tracking-[0.1em];
 }
 
-/* El placeholder sí lo mantenemos en mayúsculas para estética */
 .input-luxury::placeholder {
   @apply uppercase text-[10px] tracking-[0.2em] opacity-50;
 }
@@ -210,7 +230,7 @@ const handleSubmit = async () => {
 }
 
 .eye-btn {
-  @apply absolute right-0 text-brand-white/40 hover:text-brand-gold transition-colors p-2;
+  @apply absolute right-0 text-brand-white/40 hover:text-brand-gold transition-colors p-2 flex items-center justify-center;
 }
 
 .forgot-link {
@@ -223,4 +243,15 @@ const handleSubmit = async () => {
 
 .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Animación sutil de entrada lateral para el Toast */
+.toast-slide-enter-active,
+.toast-slide-leave-active {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.toast-slide-enter-from,
+.toast-slide-leave-to {
+  opacity: 0;
+  transform: translateX(40px);
+}
 </style>
