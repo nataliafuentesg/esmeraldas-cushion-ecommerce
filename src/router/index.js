@@ -4,6 +4,13 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // Forzamos un comportamiento de scroll nativo suave para evitar saltos bruscos en móviles
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { top: 0, behavior: 'smooth' };
+  },
   routes: [
     {
       path: '/',
@@ -123,32 +130,33 @@ const router = createRouter({
         description: 'Administración exclusiva del sistema Cushion.'
       }
     }
-  ],
-  scrollBehavior(to, from, savedPosition) {
-    return { top: 0 }
-  }
-})
+  ]
+});
 
-router.beforeEach((to, from, next) => {
+// ✨ IMPLEMENTACIÓN SEGUIDORES DE NAVEGACIÓN MODERNA Y FLUIDA (EVITA CONGELAMIENTOS)
+router.beforeEach((to) => {
   const authStore = useAuthStore();
 
+  // Validación de Rutas Administrativas
   if (to.path.startsWith('/admin')) {
-    if (authStore.isAuthenticated && authStore.isAdmin) {
-      next();
-    } else {
-      next('/auth');
+    if (!authStore.isAuthenticated || !authStore.isAdmin) {
+      return '/auth'; // Redirección limpia mediante retorno de objeto
     }
   }
-  else if (to.path.startsWith('/perfil')) {
-    if (authStore.isAuthenticated) {
-      next();
-    } else {
-      next('/auth');
-    }
-  }
-  else {
-    next();
-  }
-})
 
-export default router
+  if (to.path.startsWith('/perfil')) {
+    if (!authStore.isAuthenticated) {
+      return '/auth';
+    }
+  }
+
+  return true;
+});
+
+router.afterEach((to) => {
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
+});
+
+export default router;
