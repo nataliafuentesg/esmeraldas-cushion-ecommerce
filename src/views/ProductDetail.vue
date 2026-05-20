@@ -223,7 +223,7 @@ watch(() => props.slug, () => {
               <button @click="selectedQuantity < product.stock && selectedQuantity++" class="text-brand-white/60 hover:text-brand-gold text-lg px-2">+</button>
             </div>
             <button @click="addToCart" class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold uppercase tracking-[0.2em] text-xs py-4 px-8 flex items-center justify-center gap-3">
-              <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la Bóveda de Compra
+              <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa Compra
             </button>
           </div>
           <div v-else class="bg-red-950/20 border border-red-900/40 p-4 text-center">

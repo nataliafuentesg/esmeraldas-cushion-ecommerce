@@ -198,7 +198,7 @@ onUnmounted(() => {
 
       <div v-if="loading" class="flex flex-col items-center justify-center py-32">
         <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-12 h-12 mb-4" />
-        <p class="text-brand-gold font-sans-luxury tracking-[0.3em] uppercase text-[10px]">Accediendo a Bóveda...</p>
+        <p class="text-brand-gold font-sans-luxury tracking-[0.3em] uppercase text-[10px]">Accediendo a Cushion...</p>
       </div>
 
       <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16">
