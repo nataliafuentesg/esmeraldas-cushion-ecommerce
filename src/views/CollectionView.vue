@@ -1,8 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import api from '@/api/axios';
 import ProductCard from '@/components/ProductCard.vue';
+import OccasionBadges from '@/components/OccasionBadges.vue';
 import { Icon } from '@iconify/vue';
 
 const route = useRoute();
@@ -10,19 +11,39 @@ const router = useRouter();
 
 const products = ref([]);
 const loading = ref(true);
+
+// Estados para Paginación, Scroll y Filtros
 const displayLimit = ref(12);
 const showBackToTop = ref(false);
 const selectedCategory = ref('Todas');
 
-// ✨ MAPEADO DINÁMICO DE IMÁGENES DE ATMÓSFERA PARA LAS OCASIONES
-// Nota: Usa fotos de textura, detalles de vestidos o manos, nada cargado para mantener el lujo.
-const occasionMetadata = {
-  'Compromiso': { img: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=300&q=80', label: 'Compromiso' },
-  'Bodas': { img: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&q=80', label: 'Bodas' },
-  'Quinceaños': { img: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?auto=format&fit=crop&w=300&q=80', label: 'Quinceaños' },
-  'Aniversario': { img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=300&q=80', label: 'Aniversario' },
-  'Regalo': { img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=300&q=80', label: 'Regalos Especiales' }
+// Estados de Rango de Precios
+const maxPriceRange = ref(50000000); 
+const selectedMaxPrice = ref(50000000);
+
+// Estado de Criterio de Ordenamiento
+const sortBy = ref('default'); 
+
+// --- HISTORIAL DE NAVEGACIÓN (Volver a la misma posición con filtros) ---
+const saveCollectionState = () => {
+  const sessionState = {
+    scrollPosition: window.scrollY,
+    selectedCategory: selectedCategory.value,
+    displayLimit: displayLimit.value,
+    selectedMaxPrice: selectedMaxPrice.value,
+    sortBy: sortBy.value
+  };
+  sessionStorage.setItem('collection_state', JSON.stringify(sessionState));
 };
+
+// Capturamos la salida hacia el detalle del producto para congelar el estado
+onBeforeRouteLeave((to, from) => {
+  if (to.name === 'product-detail') {
+    saveCollectionState();
+  } else {
+    sessionStorage.removeItem('collection_state');
+  }
+});
 
 const typeFilters = computed(() => {
   const cats = products.value.map(p => p.category).filter(Boolean);
@@ -40,7 +61,32 @@ const loadData = async () => {
   try {
     const response = await api.get('/products');
     products.value = response.data;
-    applyUrlFilter();
+
+    // Calcular dinámicamente el precio más alto real del inventario actual
+    if (products.value.length > 0) {
+      const highestPrice = Math.max(...products.value.map(p => p.price));
+      maxPriceRange.value = highestPrice;
+    }
+
+    // Restaurar estado si el usuario viene de un "Regresar" desde el detalle
+    const savedState = sessionStorage.getItem('collection_state');
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      selectedCategory.value = state.selectedCategory;
+      displayLimit.value = state.displayLimit;
+      selectedMaxPrice.value = state.selectedMaxPrice <= maxPriceRange.value ? state.selectedMaxPrice : maxPriceRange.value;
+      sortBy.value = state.sortBy || 'default';
+      
+      // Esperamos al render para aplicar el scroll exacto
+      setTimeout(() => {
+        window.scrollTo({ top: state.scrollPosition, behavior: 'instant' });
+        sessionStorage.removeItem('collection_state'); 
+      }, 100);
+    } else {
+      selectedMaxPrice.value = maxPriceRange.value;
+      applyUrlFilter();
+    }
+
   } catch (error) {
     console.error("Error al cargar la colección:", error);
   } finally {
@@ -71,24 +117,60 @@ const setCategory = (cat) => {
   else router.replace(`/coleccion/${cat.toLowerCase()}`);
 };
 
+// --- MOTOR DE FILTRADO Y ORDENAMIENTO COMBINADO ---
 const filteredProducts = computed(() => {
-  const inStock = products.value.filter(p => p.stock > 0);
-  if (selectedCategory.value === 'Todas') return inStock;
-  if (selectedCategory.value === 'Joyas') return inStock.filter(p => p.category !== 'Piedras Sueltas');
-  if (occasionFilters.value.includes(selectedCategory.value)) {
-    return inStock.filter(p => p.occasions && p.occasions.includes(selectedCategory.value));
+  let list = products.value.filter(p => p.stock > 0 && p.price <= selectedMaxPrice.value);
+
+  if (selectedCategory.value !== 'Todas') {
+    if (selectedCategory.value === 'Joyas') {
+      list = list.filter(p => p.category !== 'Piedras Sueltas');
+    } else if (occasionFilters.value.includes(selectedCategory.value)) {
+      list = list.filter(p => p.occasions && p.occasions.includes(selectedCategory.value));
+    } else {
+      list = list.filter(p => p.category && p.category.toLowerCase() === selectedCategory.value.toLowerCase());
+    }
   }
-  return inStock.filter(p => p.category && p.category.toLowerCase() === selectedCategory.value.toLowerCase());
+
+  // Aplicar orden logístico de precios
+  if (sortBy.value === 'price-asc') {
+    return list.sort((a, b) => a.price - b.price); 
+  }
+  if (sortBy.value === 'price-desc') {
+    return list.sort((a, b) => b.price - a.price); 
+  }
+
+  return list; 
 });
 
-const displayedProducts = computed(() => filteredProducts.value.slice(0, displayLimit.value));
-const loadMore = () => { displayLimit.value += 12; };
-const handleScroll = () => { showBackToTop.value = window.scrollY > 300; };
-const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+const displayedProducts = computed(() => {
+  return filteredProducts.value.slice(0, displayLimit.value);
+});
 
-watch(() => route.params.category, () => { applyUrlFilter(); displayLimit.value = 12; });
-onMounted(() => { loadData(); window.addEventListener('scroll', handleScroll, { passive: true }); });
-onUnmounted(() => { window.removeEventListener('scroll', handleScroll); });
+const loadMore = () => {
+  displayLimit.value += 12;
+};
+
+const handleScroll = () => {
+  showBackToTop.value = window.scrollY > 300;
+};
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+watch(() => route.params.category, () => {
+  applyUrlFilter();
+  displayLimit.value = 12;
+});
+
+onMounted(() => {
+  loadData();
+  window.addEventListener('scroll', handleScroll, { passive: true });
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <template>
@@ -105,41 +187,14 @@ onUnmounted(() => { window.removeEventListener('scroll', handleScroll); });
 
     <div class="container mx-auto px-4 lg:px-8">
       
-      <section v-if="occasionFilters.length > 0" class="mb-12 border-b border-brand-white/10 pb-8">
-        <h3 class="text-center lg:text-left text-brand-white font-serif-elegant text-xs uppercase tracking-[0.3em] mb-6 opacity-60">
-          Filtrar por Ocasión Especial
-        </h3>
-        
-        <div class="flex flex-row gap-4 overflow-x-auto pb-2 hide-scrollbar snap-x px-2">
-          <div 
-            v-for="occ in occasionFilters" 
-            :key="occ"
-            @click="setCategory(occ)"
-            class="shrink-0 snap-center relative group cursor-pointer overflow-hidden border transition-all duration-500 rounded-full md:rounded-none w-20 h-20 md:w-44 md:h-20"
-            :class="selectedCategory === occ ? 'border-brand-gold shadow-lg shadow-brand-gold/10 scale-95' : 'border-brand-white/10 hover:border-brand-white/40'"
-          >
-            <img 
-              :src="occasionMetadata[occ]?.img || 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=300&q=80'" 
-              :alt="occ"
-              class="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-40 group-hover:opacity-60"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/40 to-transparent"></div>
-            
-            <div class="absolute inset-0 flex flex-col items-center justify-center p-2 text-center select-none">
-              <span 
-                class="text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-colors"
-                :class="selectedCategory === occ ? 'text-brand-gold' : 'text-brand-white group-hover:text-brand-gold'"
-              >
-                {{ occ }}
-              </span>
-              <div 
-                class="h-[1px] bg-brand-gold transition-all duration-500 mt-1"
-                :class="selectedCategory === occ ? 'w-6' : 'w-0 group-hover:w-6'"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div class="mb-12 border-b border-brand-white/10 pb-8">
+        <OccasionBadges 
+          :occasions="occasionFilters" 
+          :is-home="false" 
+          :current-selection="selectedCategory"
+          @select-category="setCategory" 
+        />
+      </div>
 
       <div v-if="loading" class="flex flex-col items-center justify-center py-32">
         <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-12 h-12 mb-4" />
@@ -148,10 +203,11 @@ onUnmounted(() => { window.removeEventListener('scroll', handleScroll); });
 
       <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16">
         
-        <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0">
-          <div class="mb-6">
-            <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs uppercase tracking-[0.3em] mb-6 border-b border-brand-white/10 pb-4">Línea de Joyería</h3>
-            <ul class="flex flex-row lg:flex-col gap-2.5 overflow-x-auto pb-3 lg:pb-0 hide-scrollbar snap-x px-2 lg:px-0">
+        <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8">
+          
+          <div>
+            <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs uppercase tracking-[0.3em] mb-5 border-b border-brand-white/10 pb-4">Línea de Joyería</h3>
+            <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-3 lg:pb-0 hide-scrollbar snap-x px-2 lg:px-0">
               <li v-for="cat in typeFilters" :key="cat" class="shrink-0 snap-center">
                 <button 
                   @click="setCategory(cat)" 
@@ -164,13 +220,52 @@ onUnmounted(() => { window.removeEventListener('scroll', handleScroll); });
               </li>
             </ul>
           </div>
+
+          <div class="px-2 lg:px-0 pt-4 lg:pt-0 border-t border-brand-white/10 lg:border-0">
+            <h3 class="text-brand-white font-serif-elegant text-xs uppercase tracking-[0.3em] mb-4">Rango de Inversión</h3>
+            <div class="space-y-3">
+              <input 
+                type="range" 
+                :min="0" 
+                :max="maxPriceRange" 
+                v-model.number="selectedMaxPrice"
+                class="w-full accent-brand-gold bg-brand-white/10 h-[2px] cursor-pointer appearance-none"
+              />
+              <div class="flex justify-between items-center text-[10px] uppercase tracking-widest text-brand-white/50 font-sans-luxury">
+                <span>$ 0</span>
+                <span class="text-brand-gold font-bold bg-brand-gold/10 px-2 py-0.5 border border-brand-gold/20">
+                  Hasta: $ {{ selectedMaxPrice.toLocaleString() }}
+                </span>
+              </div>
+            </div>
+          </div>
         </aside>
 
         <main class="flex-1">
+          
+          <div class="flex flex-row justify-between items-center mb-8 pb-4 border-b border-brand-white/5 px-2 lg:px-0">
+            <span class="text-[10px] uppercase tracking-widest text-brand-white/40 font-sans-luxury">
+              {{ filteredProducts.length }} Piezas encontradas
+            </span>
+            
+            <div class="flex items-center gap-2">
+              <label for="sort" class="hidden sm:inline-block text-[10px] uppercase tracking-widest text-brand-white/40 font-sans-luxury">Ordenar por:</label>
+              <select 
+                id="sort"
+                v-model="sortBy"
+                class="bg-brand-black text-brand-white/80 border border-brand-white/10 text-[10px] uppercase tracking-wider px-3 py-1.5 focus:border-brand-gold outline-none cursor-pointer font-sans-luxury"
+              >
+                <option value="default">Recomendados</option>
+                <option value="price-asc">Precio: Menor a Mayor</option>
+                <option value="price-desc">Precio: Mayor a Menor</option>
+              </select>
+            </div>
+          </div>
+
           <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center text-center py-20 border border-brand-white/5 bg-brand-white/[0.01]">
             <Icon icon="lucide:gem" class="w-12 h-12 text-brand-white/10 mb-4" />
             <p class="text-brand-white/40 font-sans-luxury text-xs uppercase tracking-widest px-6">
-              Las piezas correspondientes no están disponibles en este momento.
+              Ninguna pieza coincide con los criterios de inversión o categoría seleccionados.
             </p>
           </div>
           
@@ -221,4 +316,19 @@ onUnmounted(() => { window.removeEventListener('scroll', handleScroll); });
 
 .fade-toast-enter-active, .fade-toast-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .fade-toast-enter-from, .fade-toast-leave-to { opacity: 0; transform: scale(0.9) translateY(10px); }
+
+/* Estilizado premium geométrico del input range */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #c5a880; 
+  cursor: pointer;
+  border-radius: 0px; 
+  transition: transform 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
 </style>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import api from '@/api/axios';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
@@ -7,6 +8,9 @@ import { Icon } from '@iconify/vue';
 import ProductGallery from '@/components/ProductGallery.vue';
 import RelatedProducts from '@/components/RelatedProducts.vue';
 import { useHead } from '@unhead/vue';
+
+const route = useRoute();
+const router = useRouter();
 
 const props = defineProps({
   slug: { type: String, required: true }
@@ -143,8 +147,21 @@ watch(() => props.slug, () => {
     <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-12 h-12" />
   </div>
 
-  <div v-else-if="product" class="bg-brand-black min-h-screen py-10 lg:py-20">
+  <div v-else-if="product" class="bg-brand-black min-h-screen py-6 lg:py-12">
     <div class="container mx-auto px-4 lg:px-20">
+      
+      <div class="mb-8 md:mb-12">
+        <button 
+          @click="router.back()" 
+          class="group flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] uppercase tracking-[0.3em] transition-colors duration-300 py-2"
+        >
+          <Icon 
+            icon="lucide:arrow-left" 
+            class="w-3 h-3 transform group-hover:-translate-x-1 transition-transform duration-300 text-brand-gold/60 group-hover:text-brand-gold" 
+          />
+          <span>Volver a la Colección</span>
+        </button>
+      </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-24 mb-20">
         <div class="w-full lg:sticky lg:top-24 self-start">
