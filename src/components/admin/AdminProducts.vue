@@ -158,7 +158,7 @@ const deleteProduct = async (id, name) => {
         <option value="Pulseras">Pulseras</option>
         <option value="Sets">Sets</option>
         <option value="Piedras Sueltas">Piedras Sueltas</option>
-        <option value="Dije">Dije</option>
+        <option value="Dijes">Dijes</option>
       </select>
       
       <select v-model="filterStock" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
