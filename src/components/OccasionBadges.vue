@@ -40,7 +40,7 @@ const handleClick = (occ) => {
         v-for="occ in occasions" 
         :key="occ"
         @click="handleClick(occ)"
-        class="shrink-0 snap-center relative group cursor-pointer flex flex-col items-center justify-center border transition-all duration-500 rounded-full md:rounded-none w-24 h-24 md:w-40 md:h-20 bg-brand-black/80 backdrop-blur-sm"
+        class="shrink-0 snap-center relative group cursor-pointer flex flex-col items-center justify-center border transition-all duration-500 rounded-xl md:rounded-none w-28 h-20 md:w-40 md:h-20 bg-brand-white/[0.02] backdrop-blur-sm"
         :class="(!isHome && currentSelection === occ) ? 'border-brand-gold bg-brand-gold/[0.04] shadow-lg shadow-brand-gold/5' : 'border-brand-white/10 hover:border-brand-gold/30 hover:bg-brand-white/[0.02]'"
       >
         
@@ -90,10 +90,10 @@ const handleClick = (occ) => {
 
         </div>
         
-        <div class="flex flex-col items-center justify-center text-center select-none w-full px-2">
+        <div class="flex flex-col items-center justify-center text-center select-none w-full px-3">
           <span 
-            class="text-[8px] md:text-[9px] uppercase font-bold tracking-[0.25em] transition-colors duration-300 block max-w-full truncate"
-            :class="(!isHome && currentSelection === occ) ? 'text-brand-gold' : 'text-brand-white/70 group-hover:text-brand-white'"
+            class="text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-colors duration-300 block max-w-full text-center whitespace-nowrap"
+            :class="(!isHome && currentSelection === occ) ? 'text-brand-gold font-extrabold' : 'text-brand-white/70 group-hover:text-brand-white'"
           >
             {{ occ }}
           </span>
