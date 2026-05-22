@@ -10,21 +10,17 @@ const route = useRoute();
 const router = useRouter();
 
 const products = ref([]);
-const loading = ref(true);
+const loading = ref(true); 
 
-// Estados para Paginación, Scroll y Filtros
 const displayLimit = ref(12);
 const showBackToTop = ref(false);
 const selectedCategory = ref('Todas');
 
-// Estados de Rango de Precios
 const maxPriceRange = ref(50000000); 
 const selectedMaxPrice = ref(50000000);
-
-// Estado de Criterio de Ordenamiento
 const sortBy = ref('default'); 
 
-// --- HISTORIAL DE NAVEGACIÓN (Volver a la misma posición con filtros) ---
+// --- MEMORIA DE NAVEGACIÓN ---
 const saveCollectionState = () => {
   const sessionState = {
     scrollPosition: window.scrollY,
@@ -36,7 +32,6 @@ const saveCollectionState = () => {
   sessionStorage.setItem('collection_state', JSON.stringify(sessionState));
 };
 
-// Capturamos la salida hacia el detalle del producto para congelar el estado
 onBeforeRouteLeave((to, from) => {
   if (to.name === 'product-detail') {
     saveCollectionState();
@@ -56,19 +51,18 @@ const occasionFilters = computed(() => {
   return [...new Set(occs)].sort();
 });
 
+// Carga de datos inicial desde el servidor
 const loadData = async () => {
   loading.value = true;
   try {
     const response = await api.get('/products');
     products.value = response.data;
 
-    // Calcular dinámicamente el precio más alto real del inventario actual
     if (products.value.length > 0) {
       const highestPrice = Math.max(...products.value.map(p => p.price));
       maxPriceRange.value = highestPrice;
     }
 
-    // Restaurar estado si el usuario viene de un "Regresar" desde el detalle
     const savedState = sessionStorage.getItem('collection_state');
     if (savedState) {
       const state = JSON.parse(savedState);
@@ -77,24 +71,23 @@ const loadData = async () => {
       selectedMaxPrice.value = state.selectedMaxPrice <= maxPriceRange.value ? state.selectedMaxPrice : maxPriceRange.value;
       sortBy.value = state.sortBy || 'default';
       
-      // Esperamos al render para aplicar el scroll exacto
       setTimeout(() => {
         window.scrollTo({ top: state.scrollPosition, behavior: 'instant' });
         sessionStorage.removeItem('collection_state'); 
       }, 100);
     } else {
       selectedMaxPrice.value = maxPriceRange.value;
-      applyUrlFilter();
+      readCategoryFromUrl(); 
     }
 
   } catch (error) {
     console.error("Error al cargar la colección:", error);
   } finally {
-    loading.value = false;
+    loading.value = false; 
   }
 };
 
-const applyUrlFilter = () => {
+const readCategoryFromUrl = () => {
   const urlParam = route.params.category?.toLowerCase();
   if (!urlParam) {
     selectedCategory.value = 'Todas';
@@ -109,15 +102,22 @@ const applyUrlFilter = () => {
   }
 };
 
+// Cambiar categoría en silencio sin levantar loaders
 const setCategory = (cat) => {
   selectedCategory.value = cat;
   displayLimit.value = 12; 
-  if (cat === 'Todas') router.replace('/coleccion');
-  else if (cat === 'Piedras Sueltas') router.replace('/coleccion/esmeraldas');
-  else router.replace(`/coleccion/${cat.toLowerCase()}`);
+
+  let newPath = '/coleccion';
+  if (cat !== 'Todas') {
+    newPath = cat === 'Piedras Sueltas' ? '/coleccion/esmeraldas' : `/coleccion/${cat.toLowerCase()}`;
+  }
+  
+  router.replace(newPath).catch(err => {
+    if (err.name !== 'NavigationDuplicated') console.error(err);
+  });
 };
 
-// --- MOTOR DE FILTRADO Y ORDENAMIENTO COMBINADO ---
+// --- MOTOR DE FILTRADO Y ORDENAMIENTO EN MEMORIA VIVO (0ms) ---
 const filteredProducts = computed(() => {
   let list = products.value.filter(p => p.stock > 0 && p.price <= selectedMaxPrice.value);
 
@@ -131,36 +131,19 @@ const filteredProducts = computed(() => {
     }
   }
 
-  // Aplicar orden logístico de precios
-  if (sortBy.value === 'price-asc') {
-    return list.sort((a, b) => a.price - b.price); 
-  }
-  if (sortBy.value === 'price-desc') {
-    return list.sort((a, b) => b.price - a.price); 
-  }
+  if (sortBy.value === 'price-asc') return list.sort((a, b) => a.price - b.price); 
+  if (sortBy.value === 'price-desc') return list.sort((a, b) => b.price - a.price); 
 
   return list; 
 });
 
-const displayedProducts = computed(() => {
-  return filteredProducts.value.slice(0, displayLimit.value);
-});
-
-const loadMore = () => {
-  displayLimit.value += 12;
-};
-
-const handleScroll = () => {
-  showBackToTop.value = window.scrollY > 300;
-};
-
-const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
+const displayedProducts = computed(() => filteredProducts.value.slice(0, displayLimit.value));
+const loadMore = () => { displayLimit.value += 12; };
+const handleScroll = () => { showBackToTop.value = window.scrollY > 300; };
+const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
 watch(() => route.params.category, () => {
-  applyUrlFilter();
-  displayLimit.value = 12;
+  readCategoryFromUrl();
 });
 
 onMounted(() => {
@@ -198,13 +181,12 @@ onUnmounted(() => {
 
       <div v-if="loading" class="flex flex-col items-center justify-center py-32">
         <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-12 h-12 mb-4" />
-        <p class="text-brand-gold font-sans-luxury tracking-[0.3em] uppercase text-[10px]">Accediendo a Cushion...</p>
+        <p class="text-brand-gold font-sans-luxury tracking-[0.3em] uppercase text-[10px]">Cargando Cushion...</p>
       </div>
 
       <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16">
         
         <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8">
-          
           <div>
             <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs uppercase tracking-[0.3em] mb-5 border-b border-brand-white/10 pb-4">Línea de Joyería</h3>
             <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-3 lg:pb-0 hide-scrollbar snap-x px-2 lg:px-0">
@@ -242,7 +224,6 @@ onUnmounted(() => {
         </aside>
 
         <main class="flex-1">
-          
           <div class="flex flex-row justify-between items-center mb-8 pb-4 border-b border-brand-white/5 px-2 lg:px-0">
             <span class="text-[10px] uppercase tracking-widest text-brand-white/40 font-sans-luxury">
               {{ filteredProducts.length }} Piezas encontradas
@@ -311,13 +292,12 @@ onUnmounted(() => {
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.fadeIn { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fadeIn { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .fade-toast-enter-active, .fade-toast-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .fade-toast-enter-from, .fade-toast-leave-to { opacity: 0; transform: scale(0.9) translateY(10px); }
 
-/* Estilizado premium geométrico del input range */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -328,7 +308,5 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 0px; 
   transition: transform 0.2s;
 }
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.3);
-}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.3); }
 </style>

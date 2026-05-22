@@ -7,7 +7,7 @@ import Footer from '@/components/Footer.vue';
 import CartOffCanvas from '@/components/CartOffCanvas.vue';
 import { useCartStore } from '@/stores/cart';
 
-const route = useRoute(); // Inicializamos el router para poder leer la URL
+const route = useRoute(); 
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 
 const cartStore = useCartStore();
@@ -33,7 +33,7 @@ onMounted(() => {
     <Header v-if="!isAdminRoute" />
     
     <main class="flex-grow">
-      <RouterView :key="$route.fullPath"/> 
+      <RouterView /> 
     </main>
     
     <Footer v-if="!isAdminRoute" />

@@ -4,7 +4,6 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  // Forzamos un comportamiento de scroll nativo suave para evitar saltos bruscos en móviles
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
@@ -27,23 +26,15 @@ const router = createRouter({
       component: () => import('@/views/Catalog.vue'),
       meta: { title: 'Lookbook Editorial | Cushion Joyería' }
     },
+    // ✨ UNIFICACIÓN DE RUTA: Al poner el signo "?" en :category?, controlamos ambos estados en una misma ruta
     {
-      path: '/coleccion',
+      path: '/coleccion/:category?',
       name: 'coleccion',
-      component: () => import('@/views/CollectionView.vue'),
-      meta: {
-        title: 'Colección Exclusiva | Cushion Joyería',
-        description: 'Explora nuestra colección de alta joyería. Anillos, collares, pulseras y aretes elaborados por maestros artesanos en oro de 18k y platino.'
-      }
-    },
-    {
-      path: '/coleccion/:category',
-      name: 'category-view',
       component: () => import('@/views/CollectionView.vue'),
       props: true,
       meta: {
-        title: 'Colección por Categoría | Cushion Joyería',
-        description: 'Encuentra tu pieza ideal. Navega por nuestras categorías de esmeraldas puras, anillos, aretes y collares de lujo.'
+        title: 'Colección Exclusiva | Cushion Joyería',
+        description: 'Explora nuestra colección de alta joyería. Anillos, collares, pulseras y aretes elaborados por maestros artesanos en oro de 18k y platino.'
       }
     },
     {
@@ -133,14 +124,12 @@ const router = createRouter({
   ]
 });
 
-// ✨ IMPLEMENTACIÓN SEGUIDORES DE NAVEGACIÓN MODERNA Y FLUIDA (EVITA CONGELAMIENTOS)
 router.beforeEach((to) => {
   const authStore = useAuthStore();
 
-  // Validación de Rutas Administrativas
   if (to.path.startsWith('/admin')) {
     if (!authStore.isAuthenticated || !authStore.isAdmin) {
-      return '/auth'; // Redirección limpia mediante retorno de objeto
+      return '/auth'; 
     }
   }
 
