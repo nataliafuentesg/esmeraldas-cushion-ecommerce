@@ -28,15 +28,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-brand-black min-h-screen font-sans-luxury flex flex-col overflow-x-hidden"> 
+  <div class="bg-brand-black min-h-screen font-sans-luxury flex flex-col"> 
     
     <Header v-if="!isAdminRoute" />
     
     <main class="flex-grow relative">
       <RouterView v-slot="{ Component }">
-        <KeepAlive>
-          <component :is="Component" :key="route.name === 'coleccion' ? 'static-collection' : route.fullPath" />
-        </KeepAlive>
+        <transition name="fade-page" mode="out-in">
+          <KeepAlive :include="['CollectionView']">
+            <component :is="Component" :key="route.name === 'coleccion' ? 'static-collection' : route.fullPath" />
+          </KeepAlive>
+        </transition>
       </RouterView>
     </main>
     
@@ -45,3 +47,14 @@ onMounted(() => {
     
   </div>
 </template>
+
+<style>
+.fade-page-enter-active,
+.fade-page-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-page-enter-from,
+.fade-page-leave-to {
+  opacity: 0;
+}
+</style>

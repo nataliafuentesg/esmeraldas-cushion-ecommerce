@@ -43,6 +43,7 @@ const router = createRouter({
       props: true,
       meta: {
         title: 'Joya Exclusiva | Cushion',
+        key: route => route.fullPath,
         description: 'Detalles de nuestra pieza de alta joyería. Artesanía colombiana, gemas certificadas y diseño atemporal.'
       }
     },
