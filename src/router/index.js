@@ -6,9 +6,9 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition;
+      return savedPosition; 
     }
-    return { top: 0, behavior: 'smooth' };
+    return { top: 0 }; 
   },
   routes: [
     {
@@ -26,7 +26,6 @@ const router = createRouter({
       component: () => import('@/views/Catalog.vue'),
       meta: { title: 'Lookbook Editorial | Cushion Joyería' }
     },
-    // ✨ UNIFICACIÓN DE RUTA: Al poner el signo "?" en :category?, controlamos ambos estados en una misma ruta
     {
       path: '/coleccion/:category?',
       name: 'coleccion',

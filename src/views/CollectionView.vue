@@ -1,5 +1,11 @@
+<script>
+export default {
+  name: 'CollectionView'
+}
+</script>
+
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, onActivated } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import api from '@/api/axios';
 import ProductCard from '@/components/ProductCard.vue';
@@ -20,23 +26,55 @@ const maxPriceRange = ref(50000000);
 const selectedMaxPrice = ref(50000000);
 const sortBy = ref('default'); 
 
-// --- MEMORIA DE NAVEGACIÓN ---
-const saveCollectionState = () => {
-  const sessionState = {
-    scrollPosition: window.scrollY,
-    selectedCategory: selectedCategory.value,
-    displayLimit: displayLimit.value,
-    selectedMaxPrice: selectedMaxPrice.value,
-    sortBy: sortBy.value
-  };
-  sessionStorage.setItem('collection_state', JSON.stringify(sessionState));
-};
+const lastViewedProductId = ref(null);
+
+// Al resucitar la pestaña guardada por KeepAlive forzamos el posicionamiento milimétrico
+onActivated(() => {
+  const savedLastViewed = sessionStorage.getItem('last_viewed_product_id');
+  if (savedLastViewed) {
+    lastViewedProductId.value = parseInt(savedLastViewed);
+    setTimeout(() => {
+      lastViewedProductId.value = null;
+      sessionStorage.removeItem('last_viewed_product_id');
+    }, 5000);
+  }
+
+  const savedState = sessionStorage.getItem('collection_state');
+  if (savedState) {
+    const { scrollPosition } = JSON.parse(savedState);
+    
+    // Forzado instantáneo triple para evitar que las imágenes asíncronas te tiren al footer
+    window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    }, 30);
+    
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+      sessionStorage.removeItem('collection_state');
+    }, 120);
+  }
+});
 
 onBeforeRouteLeave((to, from) => {
   if (to.name === 'product-detail') {
-    saveCollectionState();
+    const sessionState = {
+      scrollPosition: window.scrollY,
+      selectedCategory: selectedCategory.value,
+      displayLimit: displayLimit.value,
+      selectedMaxPrice: selectedMaxPrice.value,
+      sortBy: sortBy.value
+    };
+    sessionStorage.setItem('collection_state', JSON.stringify(sessionState));
+    
+    const targetedProduct = products.value.find(p => p.slug === to.params.slug);
+    if (targetedProduct) {
+      sessionStorage.setItem('last_viewed_product_id', targetedProduct.id);
+    }
   } else {
     sessionStorage.removeItem('collection_state');
+    sessionStorage.removeItem('last_viewed_product_id');
   }
 });
 
@@ -51,7 +89,6 @@ const occasionFilters = computed(() => {
   return [...new Set(occs)].sort();
 });
 
-// Carga de datos inicial desde el servidor
 const loadData = async () => {
   loading.value = true;
   try {
@@ -62,24 +99,8 @@ const loadData = async () => {
       const highestPrice = Math.max(...products.value.map(p => p.price));
       maxPriceRange.value = highestPrice;
     }
-
-    const savedState = sessionStorage.getItem('collection_state');
-    if (savedState) {
-      const state = JSON.parse(savedState);
-      selectedCategory.value = state.selectedCategory;
-      displayLimit.value = state.displayLimit;
-      selectedMaxPrice.value = state.selectedMaxPrice <= maxPriceRange.value ? state.selectedMaxPrice : maxPriceRange.value;
-      sortBy.value = state.sortBy || 'default';
-      
-      setTimeout(() => {
-        window.scrollTo({ top: state.scrollPosition, behavior: 'instant' });
-        sessionStorage.removeItem('collection_state'); 
-      }, 100);
-    } else {
-      selectedMaxPrice.value = maxPriceRange.value;
-      readCategoryFromUrl(); 
-    }
-
+    
+    readCategoryFromUrl(); 
   } catch (error) {
     console.error("Error al cargar la colección:", error);
   } finally {
@@ -102,7 +123,6 @@ const readCategoryFromUrl = () => {
   }
 };
 
-// Cambiar categoría en silencio sin levantar loaders
 const setCategory = (cat) => {
   selectedCategory.value = cat;
   displayLimit.value = 12; 
@@ -117,7 +137,6 @@ const setCategory = (cat) => {
   });
 };
 
-// --- MOTOR DE FILTRADO Y ORDENAMIENTO EN MEMORIA VIVO (0ms) ---
 const filteredProducts = computed(() => {
   let list = products.value.filter(p => p.stock > 0 && p.price <= selectedMaxPrice.value);
 
@@ -142,6 +161,7 @@ const loadMore = () => { displayLimit.value += 12; };
 const handleScroll = () => { showBackToTop.value = window.scrollY > 300; };
 const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
+// ✨ RE-ACTUALIZACIÓN DIRECTA: Captura los cambios de URL de router.replace de forma limpia e instantánea
 watch(() => route.params.category, () => {
   readCategoryFromUrl();
 });
@@ -157,7 +177,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="bg-brand-black min-h-screen pt-10 pb-24 font-sans relative">
+  <div class="bg-brand-black min-h-[110vh] pt-10 pb-24 font-sans relative">
     
     <header class="container mx-auto px-4 text-center mb-10">
       <h1 class="text-3xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-[0.2em] uppercase">
@@ -243,30 +263,31 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center text-center py-20 border border-brand-white/5 bg-brand-white/[0.01]">
-            <Icon icon="lucide:gem" class="w-12 h-12 text-brand-white/10 mb-4" />
-            <p class="text-brand-white/40 font-sans-luxury text-xs uppercase tracking-widest px-6">
-              Ninguna pieza coincide con los criterios de inversión o categoría seleccionados.
-            </p>
-          </div>
-          
-          <div v-else>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-16 fadeIn">
-              <ProductCard 
-                v-for="product in displayedProducts" 
-                :key="product.id"
-                :product="product" 
-              />
-            </div>
-
-            <div v-if="displayedProducts.length < filteredProducts.length" class="mt-14 md:mt-20 flex justify-center px-4 md:px-0">
-              <button 
-                @click="loadMore"
-                class="w-full md:w-auto border border-brand-gold text-brand-gold px-12 py-4 text-[10px] uppercase font-bold tracking-[0.2em] hover:bg-brand-gold hover:text-brand-black transition-colors duration-300 bg-brand-black/50 backdrop-blur-sm"
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-16">
+            <div 
+              v-for="product in displayedProducts" 
+              :key="product.id"
+              class="relative transition-all duration-700 p-1 bg-transparent border border-transparent"
+              :class="{ 'border-brand-gold/30 bg-brand-gold/[0.01] rounded-sm pulse-gold-card': lastViewedProductId === product.id }"
+            >
+              <div 
+                v-if="lastViewedProductId === product.id"
+                class="absolute -top-3 left-4 z-30 bg-brand-gold text-brand-black text-[7px] font-extrabold uppercase tracking-[0.25em] px-2 py-0.5 rounded-none shadow-xl border border-brand-black/20"
               >
-                Explorar más piezas ({{ filteredProducts.length - displayedProducts.length }} restantes)
-              </button>
+                Última pieza explorada
+              </div>
+
+              <ProductCard :product="product" />
             </div>
+          </div>
+
+          <div v-if="displayedProducts.length < filteredProducts.length" class="mt-14 md:mt-20 flex justify-center px-4 md:px-0">
+            <button 
+              @click="loadMore"
+              class="w-full md:w-auto border border-brand-gold text-brand-gold px-12 py-4 text-[10px] uppercase font-bold tracking-[0.2em] hover:bg-brand-gold hover:text-brand-black transition-colors duration-300 bg-brand-black/50 backdrop-blur-sm"
+            >
+              Explorar más piezas ({{ filteredProducts.length - displayedProducts.length }} restantes)
+            </button>
           </div>
         </main>
 
@@ -292,11 +313,17 @@ onUnmounted(() => {
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.fadeIn { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .fade-toast-enter-active, .fade-toast-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .fade-toast-enter-from, .fade-toast-leave-to { opacity: 0; transform: scale(0.9) translateY(10px); }
+
+@keyframes goldGlow {
+  0%, 100% { border-color: rgba(197, 168, 128, 0.15); box-shadow: 0 0 0px rgba(197, 168, 128, 0); }
+  50% { border-color: rgba(197, 168, 128, 0.45); box-shadow: 0 0 15px rgba(197, 168, 128, 0.05); }
+}
+.pulse-gold-card {
+  animation: goldGlow 2.5s ease-in-out infinite;
+}
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;

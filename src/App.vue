@@ -28,12 +28,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-brand-black min-h-screen font-sans-luxury flex flex-col"> 
+  <div class="bg-brand-black min-h-screen font-sans-luxury flex flex-col overflow-x-hidden"> 
     
     <Header v-if="!isAdminRoute" />
     
-    <main class="flex-grow">
-      <RouterView /> 
+    <main class="flex-grow relative">
+      <RouterView v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component" :key="route.name === 'coleccion' ? 'static-collection' : route.fullPath" />
+        </KeepAlive>
+      </RouterView>
     </main>
     
     <Footer v-if="!isAdminRoute" />

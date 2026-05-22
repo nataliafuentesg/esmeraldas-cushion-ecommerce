@@ -32,6 +32,25 @@ const showToast = (message, type = 'error') => {
   }, 4000);
 };
 
+// ✨ MANEJO SÓLIDO DEL GO BACK CONTRA CAÍDAS AL FOOTER
+const handleGoBack = () => {
+  // Leemos la posición exacta que congelamos en la sesión antes de salir de la colección
+  const savedState = sessionStorage.getItem('collection_state');
+  
+  router.back();
+
+  if (savedState) {
+    const { scrollPosition } = JSON.parse(savedState);
+    // Ejecutamos micro-fuerzas de posicionamiento secuenciales para ganarle el tiro a la carga de imágenes
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    }, 40);
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    }, 120);
+  }
+};
+
 // Lógica de Reseñas Restaurada y Actualizada
 const reviews = ref([]);
 const newReview = ref({ 
@@ -152,7 +171,7 @@ watch(() => props.slug, () => {
       
       <div class="mb-8 md:mb-12">
         <button 
-          @click="router.back()" 
+          @click="handleGoBack" 
           class="group flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] uppercase tracking-[0.3em] transition-colors duration-300 py-2"
         >
           <Icon 
@@ -164,8 +183,13 @@ watch(() => props.slug, () => {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-24 mb-20">
-        <div class="w-full lg:sticky lg:top-24 self-start">
+        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-wrapper">
           <ProductGallery :images="product.images" :product-name="product.name" />
+          
+          <div class="block lg:hidden text-center mt-3 text-[9px] uppercase tracking-[0.2em] text-brand-white/30 font-sans-luxury">
+            <Icon icon="lucide:maximize-2" class="inline-block w-3 h-3 mr-1 text-brand-gold/50" />
+            Presiona para ampliar • Desliza para explorar detalles
+          </div>
         </div>
 
         <div class="flex flex-col">
@@ -216,7 +240,7 @@ watch(() => props.slug, () => {
             </div>
           </div>
 
-          <div v-if="product.stock > 0" class="flex flex-col sm:flex-row items-stretch gap-4">
+          <div class="flex flex-col sm:flex-row items-stretch gap-4" v-if="product.stock > 0">
             <div class="flex items-center justify-between border border-brand-white/20 bg-brand-white/[0.02] px-4 py-3 sm:w-32">
               <button @click="selectedQuantity > 1 && selectedQuantity--" class="text-brand-white/60 hover:text-brand-gold text-lg px-2">-</button>
               <span class="text-brand-white font-sans-luxury text-sm font-bold">{{ selectedQuantity }}</span>
@@ -351,5 +375,30 @@ watch(() => props.slug, () => {
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #c5a880;
     border-radius: 2px;
+}
+
+/* ✨ REGLAS GLOBALES DE INTERFACES DE LUJO PARA CONTROL DE ZOOM EN MÓVILES */
+@media (max-width: 1024px) {
+  /* Obliga al contenedor de la imagen a aislar el desborde táctil para evitar saltos horizontales de pantalla */
+  :deep(.main-gallery-wrapper), 
+  :deep(.product-gallery-container) {
+    overflow: hidden !important;
+    touch-action: pan-x pan-y !important;
+  }
+
+  /* Inyectamos suavizado de transformación al elemento interno de zoom interactivo */
+  :deep(.product-gallery-container img),
+  :deep(.main-gallery-wrapper img) {
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    transform-origin: center center !important;
+    cursor: zoom-in !important;
+  }
+
+  /* Si el usuario presiona, el sistema escala con suavidad sin movimientos de vibración erráticos */
+  :deep(.main-gallery-wrapper img:active),
+  :deep(.product-gallery-container img:active) {
+    transform: scale(1.5) !important;
+    cursor: move !important;
+  }
 }
 </style>
