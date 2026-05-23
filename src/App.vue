@@ -34,7 +34,7 @@ onMounted(() => {
     
     <main class="flex-grow relative">
       <RouterView v-slot="{ Component }">
-        <transition name="fade-page" mode="out-in">
+        <transition name="fade-page">
           <KeepAlive :include="['CollectionView']">
             <component :is="Component" :key="route.name === 'coleccion' ? 'static-collection' : route.fullPath" />
           </KeepAlive>
@@ -49,10 +49,12 @@ onMounted(() => {
 </template>
 
 <style>
+
 .fade-page-enter-active,
 .fade-page-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.18s ease-in-out;
 }
+
 .fade-page-enter-from,
 .fade-page-leave-to {
   opacity: 0;
