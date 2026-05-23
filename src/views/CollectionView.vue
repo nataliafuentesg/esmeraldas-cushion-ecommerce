@@ -28,7 +28,27 @@ const sortBy = ref('default');
 
 const lastViewedProductId = ref(null);
 
-// Al resucitar la pestaña guardada por KeepAlive forzamos el posicionamiento milimétrico
+const restoreScrollSafely = () => {
+  const savedState = sessionStorage.getItem('collection_state');
+  const cameFromCollection = sessionStorage.getItem('came_from_collection') === 'true';
+
+  if (cameFromCollection && savedState) {
+    const { scrollPosition } = JSON.parse(savedState);
+    
+    window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    
+    setTimeout(() => { 
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' }); 
+    }, 40);
+    
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+      sessionStorage.removeItem('collection_state');
+      sessionStorage.removeItem('came_from_collection');
+    }, 120);
+  }
+};
+
 onActivated(() => {
   const savedLastViewed = sessionStorage.getItem('last_viewed_product_id');
   if (savedLastViewed) {
@@ -38,22 +58,9 @@ onActivated(() => {
       sessionStorage.removeItem('last_viewed_product_id');
     }, 5000);
   }
-
-  const savedState = sessionStorage.getItem('collection_state');
-  if (savedState) {
-    const { scrollPosition } = JSON.parse(savedState);
-    
-    // Forzado instantáneo triple para evitar que las imágenes asíncronas te tiren al footer
-    window.scrollTo({ top: scrollPosition, behavior: 'instant' });
-    
-    setTimeout(() => {
-      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
-    }, 30);
-    
-    setTimeout(() => {
-      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
-      sessionStorage.removeItem('collection_state');
-    }, 120);
+  
+  if (!loading.value) {
+    restoreScrollSafely();
   }
 });
 
@@ -67,16 +74,22 @@ onBeforeRouteLeave((to, from) => {
       sortBy: sortBy.value
     };
     sessionStorage.setItem('collection_state', JSON.stringify(sessionState));
+    sessionStorage.setItem('came_from_collection', 'true');
     
     const targetedProduct = products.value.find(p => p.slug === to.params.slug);
     if (targetedProduct) {
       sessionStorage.setItem('last_viewed_product_id', targetedProduct.id);
     }
   } else {
-    sessionStorage.removeItem('collection_state');
-    sessionStorage.removeItem('last_viewed_product_id');
+    clearCollectionSession();
   }
 });
+
+const clearCollectionSession = () => {
+  sessionStorage.removeItem('collection_state');
+  sessionStorage.removeItem('last_viewed_product_id');
+  sessionStorage.removeItem('came_from_collection');
+};
 
 const typeFilters = computed(() => {
   const cats = products.value.map(p => p.category).filter(Boolean);
@@ -100,11 +113,25 @@ const loadData = async () => {
       maxPriceRange.value = highestPrice;
     }
     
-    readCategoryFromUrl(); 
+    const savedState = sessionStorage.getItem('collection_state');
+    if (savedState && sessionStorage.getItem('came_from_collection') === 'true') {
+      const state = JSON.parse(savedState);
+      selectedCategory.value = state.selectedCategory;
+      displayLimit.value = state.displayLimit;
+      selectedMaxPrice.value = state.selectedMaxPrice <= maxPriceRange.value ? state.selectedMaxPrice : maxPriceRange.value;
+      sortBy.value = state.sortBy || 'default';
+    } else {
+      selectedMaxPrice.value = maxPriceRange.value;
+      readCategoryFromUrl(); 
+    }
+
   } catch (error) {
     console.error("Error al cargar la colección:", error);
   } finally {
     loading.value = false; 
+    setTimeout(() => {
+      restoreScrollSafely();
+    }, 20);
   }
 };
 
@@ -161,12 +188,14 @@ const loadMore = () => { displayLimit.value += 12; };
 const handleScroll = () => { showBackToTop.value = window.scrollY > 300; };
 const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
-// ✨ RE-ACTUALIZACIÓN DIRECTA: Captura los cambios de URL de router.replace de forma limpia e instantánea
 watch(() => route.params.category, () => {
   readCategoryFromUrl();
 });
 
 onMounted(() => {
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
   loadData();
   window.addEventListener('scroll', handleScroll, { passive: true });
 });
@@ -199,12 +228,25 @@ onUnmounted(() => {
         />
       </div>
 
-      <div v-if="loading" class="flex flex-col items-center justify-center py-32">
-        <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-12 h-12 mb-4" />
-        <p class="text-brand-gold font-sans-luxury tracking-[0.3em] uppercase text-[10px]">Cargando Cushion...</p>
+      <div v-if="loading" class="flex flex-col lg:flex-row gap-8 xl:gap-16 dynamic-skeleton-view">
+        <aside class="w-full lg:w-56 space-y-6 opacity-30 animate-pulse">
+          <div class="h-4 bg-brand-white/20 w-32"></div>
+          <div class="space-y-2">
+            <div class="h-8 bg-brand-white/10 w-full" v-for="n in 5" :key="n"></div>
+          </div>
+        </aside>
+        <main class="flex-1">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12">
+            <div v-for="i in 6" :key="i" class="space-y-4 animate-pulse">
+              <div class="aspect-square bg-brand-white/[0.03] border border-brand-white/5 w-full"></div>
+              <div class="h-3 bg-brand-white/20 w-3/4 mx-auto"></div>
+              <div class="h-3 bg-brand-gold/20 w-1/2 mx-auto"></div>
+            </div>
+          </div>
+        </main>
       </div>
 
-      <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16">
+      <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16 entry-fade">
         
         <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8">
           <div>
@@ -316,6 +358,10 @@ onUnmounted(() => {
 
 .fade-toast-enter-active, .fade-toast-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .fade-toast-enter-from, .fade-toast-leave-to { opacity: 0; transform: scale(0.9) translateY(10px); }
+
+/* Transición suave para la entrada de la grilla real */
+.entry-fade { animation: entryFade 0.3s ease-out; }
+@keyframes entryFade { from { opacity: 0; } to { opacity: 1; } }
 
 @keyframes goldGlow {
   0%, 100% { border-color: rgba(197, 168, 128, 0.15); box-shadow: 0 0 0px rgba(197, 168, 128, 0); }

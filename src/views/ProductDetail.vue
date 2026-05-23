@@ -23,61 +23,40 @@ const allProducts = ref([]);
 const loading = ref(true);
 const selectedQuantity = ref(1);
 
-// ✨ SISTEMA DE LIGHTBOX INMUNE A ERRORES DE RUTA
 const isLightboxOpen = ref(false);
-const selectedImageUrl = ref('');
+const lightboxImgUrl = ref('');
 
-const openLightbox = (event) => {
-  // Solo se activa en dispositivos móviles
-  if (window.innerWidth < 1024) {
-    // Capturamos de forma estricta la URL de la etiqueta <img> que el usuario está tocando
-    const clickedImg = event.target.closest('.main-gallery-wrapper')?.querySelector('img');
-    if (clickedImg && clickedImg.src) {
-      selectedImageUrl.value = clickedImg.src;
-      isLightboxOpen.value = true;
-      document.body.style.overflow = 'hidden'; 
-    }
+const openLightbox = () => {
+  if (window.innerWidth < 1024 && product.value?.images?.length > 0) {
+    lightboxImgUrl.value = product.value.images[0];
+    isLightboxOpen.value = true;
+    document.body.style.overflow = 'hidden'; 
   }
 };
 
 const closeLightbox = () => {
   isLightboxOpen.value = false;
-  selectedImageUrl.value = '';
+  lightboxImgUrl.value = '';
   document.body.style.overflow = ''; 
 };
 
-const toast = ref({ show: false, message: '', type: 'error' });
-
-const showToast = (message, type = 'error') => {
-  toast.value = { show: true, message, type };
-  setTimeout(() => { toast.value.show = false; }, 4000);
-};
-
-// GESTIÓN DEL RETORNO NATIVO BLINDADO ANTI-FOOTER
+// RETORNO INTELIGENTE
 const handleGoBack = () => {
   const savedState = sessionStorage.getItem('collection_state');
+  const cameFromCollection = sessionStorage.getItem('came_from_collection') === 'true';
   
-  // Ejecuta la navegación física hacia atrás
   router.back();
 
-  // Si el usuario viene directo del catálogo, lo reposiciona milimétricamente
-  if (savedState) {
+  if (cameFromCollection && savedState) {
     const { scrollPosition } = JSON.parse(savedState);
     setTimeout(() => { window.scrollTo({ top: scrollPosition, behavior: 'instant' }); }, 40);
-    setTimeout(() => { window.scrollTo({ top: scrollPosition, behavior: 'instant' }); }, 120);
   } else {
-    // Si viene de un producto relacionado, lo manda arriba de todo sin parpadeos negros
-    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, 50);
+    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, 40);
   }
 };
 
-// Lógica de Reseñas
-const reviews = ref([]);
-const newReview = ref({ rating: 5, author: authStore.user?.name || authStore.user?.firstName || '', comment: '' });
-const isSubmittingReview = ref(false);
-
 useHead({
-  title: computed(() => product.value ? `${product.value.name} | Cushion Joyería de Lujo` : 'Cargando Pieza...')
+  title: computed(() => product.value ? `${product.value.name} | Cushion` : 'Cargando...')
 });
 
 const fetchProduct = async () => {
@@ -85,10 +64,16 @@ const fetchProduct = async () => {
   try {
     const res = await api.get(`/products/${props.slug}`);
     product.value = res.data;
-    reviews.value = product.value.reviews || [];
 
     const all = await api.get('/products');
     allProducts.value = all.data;
+
+    // ✨ ANCLA DE RENDERIZADO: Una vez los datos modifican el tamaño real de la pantalla,
+    // obligamos al hilo principal del navegador a saltar al tope superior.
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }, 10);
+    
   } catch (err) {
     console.error("Error cargando pieza:", err);
   } finally {
@@ -102,26 +87,6 @@ const addToCart = async () => {
   cartStore.isOffCanvasOpen = true; 
 };
 
-const submitReview = async () => {
-  if (!authStore.isAuthenticated) { showToast("Debes iniciar sesión.", "error"); return; }
-  if (newReview.value.comment.trim().length < 10) { showToast("Detalla más tu reseña.", "error"); return; }
-
-  isSubmittingReview.value = true;
-  try {
-    await api.post(`/products/${props.slug}/reviews`, {
-      author: newReview.value.author || 'Cliente Cushion',
-      rating: newReview.value.rating,
-      comment: newReview.value.comment
-    });
-    await fetchProduct();
-    newReview.value.comment = '';
-  } catch (error) {
-    console.error(error);
-  } finally {
-    isSubmittingReview.value = false;
-  }
-};
-
 const relatedProducts = computed(() => {
   if (!product.value || !allProducts.value) return [];
   const inStock = allProducts.value.filter(p => p.stock > 0 && p.id !== product.value.id);
@@ -131,8 +96,17 @@ const relatedProducts = computed(() => {
 
 watch(() => props.slug, () => {
   fetchProduct();
-  window.scrollTo(0, 0); // Sube la pantalla de inmediato al cambiar entre relacionados
 }, { immediate: true });
+
+onMounted(() => {
+  // ✨ ANTI-MEMORIA DE RECARGA NATIVA:
+  // Si el usuario refresca la página con F5, forzamos al historial del navegador 
+  // a olvidarse de la posición del scroll anterior antes de pintar nada en pantalla.
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  window.scrollTo(0, 0);
+});
 </script>
 
 <template>
@@ -154,7 +128,7 @@ watch(() => props.slug, () => {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-24 mb-20">
-        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-wrapper cursor-zoom-in" @click="openLightbox($event)">
+        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-wrapper cursor-zoom-in" @click="openLightbox">
           <ProductGallery :images="product.images" :product-name="product.name" />
           
           <div class="block lg:hidden text-center mt-3 text-[9px] uppercase tracking-[0.2em] text-brand-white/30 font-sans-luxury">
@@ -190,18 +164,6 @@ watch(() => props.slug, () => {
                 <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Gema Principal</span>
                 <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.gemstoneType }}</span>
               </div>
-              <div v-if="product.cutType?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Talla / Corte</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.cutType }}</span>
-              </div>
-              <div v-if="product.caratWeight?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Peso Carates (ct)</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.caratWeight }}</span>
-              </div>
-              <div v-if="product.totalWeight?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Peso de la Pieza</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.totalWeight }}</span>
-              </div>
               <div v-if="product.metalType?.trim()" class="flex flex-col">
                 <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Metal Precioso</span>
                 <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.metalType }}</span>
@@ -222,47 +184,6 @@ watch(() => props.slug, () => {
         </div>
       </div>
 
-      <section class="mt-20 pt-16 border-t border-brand-white/10">
-        <h3 class="text-2xl font-serif-elegant text-brand-white uppercase tracking-widest mb-10 text-center">Reseñas de Clientes</h3>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          <div class="bg-brand-white/[0.02] border border-brand-white/5 p-8 h-fit">
-            <h4 class="text-brand-gold text-xs uppercase tracking-widest mb-6 border-b border-brand-white/10 pb-4">Dejar un comentario</h4>
-            <form v-if="authStore.isAuthenticated" @submit.prevent="submitReview" class="space-y-6">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-[10px] text-brand-white/50 uppercase tracking-widest mb-2">Calificación</label>
-                  <div class="flex gap-2">
-                    <Icon v-for="star in 5" :key="star" icon="lucide:star" :class="star <= newReview.rating ? 'fill-brand-gold text-brand-gold' : 'text-brand-white/20'" class="w-6 h-6 cursor-pointer" @click="newReview.rating = star" />
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-[10px] text-brand-white/50 uppercase tracking-widest mb-2">Tu Nombre</label>
-                  <input v-model="newReview.author" type="text" required placeholder="Ej: María P." class="w-full bg-brand-black border border-brand-white/20 p-2 text-brand-white text-sm focus:border-brand-gold outline-none font-sans-luxury" />
-                </div>
-              </div>
-              <div>
-                <label class="block text-[10px] text-brand-white/50 uppercase tracking-widest mb-2">Tu Experiencia</label>
-                <textarea v-model="newReview.comment" rows="4" required placeholder="Comparte tu experiencia..." class="w-full bg-brand-black border border-brand-white/20 p-4 text-brand-white text-sm focus:border-brand-gold outline-none resize-none font-sans-luxury"></textarea>
-              </div>
-              <button type="submit" :disabled="isSubmittingReview" class="w-full border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black uppercase text-xs tracking-widest py-3 transition-colors">
-                {{ isSubmittingReview ? 'Enviando...' : 'Publicar Reseña' }}
-              </button>
-            </form>
-          </div>
-
-          <div class="space-y-6 max-h-[500px] overflow-y-auto pr-4 custom-scrollbar">
-            <div v-if="reviews.length === 0" class="text-center py-10 text-brand-white/40 text-sm italic font-sans-luxury border border-brand-white/5">Aún no hay reseñas.</div>
-            <div v-for="review in reviews" :key="review.id" class="border-b border-brand-white/10 pb-6 mb-6 last:border-0">
-              <div class="flex justify-between items-start mb-2">
-                <span class="text-brand-white font-serif-elegant uppercase tracking-wide text-sm">{{ review.author || 'Cliente Cushion' }}</span>
-                <span class="text-brand-white/30 text-[10px] tracking-widest">{{ new Date(review.date || Date.now()).toLocaleDateString() }}</span>
-              </div>
-              <p class="text-brand-white/70 text-sm font-sans-luxury leading-relaxed">"{{ review.comment }}"</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section class="mt-20 border-t border-brand-white/10 pt-20">
         <RelatedProducts :related-products="relatedProducts" />
       </section>
@@ -270,19 +191,12 @@ watch(() => props.slug, () => {
 
     <Transition name="fade-lightbox">
       <div v-if="isLightboxOpen" class="fixed inset-0 bg-brand-black/98 backdrop-blur-md z-[999] flex flex-col justify-center items-center p-4" @click="closeLightbox">
-        
         <button @click.stop="closeLightbox" class="absolute top-6 right-6 text-brand-white/70 hover:text-brand-gold p-3 z-50 transition-colors">
           <Icon icon="lucide:x" class="w-6 h-6" />
         </button>
-
         <div class="w-full max-w-full max-h-[80vh] flex justify-center items-center overflow-auto scrollbar-none" @click.stop>
-          <img 
-            :src="selectedImageUrl" 
-            :alt="product.name" 
-            class="max-w-full max-h-[75vh] object-contain select-none mobile-pinch-target"
-          />
+          <img :src="lightboxImgUrl" :alt="product.name" class="max-w-full max-h-[75vh] object-contain select-none mobile-pinch-target" />
         </div>
-
         <div class="absolute bottom-8 text-[9px] uppercase tracking-[0.25em] text-brand-white/40 font-sans-luxury text-center px-4">
           Pellizca con dos dedos para ampliar detalles • Toca fuera para salir
         </div>
@@ -292,16 +206,11 @@ watch(() => props.slug, () => {
 </template>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #c5a880; border-radius: 2px; }
-
 .fade-lightbox-enter-active, .fade-lightbox-leave-active { transition: opacity 0.2s ease; }
 .fade-lightbox-enter-from, .fade-lightbox-leave-to { opacity: 0; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 
 @media (max-width: 1024px) {
-  /* Forzamos que el renderizador del teléfono estire la imagen bajo demanda en su propio hilo táctil */
   .mobile-pinch-target {
     touch-action: pinch-zoom !important;
     display: block;

@@ -15,7 +15,7 @@ const props = defineProps({
 });
 
 const activeImage = ref('');
-const fallbackImage = 'https://images.unsplash.com/photo-1588444837495-c6cfaf50c8a9?q=80&w=800';
+const fallbackImage = 'https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902043/2U5A4648_rr9snu.jpg';
 
 watch(() => props.images, (newImages) => {
   if (newImages && newImages.length > 0) {

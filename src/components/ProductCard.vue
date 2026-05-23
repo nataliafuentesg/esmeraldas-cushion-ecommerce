@@ -14,7 +14,7 @@ const mainImage = computed(() => {
     const thumb = props.product.images.find(img => img.isThumbnail);
     return thumb ? thumb.imageUrl : props.product.images[0].imageUrl;
   }
-  return 'https://images.unsplash.com/photo-1588444837495-c6cfaf50c8a9?q=80&w=800'; 
+  return 'https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902043/2U5A4654_fyacnt.jpg'; 
 });
 
 const hoverImage = computed(() => {
