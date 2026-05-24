@@ -23,14 +23,26 @@ const allProducts = ref([]);
 const loading = ref(true);
 const selectedQuantity = ref(1);
 
+// ESTADOS DEL LIGHTBOX PREMIUM
 const isLightboxOpen = ref(false);
 const lightboxImgUrl = ref('');
 
-const openLightbox = () => {
-  if (window.innerWidth < 1024 && product.value?.images?.length > 0) {
-    lightboxImgUrl.value = product.value.images[0];
-    isLightboxOpen.value = true;
-    document.body.style.overflow = 'hidden'; 
+// ✨ CAPTURA INTERNA DE LA IMAGEN ACTIVA EN TIEMPO REAL
+const openLightbox = (event) => {
+  if (window.innerWidth < 1024) {
+    // Buscamos la etiqueta <img> que esté visible o activa dentro del contenedor de la galería del hijo
+    const activeImg = event.currentTarget.querySelector('.main-gallery-wrapper img') || event.currentTarget.querySelector('img');
+    
+    if (activeImg && activeImg.src) {
+      lightboxImgUrl.value = activeImg.src;
+      isLightboxOpen.value = true;
+      document.body.style.overflow = 'hidden'; 
+    } else if (product.value?.images?.length > 0) {
+      // Respaldo de seguridad directo por datos si el DOM del hijo está muy protegido
+      lightboxImgUrl.value = product.value.images[0];
+      isLightboxOpen.value = true;
+      document.body.style.overflow = 'hidden';
+    }
   }
 };
 
@@ -40,7 +52,7 @@ const closeLightbox = () => {
   document.body.style.overflow = ''; 
 };
 
-// RETORNO INTELIGENTE
+// RETORNO INTELIGENTE ANTI-FOOTER
 const handleGoBack = () => {
   const savedState = sessionStorage.getItem('collection_state');
   const cameFromCollection = sessionStorage.getItem('came_from_collection') === 'true';
@@ -59,21 +71,25 @@ useHead({
   title: computed(() => product.value ? `${product.value.name} | Cushion` : 'Cargando...')
 });
 
+// ✨ PROCESO OPTIMIZADO: Elimina las consultas duplicadas al servidor
 const fetchProduct = async () => {
   loading.value = true;
   try {
+    // 1. Traemos únicamente la pieza en foco (petición ultra liviana al backend)
     const res = await api.get(`/products/${props.slug}`);
     product.value = res.data;
 
-    const all = await api.get('/products');
-    allProducts.value = all.data;
+    // 2. Sistema de Caché Local para Piezas Relacionadas (Evita saturar Spring Boot)
+    const cachedProducts = sessionStorage.getItem('cushion_global_products');
+    if (cachedProducts) {
+      allProducts.value = JSON.parse(cachedProducts);
+    } else {
+      const all = await api.get('/products');
+      allProducts.value = all.data;
+      sessionStorage.setItem('cushion_global_products', JSON.stringify(all.data));
+    }
 
-    // ✨ ANCLA DE RENDERIZADO: Una vez los datos modifican el tamaño real de la pantalla,
-    // obligamos al hilo principal del navegador a saltar al tope superior.
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }, 10);
-    
+    setTimeout(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, 10);
   } catch (err) {
     console.error("Error cargando pieza:", err);
   } finally {
@@ -99,9 +115,6 @@ watch(() => props.slug, () => {
 }, { immediate: true });
 
 onMounted(() => {
-  // ✨ ANTI-MEMORIA DE RECARGA NATIVA:
-  // Si el usuario refresca la página con F5, forzamos al historial del navegador 
-  // a olvidarse de la posición del scroll anterior antes de pintar nada en pantalla.
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
   }
@@ -128,7 +141,7 @@ onMounted(() => {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-24 mb-20">
-        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-wrapper cursor-zoom-in" @click="openLightbox">
+        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-container cursor-zoom-in" @click="openLightbox($event)">
           <ProductGallery :images="product.images" :product-name="product.name" />
           
           <div class="block lg:hidden text-center mt-3 text-[9px] uppercase tracking-[0.2em] text-brand-white/30 font-sans-luxury">
@@ -140,35 +153,17 @@ onMounted(() => {
         <div class="flex flex-col">
           <div class="flex flex-wrap items-center gap-3 mb-4">
             <span class="text-brand-gold text-[10px] tracking-[0.5em] uppercase font-bold">{{ product.category }}</span>
-            <span v-if="product.featured" class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold uppercase tracking-widest">Pieza Exclusiva</span>
           </div>
-
           <h1 class="text-2xl md:text-3xl lg:text-4xl font-serif-elegant text-brand-white mb-4 uppercase leading-tight tracking-wide">
             {{ product.name }}
           </h1>
-
           <p class="text-2xl md:text-3xl text-brand-white/90 mb-8 font-serif-elegant tracking-tight">
             $ {{ product.price.toLocaleString() }}
           </p>
-
           <div class="border-l-2 border-brand-gold pl-6 mb-10">
             <p class="text-brand-white/75 leading-relaxed font-sans-luxury italic text-sm md:text-base">
               "{{ product.description }}"
             </p>
-          </div>
-
-          <div class="bg-brand-white/[0.03] border border-brand-white/10 p-6 md:p-10 mb-8">
-            <h3 class="text-brand-gold text-[10px] uppercase tracking-[0.4em] mb-8 border-b border-brand-gold/20 pb-4">Certificado de Joyería</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
-              <div v-if="product.gemstoneType?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Gema Principal</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.gemstoneType }}</span>
-              </div>
-              <div v-if="product.metalType?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Metal Precioso</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.metalType }}</span>
-              </div>
-            </div>
           </div>
 
           <div class="flex flex-col sm:flex-row items-stretch gap-4" v-if="product.stock > 0">
@@ -178,7 +173,7 @@ onMounted(() => {
               <button @click="selectedQuantity < product.stock && selectedQuantity++" class="text-brand-white/60 hover:text-brand-gold text-lg px-2">+</button>
             </div>
             <button @click="addToCart" class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold uppercase tracking-[0.2em] text-xs py-4 px-8 flex items-center justify-center gap-3">
-              <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa Compra
+              <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa
             </button>
           </div>
         </div>

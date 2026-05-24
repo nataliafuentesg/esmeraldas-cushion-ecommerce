@@ -11,13 +11,6 @@ const route = useRoute();
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 const cartStore = useCartStore();
 
-// ✨ SEGURO EXCLUSIVO DE FLUJO: Garantiza que el terminal móvil inicie arriba al renderizar páginas relacionadas
-const forceTopScroll = () => {
-  if (route.name !== 'coleccion') {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }
-};
-
 useHead({
   title: computed(() => route.meta.title || 'Cushion | Alta Joyería')
 });
@@ -34,9 +27,9 @@ onMounted(() => {
     
     <main class="flex-grow relative">
       <RouterView v-slot="{ Component }">
-        <transition name="fade-page" mode="out-in" @after-enter="forceTopScroll">
+        <transition name="fade-page">
           <KeepAlive :include="['CollectionView']">
-            <component :is="Component" :key="route.fullPath" />
+            <component :is="Component" />
           </KeepAlive>
         </transition>
       </RouterView>
