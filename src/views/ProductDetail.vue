@@ -27,10 +27,9 @@ const selectedQuantity = ref(1);
 const isLightboxOpen = ref(false);
 const lightboxImgUrl = ref('');
 
-// ✨ CAPTURA INTERNA DE LA IMAGEN ACTIVA EN TIEMPO REAL
+// CAPTURA INTERNA DE LA IMAGEN ACTIVA EN TIEMPO REAL
 const openLightbox = (event) => {
   if (window.innerWidth < 1024) {
-    // Buscamos la etiqueta <img> que esté visible o activa dentro del contenedor de la galería del hijo
     const activeImg = event.currentTarget.querySelector('.main-gallery-wrapper img') || event.currentTarget.querySelector('img');
     
     if (activeImg && activeImg.src) {
@@ -38,7 +37,6 @@ const openLightbox = (event) => {
       isLightboxOpen.value = true;
       document.body.style.overflow = 'hidden'; 
     } else if (product.value?.images?.length > 0) {
-      // Respaldo de seguridad directo por datos si el DOM del hijo está muy protegido
       lightboxImgUrl.value = product.value.images[0];
       isLightboxOpen.value = true;
       document.body.style.overflow = 'hidden';
@@ -52,7 +50,7 @@ const closeLightbox = () => {
   document.body.style.overflow = ''; 
 };
 
-// RETORNO INTELIGENTE ANTI-FOOTER
+// GESTIÓN DEL RETORNO NATIVO BLINDADO ANTI-FOOTER
 const handleGoBack = () => {
   const savedState = sessionStorage.getItem('collection_state');
   const cameFromCollection = sessionStorage.getItem('came_from_collection') === 'true';
@@ -71,15 +69,13 @@ useHead({
   title: computed(() => product.value ? `${product.value.name} | Cushion` : 'Cargando...')
 });
 
-// ✨ PROCESO OPTIMIZADO: Elimina las consultas duplicadas al servidor
+// PROCESO OPTIMIZADO DE RED (CACHÉ LOCAL DE PRODUCTOS RELACIONADOS)
 const fetchProduct = async () => {
   loading.value = true;
   try {
-    // 1. Traemos únicamente la pieza en foco (petición ultra liviana al backend)
     const res = await api.get(`/products/${props.slug}`);
     product.value = res.data;
 
-    // 2. Sistema de Caché Local para Piezas Relacionadas (Evita saturar Spring Boot)
     const cachedProducts = sessionStorage.getItem('cushion_global_products');
     if (cachedProducts) {
       allProducts.value = JSON.parse(cachedProducts);
@@ -153,17 +149,49 @@ onMounted(() => {
         <div class="flex flex-col">
           <div class="flex flex-wrap items-center gap-3 mb-4">
             <span class="text-brand-gold text-[10px] tracking-[0.5em] uppercase font-bold">{{ product.category }}</span>
+            <span v-if="product.featured" class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold uppercase tracking-widest">Pieza Exclusiva</span>
           </div>
+
           <h1 class="text-2xl md:text-3xl lg:text-4xl font-serif-elegant text-brand-white mb-4 uppercase leading-tight tracking-wide">
             {{ product.name }}
           </h1>
+
           <p class="text-2xl md:text-3xl text-brand-white/90 mb-8 font-serif-elegant tracking-tight">
             $ {{ product.price.toLocaleString() }}
           </p>
+
           <div class="border-l-2 border-brand-gold pl-6 mb-10">
             <p class="text-brand-white/75 leading-relaxed font-sans-luxury italic text-sm md:text-base">
               "{{ product.description }}"
             </p>
+          </div>
+
+          <div class="bg-brand-white/[0.03] border border-brand-white/10 p-6 md:p-10 mb-8">
+            <h3 class="text-brand-gold text-[10px] uppercase tracking-[0.4em] mb-8 border-b border-brand-gold/20 pb-4">
+              Certificado de Joyería
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+              <div v-if="product.gemstoneType?.trim()" class="flex flex-col">
+                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Gema Principal</span>
+                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.gemstoneType }}</span>
+              </div>
+              <div v-if="product.cutType?.trim()" class="flex flex-col">
+                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Talla / Corte</span>
+                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.cutType }}</span>
+              </div>
+              <div v-if="product.caratWeight?.trim()" class="flex flex-col">
+                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Peso Carates (ct)</span>
+                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.caratWeight }}</span>
+              </div>
+              <div v-if="product.totalWeight?.trim()" class="flex flex-col">
+                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Peso de la Pieza</span>
+                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.totalWeight }}</span>
+              </div>
+              <div v-if="product.metalType?.trim()" class="flex flex-col">
+                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Metal Precioso</span>
+                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.metalType }}</span>
+              </div>
+            </div>
           </div>
 
           <div class="flex flex-col sm:flex-row items-stretch gap-4" v-if="product.stock > 0">
