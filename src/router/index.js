@@ -4,7 +4,6 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  // ✨ SISTEMA DE CONTROL DE SCROLL AISLADO
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition && to.name === 'coleccion') {
       return savedPosition; // Solo el catálogo recupera el punto exacto
