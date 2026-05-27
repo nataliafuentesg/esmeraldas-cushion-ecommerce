@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
@@ -23,11 +23,10 @@ const handleReset = async () => {
 
   loading.value = true;
   try {
-    // Llamada al backend: POST /api/clients/reset-password
     await authStore.resetPassword(token, password.value);
     successMsg.value = "Contraseña actualizada. Redirigiendo...";
     setTimeout(() => router.push('/auth'), 3000);
-  } catch (error) {
+  } catch {
     errorMsg.value = "El enlace ha expirado o es inválido.";
   } finally {
     loading.value = false;
@@ -48,7 +47,7 @@ const handleReset = async () => {
       <form @submit.prevent="handleReset" class="space-y-6">
         <input v-model="password" type="password" placeholder="Nueva Contraseña" required class="input-luxury">
         <input v-model="confirmPassword" type="password" placeholder="Confirmar Nueva Contraseña" required class="input-luxury">
-        
+
         <button type="submit" :disabled="loading" class="btn-luxury">
           {{ loading ? 'Actualizando...' : 'Cambiar Contraseña' }}
         </button>

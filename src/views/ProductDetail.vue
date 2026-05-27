@@ -8,6 +8,7 @@ import { Icon } from '@iconify/vue';
 import ProductGallery from '@/components/ProductGallery.vue';
 import RelatedProducts from '@/components/RelatedProducts.vue';
 import { useHead } from '@unhead/vue';
+import { useAnalytics } from '@/composables/useAnalytics';
 
 const route = useRoute();
 const router = useRouter();
@@ -18,6 +19,7 @@ const props = defineProps({
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
 const allProducts = ref([]);
 const loading = ref(true);
@@ -26,7 +28,7 @@ const selectedQuantity = ref(1);
 // ESTADOS DEL LIGHTBOX PREMIUM
 const isLightboxOpen = ref(false);
 const lightboxImgUrl = ref('');
-const galleryRef = ref(null); 
+const galleryRef = ref(null);
 
 const openLightboxOnActiveImage = (event) => {
   if (window.innerWidth < 1024) {
@@ -36,7 +38,7 @@ const openLightboxOnActiveImage = (event) => {
     if (activeImg && activeImg.src) {
       lightboxImgUrl.value = activeImg.src;
       isLightboxOpen.value = true;
-      document.body.style.overflow = 'hidden'; 
+      document.body.style.overflow = 'hidden';
     }
   }
 };
@@ -72,6 +74,7 @@ const fetchProduct = async () => {
   try {
     const res = await api.get(`/products/${props.slug}`);
     product.value = res.data;
+    trackViewProduct(res.data); // ← analytics: vista de producto
 
     const cachedProducts = sessionStorage.getItem('cushion_global_products');
     if (cachedProducts) {
@@ -92,8 +95,36 @@ const fetchProduct = async () => {
 
 const addToCart = async () => {
   if (!product.value) return;
+  trackAddToCart(product.value, selectedQuantity.value); // ← analytics
   await cartStore.addItem(product.value, selectedQuantity.value);
   cartStore.isOffCanvasOpen = true;
+};
+
+const WA_NUMBER = '573136133822';
+
+const handleWhatsAppClick = () => {
+  if (!product.value) return;
+
+  // 1. Analytics
+  trackWhatsAppClick(product.value);
+
+  // 2. Registrar en backend (fire & forget — no bloquea la UX)
+  const params = new URLSearchParams(window.location.search);
+  api.post('/product-inquiries', {
+    productSlug:  product.value.slug,
+    productName:  product.value.name,
+    channel:      'WHATSAPP',
+    clientEmail:  authStore.user?.email || null,
+    utmSource:    params.get('utm_source'),
+    utmMedium:    params.get('utm_medium'),
+    utmCampaign:  params.get('utm_campaign'),
+  }).catch(() => {}); // silencioso — no interrumpir flujo
+
+  // 3. Abrir WhatsApp con mensaje pre-llenado
+  const msg = encodeURIComponent(
+    `Hola, me interesa la joya *${product.value.name}* ($${product.value.price.toLocaleString()} COP). ¿Me pueden dar más información?`
+  );
+  window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
 };
 
 const relatedProducts = computed(() => {
@@ -212,10 +243,22 @@ onUnmounted(() => {
                 class="text-brand-white/60 hover:text-brand-gold text-lg px-2">+</button>
             </div>
             <button @click="addToCart"
-              class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold tracking-wide text-xs py-4 px-8 flex items-center justify-center gap-3">
+              class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold tracking-wide text-xs py-4 px-8 flex items-center justify-center gap-3 transition-colors duration-300">
               <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa
             </button>
           </div>
+
+          <!-- Botón WhatsApp — siempre visible, con o sin stock -->
+          <button @click="handleWhatsAppClick"
+            class="mt-3 w-full flex items-center justify-center gap-3 border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 py-4 text-xs font-sans-luxury tracking-wide transition-all duration-300 group">
+            <Icon icon="simple-icons:whatsapp" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+            Consultar por WhatsApp
+          </button>
+
+          <!-- Nota de confianza -->
+          <p class="mt-4 text-center text-[10px] text-brand-white/30 font-sans-luxury tracking-wide">
+            Respuesta en menos de 24 horas hábiles · Asesoría personalizada sin costo
+          </p>
         </div>
       </div>
 

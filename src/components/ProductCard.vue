@@ -29,10 +29,13 @@ const onMainImageError = () => { mainImageFailed.value = true; };
 </script>
 
 <template>
-  <RouterLink 
+  <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
-    class="group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 hover:border-brand-gold/30 text-brand-white transition-all duration-500 relative"
+    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
   >
+    <!-- Shimmer de lujo en hover -->
+    <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
+
     <div class="aspect-square overflow-hidden relative bg-brand-white/[0.02] border-b border-brand-white/5">
 
       <!-- Placeholder cuando no hay imagen o falla la carga -->
@@ -47,7 +50,7 @@ const onMainImageError = () => { mainImageFailed.value = true; };
         v-if="mainImage && !mainImageFailed"
         :src="mainImage"
         :alt="product.name"
-        class="w-full h-full object-cover transition-all duration-1000 ease-in-out group-hover:scale-105"
+        class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.06]"
         :class="{ 'group-hover:opacity-0': hoverImage }"
         @error="onMainImageError"
       />
@@ -56,21 +59,28 @@ const onMainImageError = () => { mainImageFailed.value = true; };
         v-if="hoverImage && !mainImageFailed"
         :src="hoverImage"
         :alt="product.name + ' vista alternativa'"
-        class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-all duration-1000 ease-in-out group-hover:opacity-100 group-hover:scale-105"
+        class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-[1.06]"
       />
-      
-      <span 
-        v-if="product.featured" 
+
+      <span
+        v-if="product.featured"
         class="absolute top-4 left-4 bg-brand-black/80 backdrop-blur-md text-brand-gold border border-brand-gold/30 px-2.5 py-1 text-[8px] font-bold tracking-wide z-10"
       >
         Exclusivo
       </span>
+
+      <!-- Overlay de acción en hover -->
+      <div class="absolute inset-0 bg-brand-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10">
+        <span class="text-brand-white/80 text-[9px] tracking-[0.3em] font-sans-luxury translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+          Ver pieza
+        </span>
+      </div>
     </div>
 
     <div class="p-5 md:p-6 text-center flex-1 flex flex-col justify-between gap-4">
-      
+
       <div>
-        <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80">
+        <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
           {{ product.category }}
         </p>
         <h3 class="font-serif-elegant text-base md:text-lg tracking-wide group-hover:text-brand-gold transition-colors duration-300 line-clamp-2 min-h-[3rem] flex items-center justify-center">
@@ -78,8 +88,8 @@ const onMainImageError = () => { mainImageFailed.value = true; };
         </h3>
       </div>
 
-      <div class="pt-3 border-t border-brand-white/5">
-        <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium">
+      <div class="pt-3 border-t border-brand-white/5 group-hover:border-brand-gold/20 transition-colors duration-500">
+        <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
           $ {{ product.price.toLocaleString() }}
         </p>
       </div>
@@ -91,20 +101,41 @@ const onMainImageError = () => { mainImageFailed.value = true; };
 <style scoped>
 @reference "../assets/main.css";
 
-/* Simplificamos los estilos nativos para delegar la animación de elevación 
-   a las vistas globales de forma limpia y fluida */
-.group {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-.group:hover {
-  box-shadow: 0 15px 30px rgba(197, 168, 128, 0.05);
+.product-card {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 0.4s ease;
 }
 
-/* Forzar el truncado a dos líneas máximas si el nombre es kilométrico */
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(184, 155, 106, 0.12),
+              0 8px 16px rgba(0, 0, 0, 0.3);
+  border-color: rgba(184, 155, 106, 0.25);
+}
+
+/* Shimmer sutil en hover — efecto de luz sobre la joya */
+.card-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(184, 155, 106, 0.04) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  transition: background-position 0.6s ease;
+  background-position: 200% 0;
+}
+
+.product-card:hover .card-shimmer {
+  background-position: -200% 0;
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;  
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 </style>
