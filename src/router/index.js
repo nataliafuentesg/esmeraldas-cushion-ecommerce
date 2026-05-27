@@ -91,6 +91,12 @@ const router = createRouter({
       path: '/reset-password',
       name: 'reset-password',
       component: () => import('@/views/ResetPassword.vue')
+    },
+    {
+      path: '/esmeraldas',
+      name: 'esmeraldas',
+      component: () => import('@/views/EsmeraldasView.vue'),
+      meta: { title: 'Esmeraldas Personalizadas | Cushion' }
     }
   ]
 });

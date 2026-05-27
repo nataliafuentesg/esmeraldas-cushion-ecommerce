@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useAuthStore } from '@/stores/auth';
+//import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart'
 
-const authStore = useAuthStore();
+//const authStore = useAuthStore();
 const cartStore = useCartStore()
-const totalItems = computed(() => cartStore.items.length) 
+const totalItems = computed(() => cartStore.items.length)
 
 const isMenuOpen = ref(false)
 const toggleMenu = () => {
@@ -14,13 +14,13 @@ const toggleMenu = () => {
 }
 
 const toggleCart = () => {
-    cartStore.isOffCanvasOpen = !cartStore.isOffCanvasOpen; 
+    cartStore.isOffCanvasOpen = !cartStore.isOffCanvasOpen;
 };
 
 const navItems = [
   { name: 'HOME', path: '/' },
-  { name: 'ESMERALDAS', path: '/coleccion/esmeraldas' }, 
-  { name: 'JOYAS', path: '/coleccion/joyas' }, 
+  { name: 'ESMERALDAS', path: '/esmeraldas' },
+  { name: 'JOYAS', path: '/coleccion/joyas' },
   { name: 'CONTACTO', path: '/contacto' },
 ]
 
@@ -35,8 +35,8 @@ const mobileNavItems = navItems;
 <template>
   <nav class="bg-brand-black border-b border-brand-white/5 sticky top-0 z-[60]">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center relative">
-      
-      <div class="flex items-center justify-start lg:pl-10 xl:pl-20 flex-1"> 
+
+      <div class="flex items-center justify-start lg:pl-10 xl:pl-20 flex-1">
           <button @click="toggleMenu" class="lg:hidden text-brand-white z-50">
             <svg v-if="!isMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16m-7 6h7" />
@@ -45,11 +45,11 @@ const mobileNavItems = navItems;
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          
+
           <div class="hidden lg:flex space-x-12 xl:space-x-16">
-            <RouterLink 
-              v-for="item in navItemsLeft" 
-              :key="item.name" 
+            <RouterLink
+              v-for="item in navItemsLeft"
+              :key="item.name"
               :to="item.path"
               class="nav-link text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
             >
@@ -58,22 +58,22 @@ const mobileNavItems = navItems;
           </div>
       </div>
 
-      <RouterLink to="/" class="absolute left-1/2 transform -translate-x-1/2 z-50 px-2 sm:px-4 md:px-6"> 
+      <RouterLink to="/" class="absolute left-1/2 transform -translate-x-1/2 z-50 px-2 sm:px-4 md:px-6">
         <img src="@/assets/images/logo-cushion-white.png" alt="Cushion Joyas & Esmeraldas" class="h-14 md:h-16 p-2 object-contain">
       </RouterLink>
 
-      <div class="flex items-center justify-end lg:pr-10 xl:pr-20 flex-1"> 
+      <div class="flex items-center justify-end lg:pr-10 xl:pr-20 flex-1">
           <div class="hidden lg:flex space-x-12 xl:space-x-16">
-              <RouterLink 
-                v-for="item in navItemsRight" 
-                :key="item.name" 
+              <RouterLink
+                v-for="item in navItemsRight"
+                :key="item.name"
                 :to="item.path"
                 class="nav-link text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
               >
                 {{ item.name }}
               </RouterLink>
           </div>
-        
+
           <button @click="toggleCart" class="relative text-brand-white hover:text-brand-gold ml-6 lg:ml-12 transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -88,9 +88,9 @@ const mobileNavItems = navItems;
     <transition name="slide-down">
       <div v-if="isMenuOpen" class="lg:hidden fixed top-0 left-0 w-full h-screen bg-brand-black/95 backdrop-blur-sm z-40 pt-24 pb-10 overflow-y-auto">
         <nav class="flex flex-col items-center space-y-8">
-          <RouterLink 
-            v-for="item in mobileNavItems" 
-            :key="item.name" 
+          <RouterLink
+            v-for="item in mobileNavItems"
+            :key="item.name"
             :to="item.path"
             @click="toggleMenu"
             class="nav-link-mobile text-2xl text-brand-white hover:text-brand-gold font-serif-elegant transition-colors"
@@ -114,7 +114,7 @@ const mobileNavItems = navItems;
     border-bottom: 1px solid transparent;
 }
 .nav-link:hover {
-    border-color: #B89B6A; 
+    border-color: #B89B6A;
 }
 
 /* Transición de menú móvil */

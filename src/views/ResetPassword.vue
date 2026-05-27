@@ -58,7 +58,7 @@ const handleReset = async () => {
 </template>
 
 <style scoped>
-@reference "../../assets/main.css";
+@reference "../assets/main.css";
 .input-luxury { @apply w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm focus:outline-none focus:border-brand-gold transition-all; }
 .btn-luxury { @apply w-full bg-brand-white text-brand-black py-4 text-[10px] font-bold tracking-wide hover:bg-brand-gold hover:text-brand-white transition-all; }
 </style>

@@ -9,6 +9,7 @@ const AdminOrders = defineAsyncComponent(() => import('@/components/admin/AdminO
 const AdminProducts = defineAsyncComponent(() => import('@/components/admin/AdminProducts.vue'));
 const AdminMessages = defineAsyncComponent(() => import('@/components/admin/AdminMessages.vue'));
 const AdminReviews = defineAsyncComponent(() => import('@/components/admin/AdminReviews.vue'));
+const AdminEsmeraldas = defineAsyncComponent(() => import('@/components/admin/AdminEsmeraldas.vue'));
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -64,6 +65,9 @@ const selectTab = (tab) => {
         <button @click="selectTab('resenas')" :class="activeTab === 'resenas' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
           <Icon icon="lucide:star" class="w-5 h-5 md:w-4 md:h-4" /><span>Reseñas</span>
         </button>
+        <button @click="selectTab('esmeraldas')" :class="activeTab === 'esmeraldas' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
+          <Icon icon="lucide:gem" class="w-5 h-5 md:w-4 md:h-4 text-emerald-400" /><span>Consultas Esmeraldas</span>
+        </button>
       </nav>
 
       <div class="mt-8 pt-6 border-t border-brand-white/10">
@@ -76,9 +80,11 @@ const selectTab = (tab) => {
     <main class="flex-1 p-4 md:p-10 overflow-x-hidden">
       <transition name="fade" mode="out-in">
         <component :is="
-          activeTab === 'pedidos' ? AdminOrders : 
-          activeTab === 'productos' ? AdminProducts : 
-          activeTab === 'mensajes' ? AdminMessages : AdminReviews
+          activeTab === 'pedidos'     ? AdminOrders :
+          activeTab === 'productos'   ? AdminProducts :
+          activeTab === 'mensajes'    ? AdminMessages :
+          activeTab === 'esmeraldas'  ? AdminEsmeraldas :
+          AdminReviews
         " />
       </transition>
     </main>
