@@ -1,63 +1,58 @@
-/* src/assets/main.css */
+/* ============================================================
+   src/assets/main.css  —  CUSHION / ESMERALDAS
+   Fuente única de verdad para tokens de diseño (Tailwind v4)
 
-/* DIRECTIVAS DE TAILWIND */
+   PARA CAMBIAR LA MARCA: editar SOLO el bloque @theme de abajo.
+   Los colores, fuentes y tamaños se propagan automáticamente
+   a toda la app gracias a las variables CSS.
+   ============================================================ */
+
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* * CLAVE DEL LUJO: Definimos colores y fuentes usando la sintaxis @theme 
- * compatible con la versión de Tailwind de tu proyecto funcional.
- */
+/* ────────────────────────────────────────────────────────────
+   TOKENS DE DISEÑO GLOBALES
+   Tailwind v4 usa @theme como fuente de verdad.
+   Clases generadas automáticamente: bg-brand-black, text-brand-gold,
+   font-serif-elegant, font-sans-luxury, etc.
+   ──────────────────────────────────────────────────────────── */
 @theme {
-    /* Definición de Fuentes de Lujo */
-    --font-serif-elegant: "Cormorant Garamond", ui-serif, Georgia; 
-    --font-sans-luxury: "Montserrat", ui-sans-serif, system-ui; 
-    
-    /* Colores de CUSHION */
-    --color-brand-black: #1E1E1E;   
-    --color-brand-primary: #4C7F62; /* Esmeralda (Principal) */
-    --color-brand-gold: #B89B6A;    /* Dorado */
-    --color-brand-white: #F5F5F5;   /* Blanco Roto/Texto */
-    
-    /* ********************************************** */
-    /* ¡NUEVO COLOR PARA EL FONDO DEL FOOTER! */
-    --color-brand-emerald-dark: #005C4D; 
-    /* ********************************************** */
+    /* --- TIPOGRAFÍAS ---
+       Para cambiar la fuente de titulares: editar --font-serif-elegant
+       Para cambiar la fuente de cuerpo/navegación: editar --font-sans-luxury
+       Recuerda importar la nueva fuente en index.html si cambias. */
+    --font-serif-elegant: "Cormorant Garamond", ui-serif, Georgia, serif;
+    --font-sans-luxury:   "Montserrat", ui-sans-serif, system-ui, sans-serif;
 
-    /* Mapeo de colores para usarlos con las clases de Tailwind */
-    --color-black: var(--color-brand-black);
-    --color-white: var(--color-brand-white);
-    --color-gold: var(--color-brand-gold);
-    --color-primary: var(--color-brand-primary);
-    
-    /* CLAVE: Mapeamos el nuevo color oscuro para usarlo en Tailwind */
-    --color-emerald-dark: var(--color-brand-emerald-dark);
+    /* --- PALETA DE COLORES ---
+       Para un rebrand: basta con cambiar los valores hex aquí abajo. */
+    --color-brand-black:        #1E1E1E;   /* Fondo principal            */
+    --color-brand-white:        #F5F5F5;   /* Texto y elementos claros   */
+    --color-brand-gold:         #B89B6A;   /* Dorado de Cushion          */
+    --color-brand-primary:      #4C7F62;   /* Verde esmeralda            */
+    --color-brand-emerald-dark: #005C4D;   /* Esmeralda oscura (footer)  */
 }
 
-/* Fuerza el color de fondo en el cuerpo HTML */
+/* ────────────────────────────────────────────────────────────
+   BASE
+   ──────────────────────────────────────────────────────────── */
 html, body {
-    background-color: var(--color-brand-black); 
+    background-color: var(--color-brand-black);
+    color: var(--color-brand-white);
     min-height: 100vh;
 }
 
-/* CLASES DE UTILIDAD PARA USAR LAS NUEVAS FUENTES */
-@layer base {
-  .font-serif-elegant {
-    font-family: var(--font-serif-elegant);
-  }
-  .font-sans-luxury {
-    font-family: var(--font-sans-luxury);
-  }
-}
-
-/* Otras utilidades que definimos antes */
+/* ────────────────────────────────────────────────────────────
+   UTILIDADES PERSONALIZADAS
+   ──────────────────────────────────────────────────────────── */
 @layer utilities {
     .nav-link {
-        color: var(--color-brand-white) !important; 
-        letter-spacing: 0.2em;
+        color: var(--color-brand-white);
+    
         padding-bottom: 3px;
         border-bottom: 1px solid transparent;
-        /* Estilo de hover en Tailwind para color */
+        transition: border-color 0.2s;
+    }
+    .nav-link:hover {
+        border-color: var(--color-brand-gold);
     }
 }

@@ -44,14 +44,14 @@ const openOrderDetails = (order) => {
 
 <template>
   <div>
-    <h3 class="text-2xl font-serif-elegant text-brand-white tracking-widest uppercase mb-8 border-b border-brand-white/10 pb-4">Gestión de Pedidos</h3>
+    <h3 class="text-2xl font-serif-elegant text-brand-white tracking-wide mb-8 border-b border-brand-white/10 pb-4">Gestión de Pedidos</h3>
     
-    <div v-if="loading" class="text-brand-gold uppercase tracking-widest text-xs animate-pulse">Cargando...</div>
+    <div v-if="loading" class="text-brand-gold tracking-wide text-xs animate-pulse">Cargando...</div>
     
     <div v-else class="overflow-x-auto bg-brand-white/5 border border-brand-white/10 p-1">
       <table class="w-full text-left min-w-[900px]">
         <thead class="bg-brand-black/50">
-          <tr class="text-brand-gold text-[10px] uppercase tracking-[0.2em]">
+          <tr class="text-brand-gold text-[10px] tracking-wide">
             <th class="p-4">Pedido</th>
             <th class="p-4">Cliente</th>
             <th class="p-4">Total</th>
@@ -68,12 +68,12 @@ const openOrderDetails = (order) => {
             </td>
             <td class="p-4 text-brand-gold font-bold">${{ order.totalAmount.toLocaleString() }}</td>
             <td class="p-4">
-              <select v-model="order.status" @change="updateOrderStatus(order.id, order.status)" class="bg-transparent border border-brand-white/20 text-brand-white text-[10px] uppercase tracking-widest p-2 focus:border-brand-gold focus:outline-none w-full cursor-pointer">
+              <select v-model="order.status" @change="updateOrderStatus(order.id, order.status)" class="bg-transparent border border-brand-white/20 text-brand-white text-[10px] tracking-wide p-2 focus:border-brand-gold focus:outline-none w-full cursor-pointer">
                 <option v-for="status in statusOptions" :key="status" :value="status" class="bg-brand-black">{{ status.replace('_', ' ') }}</option>
               </select>
             </td>
             <td class="p-4 text-center">
-              <button @click="openOrderDetails(order)" class="text-brand-gold text-[10px] uppercase tracking-[0.2em] underline underline-offset-4 hover:text-brand-white transition-colors">
+              <button @click="openOrderDetails(order)" class="text-brand-gold text-[10px] tracking-wide underline underline-offset-4 hover:text-brand-white transition-colors">
                 Ver Detalles
               </button>
             </td>
@@ -92,7 +92,7 @@ const openOrderDetails = (order) => {
         <h3 class="text-2xl font-serif-elegant text-brand-gold mb-2 tracking-wider">
           Pedido #{{ selectedOrder.orderNumber }}
         </h3>
-        <p class="text-[10px] text-brand-white/50 uppercase tracking-[0.2em] mb-8 border-b border-brand-white/10 pb-4">
+        <p class="text-[10px] text-brand-white/50 tracking-wide mb-8 border-b border-brand-white/10 pb-4">
           Fecha: {{ new Date(selectedOrder.createdAt).toLocaleString() }}
         </p>
         
@@ -100,43 +100,43 @@ const openOrderDetails = (order) => {
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-brand-white/5 p-4 border border-brand-white/10">
             <div>
-              <h4 class="text-brand-gold text-[10px] uppercase tracking-widest mb-2">Datos del Cliente</h4>
+              <h4 class="text-brand-gold text-[10px] tracking-wide mb-2">Datos del Cliente</h4>
               <p class="text-brand-white text-sm font-sans-luxury">{{ selectedOrder.customerName }}</p>
               <p class="text-brand-white/70 text-sm font-sans-luxury">{{ selectedOrder.customerEmail }}</p>
               <p class="text-brand-white/70 text-sm font-sans-luxury">Tel: {{ selectedOrder.phoneNumber }}</p>
             </div>
             
             <div>
-              <h4 class="text-brand-gold text-[10px] uppercase tracking-widest mb-2">Dirección de Envío</h4>
+              <h4 class="text-brand-gold text-[10px] tracking-wide mb-2">Dirección de Envío</h4>
               <p class="text-brand-white text-sm font-sans-luxury leading-relaxed">{{ selectedOrder.shippingAddress }}</p>
             </div>
           </div>
 
           <div v-if="selectedOrder.notes" class="bg-brand-gold/10 p-4 border border-brand-gold/30">
-            <h4 class="text-brand-gold text-[10px] uppercase tracking-widest mb-2">Notas del Cliente</h4>
+            <h4 class="text-brand-gold text-[10px] tracking-wide mb-2">Notas del Cliente</h4>
             <p class="text-brand-white text-sm font-sans-luxury italic">"{{ selectedOrder.notes }}"</p>
           </div>
 
           <div>
-            <h4 class="text-brand-white uppercase tracking-widest text-xs border-b border-brand-white/10 pb-2 mb-4">Artículos en este pedido</h4>
+            <h4 class="text-brand-white tracking-wide text-xs border-b border-brand-white/10 pb-2 mb-4">Artículos en este pedido</h4>
             
             <div v-if="selectedOrder.items && selectedOrder.items.length > 0" class="space-y-3">
               <div v-for="item in selectedOrder.items" :key="item.id" class="flex justify-between items-center text-sm border-b border-brand-white/5 pb-2">
-                <p class="text-brand-white/80 font-sans-luxury tracking-widest flex-1">
+                <p class="text-brand-white/80 font-sans-luxury tracking-wide flex-1">
                   <span class="text-brand-gold font-bold mr-2">{{ item.quantity }}x</span> 
                   {{ item.product?.name || 'Joya Eliminada del Catálogo' }}
                 </p>
-                <p class="text-brand-white/80 font-sans-luxury tracking-widest">
+                <p class="text-brand-white/80 font-sans-luxury tracking-wide">
                   ${{ item.priceAtPurchase.toLocaleString() }}
                 </p>
               </div>
             </div>
-            <div v-else class="text-brand-white/50 text-xs uppercase tracking-widest italic">
+            <div v-else class="text-brand-white/50 text-xs tracking-wide italic">
               Detalle de artículos no disponible.
             </div>
             
             <div class="flex justify-between items-center mt-6 pt-4 border-t border-brand-white/20">
-              <span class="text-brand-gold font-serif-elegant uppercase tracking-wider text-lg">Total Pagado</span>
+              <span class="text-brand-gold font-serif-elegant tracking-wider text-lg">Total Pagado</span>
               <span class="text-brand-gold font-serif-elegant tracking-wider text-xl">${{ selectedOrder.totalAmount.toLocaleString() }}</span>
             </div>
           </div>

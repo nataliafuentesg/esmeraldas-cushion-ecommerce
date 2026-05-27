@@ -85,7 +85,7 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
   <div class="fixed inset-0 bg-brand-black z-[9999] flex items-center justify-center overflow-hidden select-none antialiased">
     
     <!-- SALIR: Rediseño minimalista de perfil ultra delgado -->
-    <button @click="router.push('/')" class="absolute top-6 left-6 z-[10020] text-brand-white/60 border border-brand-white/10 px-4 py-2 text-[9px] uppercase tracking-[0.35em] font-sans-luxury hover:border-brand-gold hover:text-brand-gold bg-transparent backdrop-blur-sm transition-all duration-300">
+    <button @click="router.push('/')" class="absolute top-6 left-6 z-[10020] text-brand-white/60 border border-brand-white/10 px-4 py-2 text-[9px] tracking-[0.35em] font-sans-luxury hover:border-brand-gold hover:text-brand-gold bg-transparent backdrop-blur-sm transition-all duration-300">
       ✕ Salir
     </button>
 
@@ -99,7 +99,7 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
     </button>
 
     <!-- Loader -->
-    <div v-if="loading" class="text-brand-gold/60 font-sans-luxury text-[9px] uppercase tracking-[0.6em] animate-pulse">
+    <div v-if="loading" class="text-brand-gold/60 font-sans-luxury text-[9px] tracking-[0.6em] animate-pulse">
       Cargando Lookbook...
     </div>
 
@@ -117,12 +117,12 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
             <h1 class="text-4xl md:text-5xl lg:text-6xl text-brand-white font-serif-elegant font-normal tracking-wide normal-case mb-3">
               Lookbook
             </h1>
-            <p class="text-brand-gold text-[10px] tracking-[0.5em] font-sans-luxury uppercase font-light">
+            <p class="text-brand-gold text-[10px] tracking-[0.5em] font-sans-luxury font-light">
               Edición 2026
             </p>
             
             <div class="mt-20 flex flex-col items-center opacity-30">
-              <span class="text-[8px] text-brand-white uppercase tracking-[0.4em] mb-4 font-sans-luxury">Desliza para hojear</span>
+              <span class="text-[8px] text-brand-white tracking-[0.4em] mb-4 font-sans-luxury">Desliza para hojear</span>
               <div class="w-[1px] h-16 bg-gradient-to-b from-brand-gold to-transparent"></div>
             </div>
           </div>
@@ -136,7 +136,7 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
             <div class="absolute inset-8 border border-brand-white/[0.03] pointer-events-none z-0"></div>
             
             <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10">
-              <span class="text-brand-gold text-[9px] uppercase tracking-[0.6em] mb-3 font-sans-luxury font-light">Colección</span>
+              <span class="text-brand-gold text-[9px] tracking-[0.6em] mb-3 font-sans-luxury font-light">Colección</span>
               <h2 class="text-3xl md:text-4xl text-brand-white font-serif-elegant tracking-wide normal-case font-normal italic">
                 {{ category }}
               </h2>
@@ -170,7 +170,7 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
 
               </div>
               
-              <span class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[7px] text-brand-white/20 tracking-[0.5em] uppercase font-sans-luxury">
+              <span class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[7px] text-brand-white/20 tracking-[0.5em] font-sans-luxury">
                 Cushion — {{ category }}
               </span>
             </div>
@@ -182,18 +182,18 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
           <div class="absolute inset-6 md:inset-8 border border-brand-white/[0.05] pointer-events-none z-0"></div>
           
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-10 z-10">
-            <span class="text-brand-gold text-[9px] uppercase tracking-[0.5em] mb-3 font-sans-luxury font-light">Final de la edición</span>
+            <span class="text-brand-gold text-[9px] tracking-[0.5em] mb-3 font-sans-luxury font-light">Final de la edición</span>
             <h2 class="text-3xl md:text-4xl text-brand-white font-serif-elegant tracking-wide normal-case font-normal mb-8">
               Fin del Catálogo
             </h2>
             
             <div class="h-[1px] w-12 bg-brand-gold/30 mb-10"></div>
             
-            <button @click="router.push('/')" class="px-8 py-3 border border-brand-gold text-brand-gold font-sans-luxury text-[9px] uppercase tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-all duration-300 bg-transparent">
+            <button @click="router.push('/')" class="px-8 py-3 border border-brand-gold text-brand-gold font-sans-luxury text-[9px] tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-all duration-300 bg-transparent">
               Visitar Tienda
             </button>
 
-            <p class="absolute bottom-12 text-brand-white/20 font-sans-luxury text-[8px] uppercase tracking-[0.4em] leading-relaxed">
+            <p class="absolute bottom-12 text-brand-white/20 font-sans-luxury text-[8px] tracking-[0.4em] leading-relaxed">
               Alta Joyería<br>
               Bogotá, Colombia
             </p>

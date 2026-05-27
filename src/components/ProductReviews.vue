@@ -21,7 +21,7 @@ const getStarIcons = (rating) => {
 
 <template>
     <div class="py-16">
-        <h2 class="text-3xl font-serif-elegant text-brand-white text-center mb-10 border-b border-brand-gold/50 pb-4 uppercase tracking-widest">
+        <h2 class="text-3xl font-serif-elegant text-brand-white text-center mb-10 border-b border-brand-gold/50 pb-4 tracking-wide">
             Opiniones de Nuestros Clientes
         </h2>
         
@@ -48,7 +48,7 @@ const getStarIcons = (rating) => {
         </div>
         
         <div class="text-center mt-12">
-            <button class="px-8 py-3 bg-brand-black border border-brand-white/50 text-brand-white uppercase font-bold text-sm tracking-widest hover:border-brand-gold hover:text-brand-gold transition-colors duration-300">
+            <button class="px-8 py-3 bg-brand-black border border-brand-white/50 text-brand-white font-bold text-sm tracking-wide hover:border-brand-gold hover:text-brand-gold transition-colors duration-300">
                 Ver Todas las Opiniones
             </button>
         </div>

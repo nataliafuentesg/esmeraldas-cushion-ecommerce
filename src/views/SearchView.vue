@@ -74,8 +74,8 @@ onMounted(fetchProducts);
         <div class="container mx-auto px-4 sm:px-6 lg:px-20">
             
             <div class="max-w-3xl mx-auto text-center mb-16">
-                <span class="text-brand-gold text-[10px] tracking-[0.6em] uppercase font-bold block mb-3">Galería de Exploración</span>
-                <h1 class="text-3xl md:text-4xl font-serif-elegant text-brand-white uppercase tracking-wide mb-8">
+                <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Galería de Exploración</span>
+                <h1 class="text-3xl md:text-4xl font-serif-elegant text-brand-white tracking-wide mb-8">
                     Resultados de Búsqueda
                 </h1>
                 
@@ -99,7 +99,7 @@ onMounted(fetchProducts);
 
             <div v-if="loading" class="flex flex-col items-center justify-center py-20">
                 <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-10 h-10 mb-4" />
-                <span class="text-[9px] tracking-widest text-brand-white/40 uppercase">Abriendo Bóvedas de Inventario...</span>
+                <span class="text-[9px] tracking-wide text-brand-white/40">Abriendo Bóvedas de Inventario...</span>
             </div>
 
             <div v-else>
@@ -113,13 +113,13 @@ onMounted(fetchProducts);
 
                 <div v-else class="text-center py-24 border border-brand-white/5 bg-brand-white/[0.01] max-w-xl mx-auto p-8">
                     <Icon icon="lucide:package-open" class="text-brand-gold/40 w-12 h-12 mx-auto mb-4" />
-                    <h3 class="text-brand-white text-lg font-serif-elegant uppercase mb-2">No se hallaron coincidencias</h3>
+                    <h3 class="text-brand-white text-lg font-serif-elegant mb-2">No se hallaron coincidencias</h3>
                     <p class="text-brand-white/40 text-xs font-sans-luxury leading-relaxed mb-6">
                         No encontramos piezas registradas con esos términos. Intenta buscando palabras clave individuales como "Anillo", "OB", "Cluster" o "Topos".
                     </p>
                     <button 
                         @click="localSearchQuery = ''; router.push('/coleccion')"
-                        class="border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black text-[10px] font-bold uppercase tracking-widest px-6 py-3 transition-colors"
+                        class="border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black text-[10px] font-bold tracking-wide px-6 py-3 transition-colors"
                     >
                         Ver Catálogo Completo
                     </button>

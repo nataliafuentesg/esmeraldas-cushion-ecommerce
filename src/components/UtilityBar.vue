@@ -45,9 +45,9 @@ const filteredResults = computed(() => {
         const metal = normalizeText(product.metalType);
         const gema = normalizeText(product.gemstoneType);
 
-        return searchTerms.every(term => 
-            name.includes(term) || 
-            category.includes(term) || 
+        return searchTerms.every(term =>
+            name.includes(term) ||
+            category.includes(term) ||
             description.includes(term) ||
             metal.includes(term) ||
             gema.includes(term)
@@ -90,17 +90,17 @@ const goToProfile = () => {
 <template>
     <div class="bg-brand-black/70 border-t border-brand-white/10 text-brand-white py-2 relative z-40">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm">
-            
+
             <div class="flex items-center w-full lg:pr-10 xl:pr-20 lg:pl-10 xl:pl-20">
-                <button @click="toggleSearch" 
-                        class="flex items-center space-x-2 uppercase font-sans-luxury text-xs 
+                <button @click="toggleSearch"
+                        class="flex items-center space-x-2 font-sans-luxury text-xs
                                 hover:text-brand-gold transition-colors tracking-wider">
                     <Icon icon="lucide:search" class="w-4 h-4" />
                     <span class="hidden sm:block">Búsqueda</span>
                 </button>
-                
-                <button @click="goToProfile" 
-                        class="flex items-center space-x-2 uppercase font-sans-luxury text-xs 
+
+                <button @click="goToProfile"
+                        class="flex items-center space-x-2 font-sans-luxury text-xs
                                 hover:text-brand-gold transition-colors tracking-wider ml-auto">
                     <Icon icon="lucide:user" class="w-4 h-4" />
                     <span class="hidden sm:block">Mi Cuenta</span>
@@ -120,20 +120,20 @@ const goToProfile = () => {
         >
             <div v-if="isSearchOpen" class="fixed inset-x-0 top-0 bg-brand-black border-b border-brand-white/10 z-[100] shadow-2xl py-8">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-20">
-                    
+
                     <div class="flex justify-between items-center mb-6">
-                        <span class="text-[10px] tracking-[0.4em] text-brand-gold uppercase font-bold">Buscador de Piezas</span>
+                        <span class="text-[10px] tracking-[0.4em] text-brand-gold font-bold">Buscador de Piezas</span>
                         <button @click="toggleSearch" class="text-brand-white/60 hover:text-brand-white transition-colors">
                             <Icon icon="lucide:x" class="w-6 h-6" />
                         </button>
                     </div>
 
                     <div class="relative flex items-center border-b border-brand-white/20 focus-within:border-brand-gold transition-colors pb-2">
-                        <input 
+                        <input
                             id="search-input"
                             v-model="searchQuery"
                             @keydown.enter="handleSearchSubmit"
-                            type="text" 
+                            type="text"
                             placeholder="Escribe el nombre, metal, gema o referencia..."
                             class="w-full bg-transparent text-brand-white font-serif-elegant text-lg md:text-2xl focus:outline-none placeholder-brand-white/30 pr-10"
                         />
@@ -143,22 +143,29 @@ const goToProfile = () => {
                     </div>
 
                     <div v-if="searchQuery.trim().length >= 2" class="mt-6">
-                        <p class="text-[9px] uppercase tracking-[0.2em] text-brand-white/40 mb-3">Sugerencias en tiempo real</p>
-                        
+                        <p class="text-[9px] tracking-wide text-brand-white/40 mb-3">Sugerencias en tiempo real</p>
+
                         <div v-if="filteredResults.length > 0" class="divide-y divide-brand-white/5 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
-                            <div 
-                                v-for="item in filteredResults" 
+                            <div
+                                v-for="item in filteredResults"
                                 :key="item.id"
                                 @click="goToProduct(item.slug)"
                                 class="flex items-center gap-4 py-3 cursor-pointer group hover:bg-brand-white/[0.02] transition-colors px-2"
                             >
-                                <img 
-                                    :src="item.images?.[0] || 'https://via.placeholder.com/50'" 
+                                <img
+                                    v-if="item.images?.[0]?.imageUrl"
+                                    :src="item.images[0].imageUrl"
                                     :alt="item.name"
-                                    class="w-10 h-10 object-cover border border-brand-white/10 group-hover:border-brand-gold transition-colors"
+                                    class="w-10 h-10 object-cover border border-brand-white/10 group-hover:border-brand-gold transition-colors flex-shrink-0"
                                 />
+                                <div
+                                    v-else
+                                    class="w-10 h-10 flex-shrink-0 border border-brand-white/10 bg-brand-white/5 flex items-center justify-center"
+                                >
+                                    <Icon icon="lucide:gem" class="w-4 h-4 text-brand-gold/40" />
+                                </div>
                                 <div class="flex-1">
-                                    <h4 class="text-brand-white group-hover:text-brand-gold font-sans-luxury text-sm transition-colors uppercase">
+                                    <h4 class="text-brand-white group-hover:text-brand-gold font-sans-luxury text-sm transition-colors">
                                         {{ item.name }}
                                     </h4>
                                     <p class="text-xs text-brand-white/40 capitalize">{{ item.category }}</p>
@@ -171,7 +178,7 @@ const goToProfile = () => {
 
                         <div v-else class="py-4 text-center">
                             <p class="text-brand-white/50 text-sm italic">No encontramos piezas exactas con ese término.</p>
-                            <p class="text-brand-gold text-xs uppercase tracking-widest mt-2 cursor-pointer" @click="handleSearchSubmit">
+                            <p class="text-brand-gold text-xs tracking-wide mt-2 cursor-pointer" @click="handleSearchSubmit">
                                 Presiona Enter para búsqueda avanzada
                             </p>
                         </div>

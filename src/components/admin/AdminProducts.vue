@@ -137,8 +137,8 @@ const deleteProduct = async (id, name) => {
 <template>
   <div class="font-sans">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-brand-white/10 pb-4 gap-4">
-      <h3 class="text-2xl font-serif-elegant text-brand-white tracking-widest uppercase">Inventario Cushion</h3>
-      <button @click="openModalNew" class="bg-brand-white text-brand-black px-4 py-2 uppercase text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold transition-colors flex items-center space-x-2">
+      <h3 class="text-2xl font-serif-elegant text-brand-white tracking-wide">Inventario Cushion</h3>
+      <button @click="openModalNew" class="bg-brand-white text-brand-black px-4 py-2 text-[10px] font-bold tracking-wide hover:bg-brand-gold transition-colors flex items-center space-x-2">
         <Icon icon="lucide:plus" class="w-4 h-4" /><span>Nueva Joya</span>
       </button>
     </div>
@@ -146,10 +146,10 @@ const deleteProduct = async (id, name) => {
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-brand-white/5 p-4 border border-brand-white/10">
       <div class="relative">
         <Icon icon="lucide:search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-brand-white/50" />
-        <input v-model="searchQuery" type="text" placeholder="Buscar ref o nombre..." class="w-full bg-brand-black border border-brand-white/20 pl-10 pr-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none transition-colors placeholder:text-brand-white/30">
+        <input v-model="searchQuery" type="text" placeholder="Buscar ref o nombre..." class="w-full bg-brand-black border border-brand-white/20 pl-10 pr-4 py-2 text-brand-white text-xs tracking-wide focus:border-brand-gold outline-none transition-colors placeholder:text-brand-white/30">
       </div>
       
-      <select v-model="filterCategory" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
+      <select v-model="filterCategory" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs tracking-wide focus:border-brand-gold outline-none cursor-pointer">
         <option value="Todas">Todas las Categorías</option>
         <option value="Anillos">Anillos</option>
         <option value="Aretes">Aretes</option>
@@ -161,22 +161,22 @@ const deleteProduct = async (id, name) => {
         <option value="Dijes">Dijes</option>
       </select>
       
-      <select v-model="filterStock" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none cursor-pointer">
+      <select v-model="filterStock" class="bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs tracking-wide focus:border-brand-gold outline-none cursor-pointer">
         <option value="Todos">Cualquier Stock</option>
         <option value="Con Stock">Disponibles</option>
         <option value="Agotados">Agotados</option>
       </select>
 
       <div class="relative">
-        <input v-model="filterDate" type="date" class="w-full bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs uppercase tracking-widest focus:border-brand-gold outline-none transition-colors cursor-pointer [color-scheme:dark]">
+        <input v-model="filterDate" type="date" class="w-full bg-brand-black border border-brand-white/20 px-4 py-2 text-brand-white text-xs tracking-wide focus:border-brand-gold outline-none transition-colors cursor-pointer [color-scheme:dark]">
       </div>
     </div>
 
-    <div v-if="loading" class="text-brand-gold uppercase tracking-widest text-xs animate-pulse text-center py-20">Analizando archivos...</div>
+    <div v-if="loading" class="text-brand-gold tracking-wide text-xs animate-pulse text-center py-20">Analizando archivos...</div>
 
     <div v-else class="overflow-x-auto border border-brand-white/10 bg-brand-black/50">
       <table class="w-full text-left border-collapse whitespace-nowrap">
-        <thead class="bg-brand-white/5 text-[10px] uppercase tracking-[0.2em] text-brand-white/60">
+        <thead class="bg-brand-white/5 text-[10px] tracking-wide text-brand-white/60">
           <tr>
             <th class="p-4 border-b border-brand-white/10 font-medium">Joya / Referencia</th>
             <th class="p-4 border-b border-brand-white/10 font-medium">Categoría</th>
@@ -188,21 +188,21 @@ const deleteProduct = async (id, name) => {
         </thead>
         <tbody class="text-sm font-sans-luxury text-brand-white">
           <tr v-if="filteredProducts.length === 0">
-            <td colspan="6" class="p-8 text-center text-brand-white/40 text-xs uppercase tracking-widest">No se encontraron piezas con esos filtros.</td>
+            <td colspan="6" class="p-8 text-center text-brand-white/40 text-xs tracking-wide">No se encontraron piezas con esos filtros.</td>
           </tr>
           <tr v-for="product in filteredProducts" :key="product.id" class="border-b border-brand-white/5 hover:bg-brand-white/[0.02] transition-colors group">
             <td class="p-4">
-              <div class="font-serif-elegant text-base uppercase text-brand-white">{{ product.name }}</div>
-              <div class="text-[10px] text-brand-white/40 uppercase tracking-widest truncate max-w-[250px] mt-1">{{ product.description }}</div>
+              <div class="font-serif-elegant text-base text-brand-white">{{ product.name }}</div>
+              <div class="text-[10px] text-brand-white/40 tracking-wide truncate max-w-[250px] mt-1">{{ product.description }}</div>
             </td>
-            <td class="p-4 text-[10px] uppercase tracking-[0.2em] text-brand-gold">{{ product.category }}</td>
-            <td class="p-4 text-[10px] uppercase tracking-widest text-brand-white/70">
+            <td class="p-4 text-[10px] tracking-wide text-brand-gold">{{ product.category }}</td>
+            <td class="p-4 text-[10px] tracking-wide text-brand-white/70">
               {{ product.gemstoneType || 'N/A' }} 
               <span v-if="product.caratWeight" class="text-brand-white/40 ml-1">({{ product.caratWeight }})</span>
             </td>
-            <td class="p-4 tracking-widest text-brand-white/90">$ {{ product.price.toLocaleString() }}</td>
+            <td class="p-4 tracking-wide text-brand-white/90">$ {{ product.price.toLocaleString() }}</td>
             <td class="p-4">
-              <span :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'" class="text-[10px] font-bold uppercase tracking-widest">
+              <span :class="product.stock > 0 ? 'text-green-500' : 'text-red-500'" class="text-[10px] font-bold tracking-wide">
                 {{ product.stock }}
               </span>
             </td>
@@ -223,7 +223,7 @@ const deleteProduct = async (id, name) => {
 
     <div v-if="showProductModal" class="fixed inset-0 bg-brand-black/98 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
       <div class="bg-brand-black border border-brand-gold p-6 md:p-10 max-w-5xl w-full max-h-[95vh] overflow-y-auto relative shadow-2xl">
-        <h3 class="text-2xl font-serif-elegant text-brand-gold mb-10 uppercase tracking-[0.3em] text-center border-b border-brand-gold/20 pb-6">
+        <h3 class="text-2xl font-serif-elegant text-brand-gold mb-10 tracking-[0.3em] text-center border-b border-brand-gold/20 pb-6">
           Registro de Alta Joyería
         </h3>
         
@@ -259,7 +259,7 @@ const deleteProduct = async (id, name) => {
           </div>
 
           <div>
-            <h4 class="text-brand-white uppercase tracking-[0.3em] text-[10px] border-b border-brand-white/10 pb-2 mb-6 opacity-60">Especificaciones Técnicas</h4>
+            <h4 class="text-brand-white tracking-[0.3em] text-[10px] border-b border-brand-white/10 pb-2 mb-6 opacity-60">Especificaciones Técnicas</h4>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
                 <label class="label-admin">Gema Principal</label>
@@ -293,11 +293,11 @@ const deleteProduct = async (id, name) => {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div>
-              <h4 class="text-brand-white uppercase tracking-[0.3em] text-[10px] border-b border-brand-white/10 pb-2 mb-6 opacity-60">Ocasión / Colección</h4>
+              <h4 class="text-brand-white tracking-[0.3em] text-[10px] border-b border-brand-white/10 pb-2 mb-6 opacity-60">Ocasión / Colección</h4>
               <div class="flex flex-wrap gap-4">
                 <label v-for="occ in ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Regalo']" :key="occ" class="flex items-center space-x-2 cursor-pointer group">
                   <input type="checkbox" :value="occ" v-model="currentProduct.occasions" class="checkbox-admin">
-                  <span class="text-[10px] text-brand-white/70 uppercase group-hover:text-brand-gold transition-colors">{{ occ }}</span>
+                  <span class="text-[10px] text-brand-white/70 group-hover:text-brand-gold transition-colors">{{ occ }}</span>
                 </label>
               </div>
             </div>
@@ -308,15 +308,15 @@ const deleteProduct = async (id, name) => {
               </div>
               <label class="flex items-center space-x-3 cursor-pointer mt-4">
                 <input type="checkbox" v-model="currentProduct.featured" class="checkbox-admin">
-                <span class="text-[10px] text-brand-gold uppercase tracking-widest">Destacar en Inicio</span>
+                <span class="text-[10px] text-brand-gold tracking-wide">Destacar en Inicio</span>
               </label>
             </div>
           </div>
 
           <div>
             <div class="flex justify-between items-end border-b border-brand-white/10 pb-2 mb-6">
-              <h4 class="text-brand-white uppercase tracking-[0.3em] text-[10px] opacity-60">Galería Fotográfica</h4>
-              <button type="button" @click="addImageInput" class="text-brand-gold text-[9px] uppercase tracking-widest hover:text-brand-white transition-colors">+ Añadir Enlace</button>
+              <h4 class="text-brand-white tracking-[0.3em] text-[10px] opacity-60">Galería Fotográfica</h4>
+              <button type="button" @click="addImageInput" class="text-brand-gold text-[9px] tracking-wide hover:text-brand-white transition-colors">+ Añadir Enlace</button>
             </div>
             <div class="space-y-4">
               <div v-for="(img, index) in currentProduct.images" :key="index" class="flex items-center space-x-4 bg-brand-white/5 p-3 border border-brand-white/5">
@@ -324,7 +324,7 @@ const deleteProduct = async (id, name) => {
                 
                 <label class="flex items-center space-x-2 cursor-pointer" title="Marcar como imagen principal">
                   <input type="radio" :name="'thumb-' + currentProduct.id" :value="true" v-model="img.isThumbnail" @change="currentProduct.images.forEach((i, idx) => i.isThumbnail = (index === idx))" class="checkbox-admin rounded-full">
-                  <span class="text-[9px] text-brand-white/40 uppercase">Portada</span>
+                  <span class="text-[9px] text-brand-white/40">Portada</span>
                 </label>
                 
                 <button type="button" @click="removeImageInput(index)" class="text-red-500 hover:text-red-300 transition-colors"><Icon icon="lucide:x" class="w-4 h-4" /></button>
@@ -333,8 +333,8 @@ const deleteProduct = async (id, name) => {
           </div>
 
           <div class="flex justify-end space-x-6 pt-10 border-t border-brand-white/10">
-            <button type="button" @click="showProductModal = false" class="text-brand-white/40 uppercase text-[10px] tracking-[0.3em] hover:text-brand-white transition-colors">Cancelar</button>
-            <button type="submit" class="bg-brand-gold text-brand-black px-12 py-4 uppercase text-[10px] font-bold tracking-[0.3em] hover:bg-brand-white transition-all shadow-lg shadow-brand-gold/10">
+            <button type="button" @click="showProductModal = false" class="text-brand-white/40 text-[10px] tracking-[0.3em] hover:text-brand-white transition-colors">Cancelar</button>
+            <button type="submit" class="bg-brand-gold text-brand-black px-12 py-4 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-white transition-all shadow-lg shadow-brand-gold/10">
               Guardar Joya
             </button>
           </div>
@@ -348,7 +348,7 @@ const deleteProduct = async (id, name) => {
 @reference "../../assets/main.css";
 
 .label-admin {
-  @apply text-[9px] text-brand-white/40 uppercase tracking-[0.2em] block mb-2;
+  @apply text-[9px] text-brand-white/40 tracking-wide block mb-2;
 }
 
 .input-admin {

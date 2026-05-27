@@ -115,7 +115,7 @@ const handleSubmit = async () => {
     <div class="w-full max-w-md border border-brand-white/10 p-8 md:p-12 bg-brand-black/50 backdrop-blur-sm shadow-2xl">
       
       <header class="mb-10 text-center">
-        <h1 class="text-3xl font-serif-elegant text-brand-white uppercase tracking-[0.2em]">
+        <h1 class="text-3xl font-serif-elegant text-brand-white tracking-wide">
           <span v-if="isForgotPassword">Recuperar</span>
           <span v-else>{{ isLogin ? 'Ingresar' : 'Registro' }}</span>
         </h1>
@@ -123,12 +123,12 @@ const handleSubmit = async () => {
       </header>
 
       <transition name="fade">
-        <p v-if="errorMsg" class="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] p-3 text-center mb-6 uppercase tracking-widest">
+        <p v-if="errorMsg" class="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] p-3 text-center mb-6 tracking-wide">
           {{ errorMsg }}
         </p>
       </transition>
       <transition name="fade">
-        <p v-if="successMsg" class="bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-[10px] p-3 text-center mb-6 uppercase tracking-widest">
+        <p v-if="successMsg" class="bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-[10px] p-3 text-center mb-6 tracking-wide">
           {{ successMsg }}
         </p>
       </transition>
@@ -137,8 +137,8 @@ const handleSubmit = async () => {
         
         <template v-if="!isLogin && !isForgotPassword">
           <div class="grid grid-cols-2 gap-6">
-            <input v-model="form.firstName" type="text" placeholder="Nombre" required class="input-luxury uppercase">
-            <input v-model="form.lastName" type="text" placeholder="Apellido" required class="input-luxury uppercase">
+            <input v-model="form.firstName" type="text" placeholder="Nombre" required class="input-luxury">
+            <input v-model="form.lastName" type="text" placeholder="Apellido" required class="input-luxury">
           </div>
           <input v-model="form.phone" type="tel" placeholder="WhatsApp" required class="input-luxury">
         </template>
@@ -199,8 +199,8 @@ const handleSubmit = async () => {
         
         <Icon icon="lucide:shield-alert" class="w-5 h-5 shrink-0 text-brand-gold animate-pulse" />
         <div>
-          <h4 class="font-serif-elegant uppercase tracking-wider text-xs mb-0.5">Sesión Finalizada</h4>
-          <p class="font-sans-luxury text-[10px] text-brand-white/70 uppercase tracking-widest leading-relaxed">
+          <h4 class="font-serif-elegant tracking-wider text-xs mb-0.5">Sesión Finalizada</h4>
+          <p class="font-sans-luxury text-[10px] text-brand-white/70 tracking-wide leading-relaxed">
             Por su seguridad, su sesión ha expirado. Por favor, ingrese nuevamente.
           </p>
         </div>
@@ -220,11 +220,11 @@ const handleSubmit = async () => {
 }
 
 .input-luxury::placeholder {
-  @apply uppercase text-[10px] tracking-[0.2em] opacity-50;
+  @apply text-[10px] tracking-wide opacity-50;
 }
 
 .btn-luxury {
-  @apply w-full bg-brand-white text-brand-black px-6 py-4 uppercase text-[10px] font-bold tracking-[0.3em] 
+  @apply w-full bg-brand-white text-brand-black px-6 py-4 text-[10px] font-bold tracking-[0.3em] 
          hover:bg-brand-gold hover:text-brand-white transition-all duration-500 mt-6 
          disabled:opacity-20 disabled:cursor-not-allowed shadow-lg;
 }
@@ -234,11 +234,11 @@ const handleSubmit = async () => {
 }
 
 .forgot-link {
-  @apply text-[9px] text-brand-white/30 hover:text-brand-gold uppercase tracking-[0.15em] transition-colors italic mt-2;
+  @apply text-[9px] text-brand-white/30 hover:text-brand-gold tracking-normal transition-colors italic mt-2;
 }
 
 .text-link {
-  @apply text-brand-white/40 hover:text-brand-gold text-[10px] font-sans-luxury uppercase tracking-[0.2em] transition-all duration-300;
+  @apply text-brand-white/40 hover:text-brand-gold text-[10px] font-sans-luxury tracking-wide transition-all duration-300;
 }
 
 .fade-enter-active, .fade-leave-active { transition: opacity 0.5s ease; }

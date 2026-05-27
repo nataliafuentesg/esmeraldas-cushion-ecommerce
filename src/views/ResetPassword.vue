@@ -38,12 +38,12 @@ const handleReset = async () => {
 <template>
   <div class="bg-brand-black min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-md border border-brand-white/10 p-10 bg-brand-black/50 backdrop-blur-sm">
-      <h1 class="text-2xl font-serif-elegant text-brand-white text-center uppercase tracking-widest mb-8">
+      <h1 class="text-2xl font-serif-elegant text-brand-white text-center tracking-wide mb-8">
         Nueva Contraseña
       </h1>
 
-      <p v-if="errorMsg" class="text-red-400 text-[10px] text-center mb-6 uppercase tracking-widest">{{ errorMsg }}</p>
-      <p v-if="successMsg" class="text-brand-gold text-[10px] text-center mb-6 uppercase tracking-widest">{{ successMsg }}</p>
+      <p v-if="errorMsg" class="text-red-400 text-[10px] text-center mb-6 tracking-wide">{{ errorMsg }}</p>
+      <p v-if="successMsg" class="text-brand-gold text-[10px] text-center mb-6 tracking-wide">{{ successMsg }}</p>
 
       <form @submit.prevent="handleReset" class="space-y-6">
         <input v-model="password" type="password" placeholder="Nueva Contraseña" required class="input-luxury">
@@ -60,5 +60,5 @@ const handleReset = async () => {
 <style scoped>
 @reference "../../assets/main.css";
 .input-luxury { @apply w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm focus:outline-none focus:border-brand-gold transition-all; }
-.btn-luxury { @apply w-full bg-brand-white text-brand-black py-4 uppercase text-[10px] font-bold tracking-widest hover:bg-brand-gold hover:text-brand-white transition-all; }
+.btn-luxury { @apply w-full bg-brand-white text-brand-black py-4 text-[10px] font-bold tracking-wide hover:bg-brand-gold hover:text-brand-white transition-all; }
 </style>

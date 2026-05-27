@@ -14,7 +14,7 @@ const categories = [
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       
       <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant mb-4 uppercase tracking-[0.15em]">
+        <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant mb-4 tracking-normal">
           Explora por <span class="text-brand-gold italic lowercase font-serif">Tipo de Pieza</span>
         </h2>
         <div class="h-[1px] w-16 bg-brand-gold mx-auto"></div>
@@ -43,12 +43,12 @@ const categories = [
           <div class="absolute inset-4 border border-brand-white/0 group-hover:border-brand-gold/30 transition-colors duration-500 z-10 pointer-events-none"></div>
 
           <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10 z-20">
-            <h3 class="text-2xl md:text-3xl font-serif-elegant text-brand-white tracking-widest mb-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 uppercase">
+            <h3 class="text-2xl md:text-3xl font-serif-elegant text-brand-white tracking-wide mb-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
               {{ category.name }}
             </h3>
             
             <div class="overflow-hidden">
-              <span class="block text-brand-gold font-sans-luxury text-[9px] md:text-[10px] uppercase tracking-[0.3em] opacity-0 group-hover:opacity-100 transform translate-y-full group-hover:translate-y-0 transition-all duration-500 delay-75">
+              <span class="block text-brand-gold font-sans-luxury text-[9px] md:text-[10px] tracking-[0.3em] opacity-0 group-hover:opacity-100 transform translate-y-full group-hover:translate-y-0 transition-all duration-500 delay-75">
                 Descubrir Piezas
               </span>
             </div>

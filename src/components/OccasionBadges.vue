@@ -31,7 +31,7 @@ const handleClick = (occ) => {
 
 <template>
   <section v-if="occasions.length > 0" class="w-full text-center">
-    <h3 class="text-brand-white font-serif-elegant text-xs uppercase tracking-[0.3em] mb-8 opacity-40">
+    <h3 class="text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-8 opacity-40">
       {{ isHome ? 'Explorar Colecciones Especiales' : 'Filtrar por Ocasión Especial' }}
     </h3>
     
@@ -92,7 +92,7 @@ const handleClick = (occ) => {
         
         <div class="flex flex-col items-center justify-center text-center select-none w-full px-3">
           <span 
-            class="text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-colors duration-300 block max-w-full text-center whitespace-nowrap"
+            class="text-[9px] md:text-[10px] font-bold tracking-wide transition-colors duration-300 block max-w-full text-center whitespace-nowrap"
             :class="(!isHome && currentSelection === occ) ? 'text-brand-gold font-extrabold' : 'text-brand-white/70 group-hover:text-brand-white'"
           >
             {{ occ }}

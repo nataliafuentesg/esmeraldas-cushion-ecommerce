@@ -22,12 +22,12 @@ const availableRelatedProducts = computed(() => {
 <template>
   <section v-if="availableRelatedProducts.length > 0" class="related-products-section">
     <div class="flex justify-between items-end mb-12 border-b border-brand-white/10 pb-6">
-      <h3 class="font-serif-elegant text-brand-white text-2xl uppercase tracking-widest">
+      <h3 class="font-serif-elegant text-brand-white text-2xl tracking-wide">
         Joyas <span class="text-brand-gold">Relacionadas</span>
       </h3>
       <RouterLink 
         to="/coleccion" 
-        class="text-brand-gold uppercase text-[10px] tracking-[0.2em] hover:opacity-70 transition-opacity"
+        class="text-brand-gold text-[10px] tracking-wide hover:opacity-70 transition-opacity"
       >
         Ver toda la colección
       </RouterLink>
@@ -43,7 +43,7 @@ const availableRelatedProducts = computed(() => {
   </section>
 
   <div v-else class="py-20 text-center border-t border-brand-white/5">
-    <p class="text-brand-white/30 uppercase text-[10px] tracking-[0.3em]">
+    <p class="text-brand-white/30 text-[10px] tracking-[0.3em]">
       Explora más piezas exclusivas en nuestra colección completa
     </p>
   </div>

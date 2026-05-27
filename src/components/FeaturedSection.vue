@@ -57,10 +57,10 @@ const swiperBreakpoints = {
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             
             <header class="mb-16 text-center">
-                <p class="text-brand-gold text-[10px] uppercase tracking-[0.5em] font-bold mb-3 animate-pulse">
+                <p class="text-brand-gold text-[10px] tracking-[0.5em] font-bold mb-3 animate-pulse">
                     Curaduría Exclusiva
                 </p>
-                <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant uppercase tracking-[0.25em] relative inline-block">
+                <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant tracking-[0.25em] relative inline-block">
                     Piezas Destacadas
                 </h2>
                 <div class="h-[1px] w-16 bg-brand-gold mx-auto mt-5"></div>
@@ -68,7 +68,7 @@ const swiperBreakpoints = {
 
             <div v-if="loading" class="flex flex-col items-center justify-center py-20">
                 <div class="w-8 h-8 border-2 border-brand-gold/30 border-t-brand-gold rounded-full animate-spin mb-4"></div>
-                <p class="text-brand-gold font-sans-luxury tracking-[0.3em] uppercase text-[9px]">Cargando Exclusividad...</p>
+                <p class="text-brand-gold font-sans-luxury tracking-[0.3em] text-[9px]">Cargando Exclusividad...</p>
             </div>
 
             <swiper
@@ -92,7 +92,7 @@ const swiperBreakpoints = {
             <div class="text-center mt-8">
                 <RouterLink to="/coleccion"
                     class="inline-block px-12 py-4 border border-brand-gold/30 text-brand-gold 
-                           uppercase text-[10px] font-bold tracking-[0.3em] 
+                           text-[10px] font-bold tracking-[0.3em] 
                            bg-brand-gold/[0.02] backdrop-blur-sm
                            hover:bg-brand-gold hover:text-brand-black hover:border-brand-gold
                            transition-all duration-500 shadow-xl shadow-black/40 hover:shadow-brand-gold/10">

@@ -51,7 +51,7 @@ const mobileNavItems = navItems;
               v-for="item in navItemsLeft" 
               :key="item.name" 
               :to="item.path"
-              class="nav-link text-brand-white hover:text-brand-gold transition-colors uppercase font-sans-luxury text-xs"
+              class="nav-link text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
             >
               {{ item.name }}
             </RouterLink>
@@ -68,7 +68,7 @@ const mobileNavItems = navItems;
                 v-for="item in navItemsRight" 
                 :key="item.name" 
                 :to="item.path"
-                class="nav-link text-brand-white hover:text-brand-gold transition-colors uppercase font-sans-luxury text-xs"
+                class="nav-link text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
               >
                 {{ item.name }}
               </RouterLink>
@@ -93,12 +93,12 @@ const mobileNavItems = navItems;
             :key="item.name" 
             :to="item.path"
             @click="toggleMenu"
-            class="nav-link-mobile text-2xl text-brand-white hover:text-brand-gold uppercase font-serif-elegant transition-colors"
+            class="nav-link-mobile text-2xl text-brand-white hover:text-brand-gold font-serif-elegant transition-colors"
           >
             {{ item.name }}
           </RouterLink>
         </nav>
-        <div class="text-center mt-12 text-[10px] text-gray-500 font-sans-luxury uppercase tracking-widest">
+        <div class="text-center mt-12 text-[10px] text-gray-500 font-sans-luxury tracking-wide">
           Atención personalizada 24/7
         </div>
       </div>

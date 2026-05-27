@@ -42,7 +42,7 @@ const changeCategory = (category) => {
       </h1>
 
       <div v-if="loading" class="text-center py-20">
-        <p class="text-brand-gold animate-pulse font-sans-luxury tracking-widest">
+        <p class="text-brand-gold animate-pulse font-sans-luxury tracking-wide">
           CARGANDO PIEZAS EXCLUSIVAS...
         </p>
       </div>

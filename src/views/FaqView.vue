@@ -32,8 +32,8 @@ const faqs = ref([
     <div class="container mx-auto px-4 sm:px-6 lg:px-20 max-w-3xl">
       
       <header class="text-center mb-16">
-        <span class="text-brand-gold text-[10px] tracking-[0.6em] uppercase font-bold block mb-3">Asesoría Inmediata</span>
-        <h1 class="text-3xl md:text-4xl font-serif-elegant uppercase tracking-wide mb-4">Preguntas Frecuentes</h1>
+        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Asesoría Inmediata</span>
+        <h1 class="text-3xl md:text-4xl font-serif-elegant tracking-wide mb-4">Preguntas Frecuentes</h1>
         <div class="h-[1px] w-20 bg-brand-gold mx-auto"></div>
       </header>
 
@@ -45,7 +45,7 @@ const faqs = ref([
         >
           <button 
             @click="faq.open = !faq.open"
-            class="w-full flex justify-between items-center text-left text-sm md:text-base font-serif-elegant uppercase tracking-wider text-brand-white hover:text-brand-gold transition-colors"
+            class="w-full flex justify-between items-center text-left text-sm md:text-base font-serif-elegant tracking-wider text-brand-white hover:text-brand-gold transition-colors"
           >
             <span>{{ faq.q }}</span>
             <Icon 
@@ -61,7 +61,7 @@ const faqs = ref([
       </div>
 
       <div class="mt-16 text-center border-t border-brand-white/5 pt-12">
-        <p class="text-xs text-brand-white/40 uppercase tracking-widest mb-4">¿Su duda no está en la lista?</p>
+        <p class="text-xs text-brand-white/40 tracking-wide mb-4">¿Su duda no está en la lista?</p>
         <p class="text-sm mb-6">Escríbanos a nuestro correo oficial de atención global:</p>
         <a href="mailto:info@cushionjewelry.com" class="text-brand-gold hover:text-brand-white transition-colors underline font-sans-luxury text-sm">
           info@cushionjewelry.com

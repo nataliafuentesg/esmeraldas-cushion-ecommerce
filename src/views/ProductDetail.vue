@@ -133,7 +133,7 @@ onUnmounted(() => {
 
       <div class="mb-8 md:mb-12">
         <button @click="handleGoBack"
-          class="group flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] uppercase tracking-[0.3em] transition-colors duration-300 py-2">
+          class="group flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.3em] transition-colors duration-300 py-2">
           <Icon icon="lucide:arrow-left"
             class="w-3 h-3 transform group-hover:-translate-x-1 transition-transform duration-300 text-brand-gold/60 group-hover:text-brand-gold" />
           <span>Volver</span>
@@ -145,7 +145,7 @@ onUnmounted(() => {
           @click="openLightboxOnActiveImage">
           <ProductGallery :images="product.images" :product-name="product.name" />
           <div
-            class="block lg:hidden text-center mt-3 text-[9px] uppercase tracking-[0.2em] text-brand-white/30 font-sans-luxury">
+            class="block lg:hidden text-center mt-3 text-[9px] tracking-wide text-brand-white/30 font-sans-luxury">
             <Icon icon="lucide:maximize-2" class="inline-block w-3 h-3 mr-1 text-brand-gold/50" />
             Toca la joya para ampliar en pantalla completa
           </div>
@@ -153,14 +153,14 @@ onUnmounted(() => {
 
         <div class="flex flex-col">
           <div class="flex flex-wrap items-center gap-3 mb-4">
-            <span class="text-brand-gold text-[10px] tracking-[0.5em] uppercase font-bold">{{ product.category }}</span>
+            <span class="text-brand-gold text-[10px] tracking-[0.5em] font-bold">{{ product.category }}</span>
             <span v-if="product.featured"
-              class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold uppercase tracking-widest">Pieza
+              class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold tracking-wide">Pieza
               Exclusiva</span>
           </div>
 
           <h1
-            class="text-2xl md:text-3xl lg:text-4xl font-serif-elegant text-brand-white mb-4 uppercase leading-tight tracking-wide">
+            class="text-2xl md:text-3xl lg:text-4xl font-serif-elegant text-brand-white mb-4 leading-tight tracking-wide">
             {{ product.name }}
           </h1>
 
@@ -175,29 +175,29 @@ onUnmounted(() => {
           </div>
 
           <div class="bg-brand-white/[0.03] border border-brand-white/10 p-6 md:p-10 mb-8">
-            <h3 class="text-brand-gold text-[10px] uppercase tracking-[0.4em] mb-8 border-b border-brand-gold/20 pb-4">
+            <h3 class="text-brand-gold text-[10px] tracking-[0.4em] mb-8 border-b border-brand-gold/20 pb-4">
               Certificado de Joyería
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
               <div v-if="product.gemstoneType?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Gema Principal</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.gemstoneType }}</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Gema Principal</span>
+                <span class="text-brand-white text-sm font-sans-luxury">{{ product.gemstoneType }}</span>
               </div>
               <div v-if="product.cutType?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Talla / Corte</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.cutType }}</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Talla / Corte</span>
+                <span class="text-brand-white text-sm font-sans-luxury">{{ product.cutType }}</span>
               </div>
               <div v-if="product.caratWeight?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Peso Carates (ct)</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.caratWeight }}</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Peso Carates (ct)</span>
+                <span class="text-brand-white text-sm font-sans-luxury">{{ product.caratWeight }}</span>
               </div>
               <div v-if="product.totalWeight?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Peso de la Pieza</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.totalWeight }}</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Peso de la Pieza</span>
+                <span class="text-brand-white text-sm font-sans-luxury">{{ product.totalWeight }}</span>
               </div>
               <div v-if="product.metalType?.trim()" class="flex flex-col">
-                <span class="text-[9px] uppercase tracking-[0.3em] text-brand-white/40 mb-1">Metal Precioso</span>
-                <span class="text-brand-white text-sm font-sans-luxury uppercase">{{ product.metalType }}</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Metal Precioso</span>
+                <span class="text-brand-white text-sm font-sans-luxury">{{ product.metalType }}</span>
               </div>
             </div>
           </div>
@@ -212,7 +212,7 @@ onUnmounted(() => {
                 class="text-brand-white/60 hover:text-brand-gold text-lg px-2">+</button>
             </div>
             <button @click="addToCart"
-              class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold uppercase tracking-[0.2em] text-xs py-4 px-8 flex items-center justify-center gap-3">
+              class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold tracking-wide text-xs py-4 px-8 flex items-center justify-center gap-3">
               <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa
             </button>
           </div>
@@ -238,7 +238,7 @@ onUnmounted(() => {
             class="max-w-full max-h-[75vh] object-contain select-none mobile-pinch-target" />
         </div>
         <div
-          class="absolute bottom-8 text-[9px] uppercase tracking-[0.25em] text-brand-white/40 font-sans-luxury text-center px-4">
+          class="absolute bottom-8 text-[9px] tracking-[0.25em] text-brand-white/40 font-sans-luxury text-center px-4">
           Pellizca con dos dedos para ampliar detalles • Toca fuera para salir
         </div>
       </div>

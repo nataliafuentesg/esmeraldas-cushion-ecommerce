@@ -36,16 +36,16 @@ const deleteReview = async (id) => {
 
 <template>
   <div class="font-sans">
-    <h3 class="text-2xl font-serif-elegant text-brand-white tracking-widest uppercase mb-8 border-b border-brand-white/10 pb-4">
+    <h3 class="text-2xl font-serif-elegant text-brand-white tracking-wide mb-8 border-b border-brand-white/10 pb-4">
       Moderación de Reseñas
     </h3>
     
-    <div v-if="loading" class="text-brand-gold uppercase tracking-widest text-xs animate-pulse text-center py-20">
+    <div v-if="loading" class="text-brand-gold tracking-wide text-xs animate-pulse text-center py-20">
       Cargando base de datos de reseñas...
     </div>
     
     <div v-else-if="reviews.length === 0" class="text-center py-20 border border-brand-white/5 bg-brand-black/50">
-      <p class="text-brand-white/50 text-sm font-sans-luxury uppercase tracking-widest">
+      <p class="text-brand-white/50 text-sm font-sans-luxury tracking-wide">
         No hay reseñas registradas actualmente.
       </p>
     </div>
@@ -68,11 +68,11 @@ const deleteReview = async (id) => {
               />
             </div>
             
-            <span class="text-brand-white font-serif-elegant uppercase tracking-wider text-sm">
+            <span class="text-brand-white font-serif-elegant tracking-wider text-sm">
               {{ rev.author || 'Cliente Anónimo' }}
             </span>
             
-            <span class="text-brand-white/30 text-[10px] tracking-widest">
+            <span class="text-brand-white/30 text-[10px] tracking-wide">
               {{ rev.date ? new Date(rev.date).toLocaleDateString() : 'Fecha Reciente' }}
             </span>
           </div>
@@ -81,7 +81,7 @@ const deleteReview = async (id) => {
             "{{ rev.comment }}"
           </p>
           
-          <div class="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] bg-brand-white/5 w-fit px-3 py-1.5 border border-brand-white/5">
+          <div class="flex items-center gap-2 text-[10px] tracking-wide bg-brand-white/5 w-fit px-3 py-1.5 border border-brand-white/5">
             <Icon icon="lucide:gem" class="w-3 h-3 text-brand-gold" />
             <span class="text-brand-white/60">Pieza Vinculada: 
               <span class="text-brand-white font-bold">
@@ -94,7 +94,7 @@ const deleteReview = async (id) => {
 
         <button 
           @click="deleteReview(rev.id)" 
-          class="shrink-0 flex items-center gap-2 text-red-500/70 hover:text-red-500 text-[10px] uppercase tracking-widest transition-colors border border-red-900/30 bg-red-950/20 px-4 py-2 hover:bg-red-950/50"
+          class="shrink-0 flex items-center gap-2 text-red-500/70 hover:text-red-500 text-[10px] tracking-wide transition-colors border border-red-900/30 bg-red-950/20 px-4 py-2 hover:bg-red-950/50"
         >
           <Icon icon="lucide:trash-2" class="w-4 h-4" />
           <span>Eliminar</span>

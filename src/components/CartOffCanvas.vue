@@ -23,7 +23,7 @@ const closeCart = () => {
     :class="{ 'translate-x-0': isOffCanvasOpen, 'translate-x-full': !isOffCanvasOpen }"
   >
     <header class="p-8 border-b border-brand-white/10 flex justify-between items-center sticky top-0 bg-brand-black z-10">
-      <h2 class="text-2xl font-serif-elegant uppercase tracking-[0.2em]">Selección</h2>
+      <h2 class="text-2xl font-serif-elegant tracking-wide">Selección</h2>
       <button @click="closeCart" class="text-brand-white hover:text-brand-gold transition-colors p-2">
         <Icon icon="lucide:x" class="w-6 h-6" />
       </button>
@@ -32,7 +32,7 @@ const closeCart = () => {
     <div class="h-full pb-64 overflow-y-auto custom-scrollbar">
       <div v-if="cartItems.length === 0" class="p-12 text-center pt-32">
         <Icon icon="lucide:gem" class="w-12 h-12 mx-auto mb-6 text-brand-gold/30" />
-        <p class="font-sans-luxury text-brand-white/40 uppercase text-[10px] tracking-widest">El joyero está vacío</p>
+        <p class="font-sans-luxury text-brand-white/40 text-[10px] tracking-wide">El joyero está vacío</p>
       </div>
 
       <div v-else>
@@ -42,7 +42,7 @@ const closeCart = () => {
                 <img v-if="item.imageUrl" :src="item.imageUrl" class="w-full h-full object-cover">
             </div>
             <div class="flex-grow ml-6">
-              <p class="font-serif-elegant text-sm text-brand-white uppercase tracking-wider mb-2">{{ item.productName }}</p>
+              <p class="font-serif-elegant text-sm text-brand-white tracking-wider mb-2">{{ item.productName }}</p>
               
               <div class="flex items-center justify-between">
                 <div class="flex items-center border border-brand-white/10 bg-brand-black">
@@ -63,14 +63,14 @@ const closeCart = () => {
     
     <div v-if="cartItems.length > 0" class="absolute bottom-0 w-full p-8 bg-brand-black border-t border-brand-white/10">
       <div class="flex justify-between items-end mb-8">
-        <span class="font-sans-luxury text-[10px] uppercase tracking-[0.3em] text-brand-white/40">Total Estimado</span>
+        <span class="font-sans-luxury text-[10px] tracking-[0.3em] text-brand-white/40">Total Estimado</span>
         <span class="text-2xl font-serif-elegant text-brand-gold">$ {{ cartTotal.toLocaleString() }}</span>
       </div>
       <div class="grid gap-3">
-          <RouterLink to="/finalizar-compra" @click="closeCart" class="block w-full text-center py-5 bg-brand-primary text-brand-black uppercase font-bold text-[10px] tracking-[0.3em] hover:bg-brand-gold transition-all duration-500">
+          <RouterLink to="/finalizar-compra" @click="closeCart" class="block w-full text-center py-5 bg-brand-primary text-brand-black font-bold text-[10px] tracking-[0.3em] hover:bg-brand-gold transition-all duration-500">
             Proceder al Pago
           </RouterLink>
-          <button @click="cartStore.clearCart" class="text-[9px] uppercase tracking-[0.2em] text-brand-white/30 hover:text-red-400 py-2 transition-colors">
+          <button @click="cartStore.clearCart" class="text-[9px] tracking-wide text-brand-white/30 hover:text-red-400 py-2 transition-colors">
             Vaciar Selección
           </button>
       </div>

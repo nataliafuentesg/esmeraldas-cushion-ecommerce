@@ -15,7 +15,7 @@
           <p class="text-lg font-sans-luxury leading-relaxed mb-6">
             Nuestras esmeraldas provienen de las minas más prestigiosas de Colombia. Cada gema es seleccionada a mano, valorando la intensidad de su color y la pureza de su cristal. Este legado geológico es la base de cada pieza que creamos.
           </p>
-          <RouterLink to="/nosotros" class="uppercase text-sm tracking-widest font-sans-luxury border-b border-brand-white hover:text-brand-gold hover:border-brand-gold transition-colors">
+          <RouterLink to="/nosotros" class="uppercase text-sm tracking-wide font-sans-luxury border-b border-brand-white hover:text-brand-gold hover:border-brand-gold transition-colors">
             Conoce Nuestras Minas
           </RouterLink>
         </div>
@@ -38,7 +38,7 @@
           <p class="text-lg font-sans-luxury leading-relaxed mb-6">
             Combinamos la tradición milenaria de la esmeralda con técnicas de orfebrería de vanguardia. Cada montura y cada diamante acompañante son colocados con una precisión que excede los estándares de la alta joyería, garantizando que su pieza sea tan duradera como bella.
           </p>
-          <RouterLink to="/nosotros" class="uppercase text-sm tracking-widest font-sans-luxury border-b border-brand-white hover:text-brand-gold hover:border-brand-gold transition-colors">
+          <RouterLink to="/nosotros" class="uppercase text-sm tracking-wide font-sans-luxury border-b border-brand-white hover:text-brand-gold hover:border-brand-gold transition-colors">
             Ver el Proceso
           </RouterLink>
         </div>
