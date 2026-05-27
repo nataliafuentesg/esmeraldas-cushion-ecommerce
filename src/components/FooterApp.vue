@@ -2,8 +2,6 @@
 import { RouterLink } from 'vue-router'
 import { Icon } from '@iconify/vue';
 
-
-
 const supportItems = [
     { name: 'Garantías y Certificados', path: '/garantias' },
     { name: 'Política de Envíos', path: '/envios' },
@@ -129,6 +127,8 @@ const socialMedia = [
 </template>
 
 <style scoped>
+@reference "../assets/main.css";
+
 .emerald-texture {
   background:
     repeating-linear-gradient(
@@ -146,5 +146,13 @@ const socialMedia = [
       #004030 75%,
       #001A14 100%
     );
+  /* El texto dentro del footer siempre usa los tokens fijos,
+     no los de la paleta global, para ser legible sobre verde. */
+  color: var(--color-on-emerald);
+}
+
+/* Anula text-brand-white dentro del footer para que no herede el tema global */
+.emerald-texture :deep(*) {
+  --color-brand-white: var(--color-on-emerald);
 }
 </style>

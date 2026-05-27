@@ -16,43 +16,58 @@
    font-serif-elegant, font-sans-luxury, etc.
    ──────────────────────────────────────────────────────────── */
 @theme {
-    /* --- TIPOGRAFÍAS ---
+  /* --- TIPOGRAFÍAS ---
        Para cambiar la fuente de titulares: editar --font-serif-elegant
        Para cambiar la fuente de cuerpo/navegación: editar --font-sans-luxury
        Recuerda importar la nueva fuente en index.html si cambias. */
-    --font-serif-elegant: "Cormorant Garamond", ui-serif, Georgia, serif;
-    --font-sans-luxury:   "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif-elegant: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans-luxury: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 
-    /* --- PALETA DE COLORES ---
-       Para un rebrand: basta con cambiar los valores hex aquí abajo. */
-    --color-brand-black:        #1E1E1E;   /* Fondo principal            */
-    --color-brand-white:        #F5F5F5;   /* Texto y elementos claros   */
-    --color-brand-gold:         #B89B6A;   /* Dorado de Cushion          */
-    --color-brand-primary:      #4C7F62;   /* Verde esmeralda            */
-    --color-brand-emerald-dark: #005C4D;   /* Esmeralda oscura (footer)  */
+  /* --color-brand-black:      #1E1E1E;
+   --color-brand-white:        #F5F5F5;
+   --color-brand-gold:         #B89B6A;  */
+  --color-brand-primary: #4C7F62;
+  --color-brand-emerald-dark: #005C4D;
+
+  --color-brand-black: #FAF7F2;
+  --color-brand-white: #1A1A1A;
+  --color-brand-gold: #B89B6A;
+
+  /* --color-brand-black: #0D1F1A;
+  --color-brand-white: #E8F0EC;
+  --color-brand-gold: #B89B6A; */
+
+  /* --- TOKENS FIJOS (no cambian con el tema) --- */
+    --color-on-emerald:         #F5F5F5;   /* Texto sobre fondo verde    */
+    --color-on-emerald-muted:   rgba(245,245,245,0.6); /* Texto suave    */
+    --color-on-emerald-gold:    #B89B6A;   /* Dorado sobre verde         */
+
+
 }
 
 /* ────────────────────────────────────────────────────────────
    BASE
    ──────────────────────────────────────────────────────────── */
-html, body {
-    background-color: var(--color-brand-black);
-    color: var(--color-brand-white);
-    min-height: 100vh;
+html,
+body {
+  background-color: var(--color-brand-black);
+  color: var(--color-brand-white);
+  min-height: 100vh;
 }
 
 /* ────────────────────────────────────────────────────────────
    UTILIDADES PERSONALIZADAS
    ──────────────────────────────────────────────────────────── */
 @layer utilities {
-    .nav-link {
-        color: var(--color-brand-white);
-    
-        padding-bottom: 3px;
-        border-bottom: 1px solid transparent;
-        transition: border-color 0.2s;
-    }
-    .nav-link:hover {
-        border-color: var(--color-brand-gold);
-    }
+  .nav-link {
+    color: var(--color-brand-white);
+
+    padding-bottom: 3px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .nav-link:hover {
+    border-color: var(--color-brand-gold);
+  }
 }

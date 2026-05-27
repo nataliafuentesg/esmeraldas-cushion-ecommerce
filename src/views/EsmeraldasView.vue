@@ -402,6 +402,8 @@ const resetForm = () => {
 </template>
 
 <style scoped>
+@reference "../assets/main.css";
+
 .emerald-hero {
   background:
     repeating-linear-gradient(
@@ -412,5 +414,11 @@ const resetForm = () => {
       transparent 14px
     ),
     linear-gradient(160deg, #001A14 0%, #002D20 30%, #003D30 60%, #001A14 100%);
+}
+
+/* Garantiza que el texto sobre el hero verde siempre sea claro,
+   sin importar qué paleta global esté activa. */
+.emerald-hero :deep(*) {
+  --color-brand-white: var(--color-on-emerald);
 }
 </style>

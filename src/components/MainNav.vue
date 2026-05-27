@@ -59,7 +59,7 @@ const mobileNavItems = navItems;
       </div>
 
       <RouterLink to="/" class="absolute left-1/2 transform -translate-x-1/2 z-50 px-2 sm:px-4 md:px-6">
-        <img src="@/assets/images/logo-cushion-white.png" alt="Cushion Joyas & Esmeraldas" class="h-14 md:h-16 p-2 object-contain">
+        <img src="@/assets/images/logo-cushion-black.png" alt="Cushion Joyas & Esmeraldas" class="h-14 md:h-16 p-2 object-contain">
       </RouterLink>
 
       <div class="flex items-center justify-end lg:pr-10 xl:pr-20 flex-1">
