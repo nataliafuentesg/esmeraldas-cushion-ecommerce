@@ -82,99 +82,118 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
 </script>
 
 <template>
-  <div class="fixed inset-0 bg-brand-black z-[9999] flex items-center justify-center overflow-hidden select-none">
+  <div class="fixed inset-0 bg-brand-black z-[9999] flex items-center justify-center overflow-hidden select-none antialiased">
     
-    <button @click="router.push('/')" class="absolute top-6 left-6 z-[10020] text-brand-gold border border-brand-gold/30 px-4 py-2 text-[9px] uppercase tracking-[0.3em] font-sans-luxury hover:bg-brand-gold hover:text-brand-black transition-all bg-brand-black/50 backdrop-blur-md">
+    <!-- SALIR: Rediseño minimalista de perfil ultra delgado -->
+    <button @click="router.push('/')" class="absolute top-6 left-6 z-[10020] text-brand-white/60 border border-brand-white/10 px-4 py-2 text-[9px] uppercase tracking-[0.35em] font-sans-luxury hover:border-brand-gold hover:text-brand-gold bg-transparent backdrop-blur-sm transition-all duration-300">
       ✕ Salir
     </button>
 
+    <!-- Flechas de navegación -->
     <button v-if="currentPage > 0" @click="goPrev" class="nav-arrow left-2 md:left-6">
-      <svg class="w-12 h-12 md:w-16 md:h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="1.5"/></svg>
+      <svg class="w-10 h-10 stroke-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-width="1.2"/></svg>
     </button>
 
     <button @click="goNext" class="nav-arrow right-2 md:right-6">
-      <svg class="w-12 h-12 md:w-16 md:h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="1.5"/></svg>
+      <svg class="w-10 h-10 stroke-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-width="1.2"/></svg>
     </button>
 
-    <div v-if="loading" class="text-brand-gold font-sans-luxury animate-pulse text-[10px] uppercase tracking-[0.5em]">
+    <!-- Loader -->
+    <div v-if="loading" class="text-brand-gold/60 font-sans-luxury text-[9px] uppercase tracking-[0.6em] animate-pulse">
       Cargando Lookbook...
     </div>
 
     <div v-show="!loading" class="w-full h-full max-w-6xl max-h-[90vh] md:max-h-[85vh] mx-auto flex items-center justify-center p-2 md:p-8">
       
-      <div ref="bookContainer" class="flip-book shadow-[0_40px_80px_-20px_rgba(0,0,0,0.9)]">
+      <div ref="bookContainer" class="flip-book shadow-[0_50px_100px_-30px_rgba(0,0,0,0.95)]">
         
+        <!-- ================= PORTADA DEL LOOKBOOK ================= -->
         <div class="magazine-page cover bg-brand-black relative">
-          <div class="absolute inset-6 md:inset-8 border border-brand-gold/20 pointer-events-none z-0"></div>
+          <div class="absolute inset-6 md:inset-8 border border-brand-white/[0.05] pointer-events-none z-0"></div>
           
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10">
-            <img src="/src/assets/images/logo-cushion-white.png" class="w-40 md:w-56 mb-8" alt="Cushion Logo" onerror="this.style.display='none'" />
-            <h1 class="text-4xl md:text-5xl text-brand-white font-serif-elegant tracking-[0.2em] uppercase mb-4">
+            <img src="/src/assets/images/logo-cushion-white.png" class="w-24 md:w-32 opacity-40 mb-10" alt="Cushion Logo" onerror="this.style.display='none'" />
+            
+            <h1 class="text-4xl md:text-5xl lg:text-6xl text-brand-white font-serif-elegant font-normal tracking-wide normal-case mb-3">
               Lookbook
             </h1>
-            <p class="text-brand-gold font-sans-luxury tracking-[0.4em] text-[9px] md:text-[10px] uppercase">
+            <p class="text-brand-gold text-[10px] tracking-[0.5em] font-sans-luxury uppercase font-light">
               Edición 2026
             </p>
             
-            <div class="mt-16 flex flex-col items-center opacity-50">
+            <div class="mt-20 flex flex-col items-center opacity-30">
               <span class="text-[8px] text-brand-white uppercase tracking-[0.4em] mb-4 font-sans-luxury">Desliza para hojear</span>
-              <div class="w-[1px] h-12 bg-brand-gold"></div>
+              <div class="w-[1px] h-16 bg-gradient-to-b from-brand-gold to-transparent"></div>
             </div>
           </div>
         </div>
 
+        <!-- ================= CONTENIDO AGRUPADO ================= -->
         <template v-for="(items, category) in categorizedProducts" :key="category">
           
+          <!-- PÁGINA INTERMEDIA: Introducción de Categoría -->
           <div class="magazine-page bg-brand-black relative border-r border-brand-white/5">
-            <div class="absolute inset-8 border border-brand-white/5 pointer-events-none z-0"></div>
+            <div class="absolute inset-8 border border-brand-white/[0.03] pointer-events-none z-0"></div>
             
             <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10">
-              <span class="text-brand-gold font-sans-luxury text-[10px] uppercase tracking-[0.6em] mb-4">Colección</span>
-              <h2 class="text-3xl md:text-4xl text-brand-white font-serif-elegant tracking-[0.1em] uppercase">{{ category }}</h2>
-              <div class="h-[1px] w-16 bg-brand-gold mt-8"></div>
+              <span class="text-brand-gold text-[9px] uppercase tracking-[0.6em] mb-3 font-sans-luxury font-light">Colección</span>
+              <h2 class="text-3xl md:text-4xl text-brand-white font-serif-elegant tracking-wide normal-case font-normal italic">
+                {{ category }}
+              </h2>
+              <div class="h-[1px] w-12 bg-brand-gold/40 mt-6"></div>
             </div>
           </div>
 
+          <!-- PÁGINA DE RETÍCULA DE PIEZAS (4 por página) -->
           <div v-for="(chunk, pageIdx) in chunkArray(items, 4)" :key="pageIdx" class="magazine-page bg-brand-black relative border-r border-brand-white/5">
             
             <div class="absolute inset-0 p-6 md:p-10 flex flex-col justify-center z-10">
               <div class="grid grid-cols-2 grid-rows-2 h-[85%] gap-6 md:gap-8">
                 
                 <div v-for="product in chunk" :key="product.id" class="flex flex-col group cursor-pointer h-full" @click="goToDetail(product.slug)">
-                  <div class="flex-1 bg-brand-black overflow-hidden border border-brand-white/10 group-hover:border-brand-gold transition-all duration-500 relative flex items-center justify-center">
-                    <img v-if="product.images?.length" :src="product.images[0].imageUrl" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                    <div v-else class="text-[12px] md:text-2xl opacity-30 text-brand-white">💎</div>
+                  <!-- Contenedor de Imagen -->
+                  <div class="flex-1 bg-brand-black overflow-hidden border border-brand-white/[0.06] group-hover:border-brand-gold/40 transition-all duration-700 relative flex items-center justify-center">
+                    <!-- ✔️ RESTAURADO: Volvemos a tu mapeo original exacto que sí funcionaba -->
+                    <img v-if="product.images?.length" :src="product.images[0].imageUrl" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-[1.2s] ease-out group-hover:scale-105" />
+                    <div v-else class="text-lg opacity-20 text-brand-white font-serif-elegant">💎</div>
                   </div>
                   
-                  <div class="mt-4 h-[40px] text-center flex flex-col justify-center">
-                    <h4 class="text-[8px] md:text-[9px] text-brand-white font-serif-elegant uppercase tracking-widest mb-1 truncate px-1">{{ product.name }}</h4>
-                    <p class="text-[9px] md:text-[10px] text-brand-gold font-sans-luxury tracking-widest">${{ product.price.toLocaleString() }}</p>
+                  <div class="mt-3 h-[42px] text-center flex flex-col justify-center">
+                    <h4 class="text-[11px] md:text-xs text-brand-white/80 font-serif-elegant tracking-wide normal-case mb-0.5 truncate px-1 font-normal">
+                      {{ product.name }}
+                    </h4>
+                    <p class="text-[9px] text-brand-gold/80 font-sans-luxury tracking-[0.12em] font-light">
+                      $ {{ product.price.toLocaleString() }}
+                    </p>
                   </div>
                 </div>
 
               </div>
               
-              <span class="absolute bottom-6 left-1/2 -translate-x-1/2 text-[7px] text-brand-white/20 tracking-[0.4em] uppercase font-sans-luxury italic">
+              <span class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[7px] text-brand-white/20 tracking-[0.5em] uppercase font-sans-luxury">
                 Cushion — {{ category }}
               </span>
             </div>
           </div>
         </template>
 
+        <!-- ================= CONTRAPORTADA FINAL ================= -->
         <div class="magazine-page cover bg-brand-black relative">
-          <div class="absolute inset-6 md:inset-8 border border-brand-gold/20 pointer-events-none z-0"></div>
+          <div class="absolute inset-6 md:inset-8 border border-brand-white/[0.05] pointer-events-none z-0"></div>
           
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-10 z-10">
-            <span class="text-brand-gold font-sans-luxury text-[10px] uppercase tracking-[0.5em] mb-4">Final de la edición</span>
-            <h2 class="text-3xl md:text-4xl text-brand-white font-serif-elegant tracking-[0.1em] uppercase mb-8">Fin del Catálogo</h2>
+            <span class="text-brand-gold text-[9px] uppercase tracking-[0.5em] mb-3 font-sans-luxury font-light">Final de la edición</span>
+            <h2 class="text-3xl md:text-4xl text-brand-white font-serif-elegant tracking-wide normal-case font-normal mb-8">
+              Fin del Catálogo
+            </h2>
             
-            <div class="h-[1px] w-16 bg-brand-gold mb-10"></div>
+            <div class="h-[1px] w-12 bg-brand-gold/30 mb-10"></div>
             
-            <button @click="router.push('/')" class="px-8 py-3 bg-brand-gold text-brand-black font-sans-luxury text-[10px] uppercase tracking-[0.2em] hover:bg-brand-white transition-colors">
+            <button @click="router.push('/')" class="px-8 py-3 border border-brand-gold text-brand-gold font-sans-luxury text-[9px] uppercase tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-all duration-300 bg-transparent">
               Visitar Tienda
             </button>
 
-            <p class="absolute bottom-12 text-brand-white/30 font-sans-luxury text-[8px] uppercase tracking-[0.3em]">
+            <p class="absolute bottom-12 text-brand-white/20 font-sans-luxury text-[8px] uppercase tracking-[0.4em] leading-relaxed">
               Alta Joyería<br>
               Bogotá, Colombia
             </p>
@@ -187,7 +206,6 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
 </template>
 
 <style scoped>
-/* Asegura la conexión de variables de colores Tailwind v4 */
 @reference "../assets/main.css";
 
 .flip-book {
@@ -195,21 +213,19 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
 }
 
 .magazine-page {
-  /* Fondo negro por defecto para evitar destellos blancos */
-  background-color: #1E1E1E; 
-  box-shadow: inset 0 0 60px rgba(0,0,0,0.9);
+  background-color: #0d0d0d;
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.95);
   overflow: hidden;
 }
 
 .nav-arrow {
-  @apply absolute top-1/2 -translate-y-1/2 z-[10015] text-brand-gold/40 hover:text-brand-gold transition-all duration-300 outline-none;
+  @apply absolute top-1/2 -translate-y-1/2 z-[10015] text-brand-white/20 hover:text-brand-gold transition-all duration-500 outline-none;
 }
 
 .nav-arrow:hover {
-  @apply scale-110 brightness-125;
+  @apply scale-105;
 }
 
-/* Evita cuadros azules nativos de celular al dar toque en la pantalla */
 * {
   -webkit-tap-highlight-color: transparent;
 }
