@@ -165,7 +165,7 @@ const setCategory = (cat) => {
 };
 
 const filteredProducts = computed(() => {
-  let list = products.value.filter(p => p.stock > 0 && p.price <= selectedMaxPrice.value);
+  let list = products.value.filter(p => p.price <= selectedMaxPrice.value);
 
   if (selectedCategory.value !== 'Todas') {
     if (selectedCategory.value === 'Joyas') {
@@ -177,10 +177,17 @@ const filteredProducts = computed(() => {
     }
   }
 
-  if (sortBy.value === 'price-asc') return list.sort((a, b) => a.price - b.price); 
-  if (sortBy.value === 'price-desc') return list.sort((a, b) => b.price - a.price); 
+  const inStock = list.filter(p => p.stock > 0);
+  const outOfStock = list.filter(p => p.stock === 0);
 
-  return list; 
+  if (sortBy.value === 'price-asc') {
+    return [...inStock.sort((a, b) => a.price - b.price), ...outOfStock.sort((a, b) => a.price - b.price)];
+  }
+  if (sortBy.value === 'price-desc') {
+    return [...inStock.sort((a, b) => b.price - a.price), ...outOfStock.sort((a, b) => b.price - a.price)];
+  }
+
+  return [...inStock, ...outOfStock];
 });
 
 const displayedProducts = computed(() => filteredProducts.value.slice(0, displayLimit.value));
@@ -288,7 +295,10 @@ onUnmounted(() => {
         <main class="flex-1">
           <div class="flex flex-row justify-between items-center mb-8 pb-4 border-b border-brand-white/5 px-2 lg:px-0">
             <span class="text-[10px] tracking-wide text-brand-white/40 font-sans-luxury">
-              {{ filteredProducts.length }} Piezas encontradas
+              {{ filteredProducts.filter(p => p.stock > 0).length }} disponibles
+              <template v-if="filteredProducts.some(p => p.stock === 0)">
+                · <span class="text-brand-white/25">{{ filteredProducts.filter(p => p.stock === 0).length }} agotadas</span>
+              </template>
             </span>
             
             <div class="flex items-center gap-2">

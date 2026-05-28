@@ -35,7 +35,7 @@ let pageFlipInstance = null;
 const loadData = async () => {
   try {
     const response = await api.get('/products');
-    products.value = response.data.filter(p => p.stock > 0);
+    products.value = response.data;
     loading.value = false;
 
     // Tiempo de gracia para que Vue renderice el HTML antes del 3D
@@ -112,7 +112,7 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
           <div class="absolute inset-6 md:inset-8 border border-brand-white/[0.05] pointer-events-none z-0"></div>
 
           <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10">
-            <img src="/src/assets/images/logo-cushion-white.png" class="w-24 md:w-32 opacity-40 mb-10" alt="Cushion Logo" onerror="this.style.display='none'" />
+            <img src="/src/assets/images/logo-cushion-black.png" class="w-24 md:w-32 opacity-40 mb-10" alt="Cushion Logo" onerror="this.style.display='none'" />
 
             <h1 class="text-4xl md:text-5xl lg:text-6xl text-brand-white font-serif-elegant font-normal tracking-wide normal-case mb-3">
               Lookbook
@@ -152,17 +152,29 @@ const goToDetail = (slug) => router.push(`/producto/${slug}`);
 
                 <div v-for="product in chunk" :key="product.id" class="flex flex-col group cursor-pointer h-full" @click="goToDetail(product.slug)">
                   <!-- Contenedor de Imagen -->
-                  <div class="flex-1 bg-brand-black overflow-hidden border border-brand-white/[0.06] group-hover:border-brand-gold/40 transition-all duration-700 relative flex items-center justify-center">
-                    <!-- ✔️ RESTAURADO: Volvemos a tu mapeo original exacto que sí funcionaba -->
-                    <img v-if="product.images?.length" :src="product.images[0].imageUrl" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-all duration-[1.2s] ease-out group-hover:scale-105" />
+                  <div class="flex-1 bg-brand-black overflow-hidden border transition-all duration-700 relative flex items-center justify-center"
+                       :class="product.stock === 0 ? 'border-brand-white/[0.06]' : 'border-brand-white/[0.06] group-hover:border-brand-gold/40'">
+                    <img v-if="product.images?.length"
+                         :src="product.images[0].imageUrl"
+                         class="absolute inset-0 w-full h-full object-cover transition-all duration-[1.2s] ease-out"
+                         :class="product.stock === 0 ? 'grayscale-[70%] brightness-70 opacity-60' : 'opacity-80 group-hover:opacity-100 group-hover:scale-105'" />
                     <div v-else class="text-lg opacity-20 text-brand-white font-serif-elegant">💎</div>
+                    <!-- Overlay + badge agotado -->
+                    <template v-if="product.stock === 0">
+                      <div class="absolute inset-0 bg-brand-black/40 pointer-events-none"></div>
+                      <span class="absolute top-2 left-2 bg-brand-black/95 text-brand-white border border-brand-white/30 px-2 py-1 text-[7px] font-bold tracking-[0.2em] z-10">
+                        AGOTADO
+                      </span>
+                    </template>
                   </div>
 
                   <div class="mt-3 h-[42px] text-center flex flex-col justify-center">
-                    <h4 class="text-[11px] md:text-xs text-brand-white/80 font-serif-elegant tracking-wide normal-case mb-0.5 truncate px-1 font-normal">
+                    <h4 class="text-[11px] md:text-xs font-serif-elegant tracking-wide normal-case mb-0.5 truncate px-1 font-normal"
+                        :class="product.stock === 0 ? 'text-brand-white/40' : 'text-brand-white/80'">
                       {{ product.name }}
                     </h4>
-                    <p class="text-[9px] text-brand-gold/80 font-sans-luxury tracking-[0.12em] font-light">
+                    <p class="text-[9px] font-sans-luxury tracking-[0.12em] font-light"
+                       :class="product.stock === 0 ? 'text-brand-white/25 line-through' : 'text-brand-gold/80'">
                       $ {{ product.price.toLocaleString() }}
                     </p>
                   </div>

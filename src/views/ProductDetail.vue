@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import api from '@/api/axios';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
@@ -10,7 +10,6 @@ import RelatedProducts from '@/components/RelatedProducts.vue';
 import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
 
-const route = useRoute();
 const router = useRouter();
 
 const props = defineProps({
@@ -120,9 +119,12 @@ const handleWhatsAppClick = () => {
     utmCampaign:  params.get('utm_campaign'),
   }).catch(() => {}); // silencioso — no interrumpir flujo
 
-  // 3. Abrir WhatsApp con mensaje pre-llenado
+  // 3. Abrir WhatsApp — mensaje distinto si está agotado
+  const isOutOfStock = product.value.stock === 0;
   const msg = encodeURIComponent(
-    `Hola, me interesa la joya *${product.value.name}* ($${product.value.price.toLocaleString()} COP). ¿Me pueden dar más información?`
+    isOutOfStock
+      ? `Hola Cushion 💎 Vi la pieza *${product.value.name}* en su tienda y aparece agotada, pero me gustaría saber si pueden recrearla o hacer algo similar. ¿Me asesoran?`
+      : `Hola, me interesa la joya *${product.value.name}* ($${product.value.price.toLocaleString()} COP). ¿Me pueden dar más información?`
   );
   window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
 };
@@ -172,9 +174,14 @@ onUnmounted(() => {
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-24 mb-20">
-        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-wrapper" ref="galleryRef"
+        <div class="w-full lg:sticky lg:top-24 self-start main-gallery-wrapper relative" ref="galleryRef"
           @click="openLightboxOnActiveImage">
           <ProductGallery :images="product.images" :product-name="product.name" />
+          <!-- Badge AGOTADO sobre la galería -->
+          <div v-if="product.stock === 0"
+               class="absolute top-4 left-4 z-20 bg-brand-black/95 backdrop-blur-sm text-brand-white border border-brand-white/30 px-3 py-1.5 text-[9px] font-bold tracking-[0.25em] pointer-events-none">
+            AGOTADO
+          </div>
           <div
             class="block lg:hidden text-center mt-3 text-[9px] tracking-wide text-brand-white/30 font-sans-luxury">
             <Icon icon="lucide:maximize-2" class="inline-block w-3 h-3 mr-1 text-brand-gold/50" />
@@ -185,9 +192,13 @@ onUnmounted(() => {
         <div class="flex flex-col">
           <div class="flex flex-wrap items-center gap-3 mb-4">
             <span class="text-brand-gold text-[10px] tracking-[0.5em] font-bold">{{ product.category }}</span>
-            <span v-if="product.featured"
+            <span v-if="product.featured && product.stock > 0"
               class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold tracking-wide">Pieza
               Exclusiva</span>
+            <span v-if="product.stock === 0"
+              class="bg-brand-black border border-brand-white/25 text-brand-white px-3 py-1 text-[8px] font-bold tracking-[0.2em]">
+              AGOTADO
+            </span>
           </div>
 
           <h1
@@ -233,7 +244,8 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <div class="flex flex-col sm:flex-row items-stretch gap-4" v-if="product.stock > 0">
+          <!-- ── CON STOCK: selector + carrito ── -->
+          <div v-if="product.stock > 0" class="flex flex-col sm:flex-row items-stretch gap-4">
             <div
               class="flex items-center justify-between border border-brand-white/20 bg-brand-white/[0.02] px-4 py-3 sm:w-32">
               <button @click="selectedQuantity > 1 && selectedQuantity--"
@@ -248,8 +260,29 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <!-- Botón WhatsApp — siempre visible, con o sin stock -->
-          <button @click="handleWhatsAppClick"
+          <!-- ── AGOTADO: aviso + CTA ── -->
+          <div v-else class="border border-brand-white/10 bg-brand-white/[0.02] p-6">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="w-2 h-2 rounded-full bg-brand-white/20 flex-shrink-0"></span>
+              <p class="text-brand-white/50 font-sans-luxury text-[10px] tracking-[0.25em] uppercase">
+                Esta pieza esta Agotada
+              </p>
+            </div>
+            <p class="text-brand-white/35 font-sans-luxury text-xs leading-relaxed mb-5">
+              Sin embargo, podemos recrearla a tu medida con una esmeralda colombiana exclusiva.
+              Cada diseño es único — cuéntanos tu visión y nuestros expertos te guían.
+            </p>
+            <button @click="handleWhatsAppClick"
+              class="w-full flex items-center justify-center gap-3 bg-[#25D366]/10 border border-[#25D366]/40
+                     text-[#25D366] hover:bg-[#25D366]/20 py-4 text-xs font-sans-luxury tracking-wide
+                     transition-all duration-300 group">
+              <Icon icon="simple-icons:whatsapp" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+              Quiero una pieza como esta
+            </button>
+          </div>
+
+          <!-- Botón WhatsApp general (solo si hay stock) -->
+          <button v-if="product.stock > 0" @click="handleWhatsAppClick"
             class="mt-3 w-full flex items-center justify-center gap-3 border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 py-4 text-xs font-sans-luxury tracking-wide transition-all duration-300 group">
             <Icon icon="simple-icons:whatsapp" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
             Consultar por WhatsApp

@@ -8,6 +8,8 @@ const props = defineProps({
   }
 });
 
+const isOutOfStock = computed(() => props.product.stock === 0);
+
 const mainImage = computed(() => {
   if (props.product.images && props.product.images.length > 0) {
     const thumb = props.product.images.find(img => img.isThumbnail);
@@ -31,14 +33,17 @@ const onMainImageError = () => { mainImageFailed.value = true; };
 <template>
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
-    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
+    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border text-brand-white relative overflow-hidden"
+    :class="isOutOfStock
+      ? 'border-brand-white/5 opacity-80'
+      : 'border-brand-white/5'"
   >
-    <!-- Shimmer de lujo en hover -->
-    <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
+    <!-- Shimmer de lujo en hover (solo si hay stock) -->
+    <div v-if="!isOutOfStock" class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
 
     <div class="aspect-square overflow-hidden relative bg-brand-white/[0.02] border-b border-brand-white/5">
 
-      <!-- Placeholder cuando no hay imagen o falla la carga -->
+      <!-- Placeholder sin imagen -->
       <div v-if="!mainImage || mainImageFailed"
            class="w-full h-full flex items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
@@ -46,33 +51,56 @@ const onMainImageError = () => { mainImageFailed.value = true; };
         </svg>
       </div>
 
+      <!-- Imagen principal — desaturada si agotado -->
       <img
         v-if="mainImage && !mainImageFailed"
         :src="mainImage"
         :alt="product.name"
-        class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.06]"
-        :class="{ 'group-hover:opacity-0': hoverImage }"
+        class="w-full h-full object-cover transition-all duration-700 ease-out"
+        :class="[
+          isOutOfStock
+            ? 'grayscale-[70%] brightness-70'
+            : 'group-hover:scale-[1.06]',
+          { 'group-hover:opacity-0': hoverImage && !isOutOfStock }
+        ]"
         @error="onMainImageError"
       />
 
+      <!-- Overlay oscuro permanente para agotados -->
+      <div v-if="isOutOfStock" class="absolute inset-0 bg-brand-black/40 z-[5] pointer-events-none"></div>
+
+      <!-- Imagen en hover (solo si hay stock) -->
       <img
-        v-if="hoverImage && !mainImageFailed"
+        v-if="hoverImage && !mainImageFailed && !isOutOfStock"
         :src="hoverImage"
         :alt="product.name + ' vista alternativa'"
         class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-[1.06]"
       />
 
+      <!-- Badge AGOTADO -->
       <span
-        v-if="product.featured"
+        v-if="isOutOfStock"
+        class="absolute top-4 left-4 bg-brand-black/95 backdrop-blur-sm text-brand-white border border-brand-white/30 px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10"
+      >
+        AGOTADO
+      </span>
+
+      <!-- Badge Exclusivo (solo si hay stock) -->
+      <span
+        v-else-if="product.featured"
         class="absolute top-4 left-4 bg-brand-black/80 backdrop-blur-md text-brand-gold border border-brand-gold/30 px-2.5 py-1 text-[8px] font-bold tracking-wide z-10"
       >
         Exclusivo
       </span>
 
-      <!-- Overlay de acción en hover -->
-      <div class="absolute inset-0 bg-brand-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10">
-        <span class="text-brand-white/80 text-[9px] tracking-[0.3em] font-sans-luxury translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-          Ver pieza
+      <!-- Overlay hover: distinto según stock -->
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10"
+           :class="isOutOfStock ? 'bg-brand-black/30' : 'bg-brand-black/20'">
+        <span class="font-sans-luxury translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
+              :class="isOutOfStock
+                ? 'text-brand-white/50 text-[9px] tracking-[0.25em]'
+                : 'text-brand-white/80 text-[9px] tracking-[0.3em]'">
+          {{ isOutOfStock ? 'Consultar diseño' : 'Ver pieza' }}
         </span>
       </div>
     </div>
@@ -83,15 +111,27 @@ const onMainImageError = () => { mainImageFailed.value = true; };
         <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
           {{ product.category }}
         </p>
-        <h3 class="font-serif-elegant text-base md:text-lg tracking-wide group-hover:text-brand-gold transition-colors duration-300 line-clamp-2 min-h-[3rem] flex items-center justify-center">
+        <h3 class="font-serif-elegant text-base md:text-lg tracking-wide line-clamp-2 min-h-[3rem] flex items-center justify-center transition-colors duration-300"
+            :class="isOutOfStock ? 'text-brand-white/50' : 'group-hover:text-brand-gold'">
           {{ product.name }}
         </h3>
       </div>
 
-      <div class="pt-3 border-t border-brand-white/5 group-hover:border-brand-gold/20 transition-colors duration-500">
-        <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
+      <div class="pt-3 border-t transition-colors duration-500"
+           :class="isOutOfStock ? 'border-brand-white/5' : 'border-brand-white/5 group-hover:border-brand-gold/20'">
+        <p v-if="!isOutOfStock"
+           class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
           $ {{ product.price.toLocaleString() }}
         </p>
+        <!-- Agotado: precio tachado + aviso -->
+        <div v-else class="flex flex-col items-center gap-1">
+          <p class="font-sans-luxury text-brand-white/25 text-xs tracking-wide line-through">
+            $ {{ product.price.toLocaleString() }}
+          </p>
+          <p class="font-sans-luxury text-brand-white/40 text-[9px] tracking-[0.2em]">
+            Se puede mandar a hacer
+          </p>
+        </div>
       </div>
 
     </div>
@@ -108,14 +148,19 @@ const onMainImageError = () => { mainImageFailed.value = true; };
               border-color 0.4s ease;
 }
 
-.product-card:hover {
+.product-card:not(.opacity-80):hover {
   transform: translateY(-6px);
   box-shadow: 0 20px 40px rgba(184, 155, 106, 0.12),
               0 8px 16px rgba(0, 0, 0, 0.3);
   border-color: rgba(184, 155, 106, 0.25);
 }
 
-/* Shimmer sutil en hover — efecto de luz sobre la joya */
+/* Sin elevación en agotados */
+.product-card.opacity-80:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
 .card-shimmer {
   background: linear-gradient(
     105deg,
