@@ -1,5 +1,6 @@
 <script setup>
-import { defineProps, computed, ref } from 'vue';
+import { defineProps, computed, ref, watch } from 'vue';
+import { cloudinaryOptimize } from '@/utils/cloudinary';
 
 const props = defineProps({
   product: {
@@ -27,7 +28,16 @@ const hoverImage = computed(() => {
 });
 
 const mainImageFailed = ref(false);
+const imgLoaded = ref(false);
+
 const onMainImageError = () => { mainImageFailed.value = true; };
+const onMainImageLoad  = () => { imgLoaded.value = true; };
+
+// Si el producto cambia (reutilización del componente), reset del estado de carga
+watch(mainImage, () => {
+  imgLoaded.value = false;
+  mainImageFailed.value = false;
+});
 </script>
 
 <template>
@@ -51,18 +61,27 @@ const onMainImageError = () => { mainImageFailed.value = true; };
         </svg>
       </div>
 
-      <!-- Imagen principal — desaturada si agotado -->
+      <!-- Skeleton shimmer mientras carga la imagen -->
+      <div
+        v-if="mainImage && !mainImageFailed && !imgLoaded"
+        class="absolute inset-0 z-[2] skeleton-shimmer"
+      ></div>
+
+      <!-- Imagen principal — desaturada si agotado, fade-in al cargar -->
       <img
         v-if="mainImage && !mainImageFailed"
-        :src="mainImage"
+        :src="cloudinaryOptimize(mainImage, { width: 600 })"
         :alt="product.name"
-        class="w-full h-full object-cover transition-all duration-700 ease-out"
+        loading="lazy"
+        class="w-full h-full object-cover transition-all duration-500 ease-out"
         :class="[
+          imgLoaded ? 'opacity-100' : 'opacity-0',
           isOutOfStock
             ? 'grayscale-[70%] brightness-70'
             : 'group-hover:scale-[1.06]',
           { 'group-hover:opacity-0': hoverImage && !isOutOfStock }
         ]"
+        @load="onMainImageLoad"
         @error="onMainImageError"
       />
 
@@ -72,8 +91,9 @@ const onMainImageError = () => { mainImageFailed.value = true; };
       <!-- Imagen en hover (solo si hay stock) -->
       <img
         v-if="hoverImage && !mainImageFailed && !isOutOfStock"
-        :src="hoverImage"
+        :src="cloudinaryOptimize(hoverImage, { width: 600 })"
         :alt="product.name + ' vista alternativa'"
+        loading="lazy"
         class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-[1.06]"
       />
 
@@ -175,6 +195,23 @@ const onMainImageError = () => { mainImageFailed.value = true; };
 
 .product-card:hover .card-shimmer {
   background-position: -200% 0;
+}
+
+/* Skeleton shimmer mientras carga la imagen */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.07) 40%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-move 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-move {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .line-clamp-2 {

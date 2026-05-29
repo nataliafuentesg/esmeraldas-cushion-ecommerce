@@ -2,11 +2,12 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
-import api from '@/api/axios';
+import { useProductsStore } from '@/stores/products';
 import ProductCard from '@/components/ProductCard.vue';
 
 const route = useRoute();
 const router = useRouter();
+const productsStore = useProductsStore();
 
 const allProducts = ref([]);
 const loading = ref(true);
@@ -17,8 +18,8 @@ localSearchQuery.value = route.query.q || '';
 const fetchProducts = async () => {
     loading.value = true;
     try {
-        const res = await api.get('/products');
-        allProducts.value = res.data;
+        await productsStore.fetchProducts();
+        allProducts.value = productsStore.products;
     } catch (err) {
         console.error("Error obteniendo catálogo de búsqueda:", err);
     } finally {
@@ -97,9 +98,16 @@ onMounted(fetchProducts);
                 </p>
             </div>
 
-            <div v-if="loading" class="flex flex-col items-center justify-center py-20">
-                <Icon icon="line-md:loading-twotone-loop" class="text-brand-gold w-10 h-10 mb-4" />
-                <span class="text-[9px] tracking-wide text-brand-white/40">Abriendo Bóvedas de Inventario...</span>
+            <!-- Skeleton tarjetas mientras carga -->
+            <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                <div v-for="i in 6" :key="i" class="animate-pulse">
+                    <div class="aspect-square bg-brand-white/[0.04] border border-brand-white/5 w-full"></div>
+                    <div class="p-5 space-y-3">
+                        <div class="h-2 bg-brand-white/10 w-1/3 mx-auto"></div>
+                        <div class="h-3 bg-brand-white/10 w-2/3 mx-auto"></div>
+                        <div class="h-2 bg-brand-gold/10 w-1/4 mx-auto mt-3"></div>
+                    </div>
+                </div>
             </div>
 
             <div v-else>

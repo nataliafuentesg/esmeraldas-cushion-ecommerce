@@ -5,15 +5,16 @@ export default {
 </script>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, onActivated } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch, onActivated, nextTick } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
-import api from '@/api/axios';
+import { useProductsStore } from '@/stores/products';
 import ProductCard from '@/components/ProductCard.vue';
 import OccasionBadges from '@/components/OccasionBadges.vue';
 import { Icon } from '@iconify/vue';
 
 const route = useRoute();
 const router = useRouter();
+const productsStore = useProductsStore();
 
 const products = ref([]);
 const loading = ref(true); 
@@ -34,18 +35,22 @@ const restoreScrollSafely = () => {
 
   if (cameFromCollection && savedState) {
     const { scrollPosition } = JSON.parse(savedState);
-    
+
+    // Intento inmediato
     window.scrollTo({ top: scrollPosition, behavior: 'instant' });
-    
-    setTimeout(() => { 
-      window.scrollTo({ top: scrollPosition, behavior: 'instant' }); 
-    }, 40);
-    
+
+    // Reintento a 80 ms — cubre el tiempo de la transición fade-page (150ms) y layout
+    setTimeout(() => {
+      window.scrollTo({ top: scrollPosition, behavior: 'instant' });
+    }, 80);
+
+    // Reintento final a 350 ms — garantiza que todas las tarjetas estén en el DOM
+    // y borra el estado guardado para que no interfiera con navegaciones futuras
     setTimeout(() => {
       window.scrollTo({ top: scrollPosition, behavior: 'instant' });
       sessionStorage.removeItem('collection_state');
       sessionStorage.removeItem('came_from_collection');
-    }, 120);
+    }, 350);
   }
 };
 
@@ -58,9 +63,11 @@ onActivated(() => {
       sessionStorage.removeItem('last_viewed_product_id');
     }, 5000);
   }
-  
+
   if (!loading.value) {
-    restoreScrollSafely();
+    // nextTick asegura que cualquier cambio de DOM pendiente esté commiteado
+    // antes de intentar restaurar el scroll (crítico cuando el store es sincrónico)
+    nextTick(() => restoreScrollSafely());
   }
 });
 
@@ -105,14 +112,14 @@ const occasionFilters = computed(() => {
 const loadData = async () => {
   loading.value = true;
   try {
-    const response = await api.get('/products');
-    products.value = response.data;
+    await productsStore.fetchProducts();
+    products.value = productsStore.products;
 
     if (products.value.length > 0) {
       const highestPrice = Math.max(...products.value.map(p => p.price));
       maxPriceRange.value = highestPrice;
     }
-    
+
     const savedState = sessionStorage.getItem('collection_state');
     if (savedState && sessionStorage.getItem('came_from_collection') === 'true') {
       const state = JSON.parse(savedState);
@@ -122,16 +129,18 @@ const loadData = async () => {
       sortBy.value = state.sortBy || 'default';
     } else {
       selectedMaxPrice.value = maxPriceRange.value;
-      readCategoryFromUrl(); 
+      readCategoryFromUrl();
     }
 
   } catch (error) {
     console.error("Error al cargar la colección:", error);
   } finally {
-    loading.value = false; 
-    setTimeout(() => {
-      restoreScrollSafely();
-    }, 20);
+    loading.value = false;
+    // nextTick espera a que Vue haya renderizado todas las tarjetas en el DOM
+    // antes de intentar el scroll — crítico cuando los datos llegan del cache sincrónico
+    nextTick(() => {
+      setTimeout(() => restoreScrollSafely(), 20);
+    });
   }
 };
 

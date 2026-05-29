@@ -15,6 +15,8 @@ const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1
         <img
           :src="heroImageMobileUrl"
           alt="Alta Joyería Cushion"
+          fetchpriority="high"
+          decoding="async"
           class="w-full h-full object-cover hero-image"
         />
       </picture>

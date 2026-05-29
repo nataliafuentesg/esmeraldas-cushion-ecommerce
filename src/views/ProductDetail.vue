@@ -9,6 +9,8 @@ import ProductGallery from '@/components/ProductGallery.vue';
 import RelatedProducts from '@/components/RelatedProducts.vue';
 import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
+import { useProductsStore } from '@/stores/products';
+import { cloudinaryOptimize } from '@/utils/cloudinary';
 
 const router = useRouter();
 
@@ -18,6 +20,7 @@ const props = defineProps({
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const productsStore = useProductsStore();
 const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
 const allProducts = ref([]);
@@ -63,8 +66,61 @@ const handleGoBack = () => {
   }
 };
 
+// OG tags dinámicas — la imagen del producto aparece al compartir en WhatsApp / iMessage
 useHead({
-  title: computed(() => product.value ? `${product.value.name} | Cushion` : 'Cargando...')
+  title: () => product.value ? `${product.value.name} | Cushion` : 'Cushion | Alta Joyería',
+  meta: [
+    {
+      property: 'og:type',
+      content: 'product'
+    },
+    {
+      property: 'og:title',
+      content: () => product.value ? `${product.value.name} | Cushion Joyería` : 'Cushion | Alta Joyería'
+    },
+    {
+      property: 'og:description',
+      content: () => product.value?.description
+        ? product.value.description.substring(0, 155)
+        : 'Alta joyería con esmeraldas colombianas exclusivas. Diseñado en Bogotá.'
+    },
+    {
+      property: 'og:image',
+      content: () => product.value?.images?.[0]?.imageUrl
+        ? cloudinaryOptimize(product.value.images[0].imageUrl, { width: 1200, quality: 'auto:best' })
+        : 'https://cushionjewelry.com/images/og-cushion.png'
+    },
+    {
+      property: 'og:image:width',
+      content: '1200'
+    },
+    {
+      property: 'og:image:height',
+      content: '630'
+    },
+    {
+      property: 'og:url',
+      content: () => `https://cushionjewelry.com/producto/${product.value?.slug || ''}`
+    },
+    {
+      name: 'description',
+      content: () => product.value?.description?.substring(0, 155) || 'Alta joyería con esmeraldas colombianas.'
+    },
+    {
+      name: 'twitter:card',
+      content: 'summary_large_image'
+    },
+    {
+      name: 'twitter:title',
+      content: () => product.value ? `${product.value.name} | Cushion` : 'Cushion Joyería'
+    },
+    {
+      name: 'twitter:image',
+      content: () => product.value?.images?.[0]?.imageUrl
+        ? cloudinaryOptimize(product.value.images[0].imageUrl, { width: 1200, quality: 'auto:best' })
+        : 'https://cushionjewelry.com/images/og-cushion.png'
+    },
+  ]
 });
 
 // Modifica tu fetchProduct para que quede así:
@@ -75,14 +131,8 @@ const fetchProduct = async () => {
     product.value = res.data;
     trackViewProduct(res.data); // ← analytics: vista de producto
 
-    const cachedProducts = sessionStorage.getItem('cushion_global_products');
-    if (cachedProducts) {
-      allProducts.value = JSON.parse(cachedProducts);
-    } else {
-      const all = await api.get('/products');
-      allProducts.value = all.data;
-      sessionStorage.setItem('cushion_global_products', JSON.stringify(all.data));
-    }
+    await productsStore.fetchProducts();
+    allProducts.value = productsStore.products;
 
     setTimeout(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, 10);
   } catch (err) {
