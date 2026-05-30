@@ -11,8 +11,40 @@ const route = useRoute();
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 const cartStore = useCartStore();
 
+// OG tags base — se aplican a todas las páginas como fallback.
+// ProductDetail.vue las sobrescribe con datos del producto específico.
 useHead({
-  title: computed(() => route.meta.title || 'Cushion | Alta Joyería')
+  title: () => route.meta.title || 'Cushion | Alta Joyería',
+  meta: [
+    {
+      property: 'og:title',
+      content: () => route.meta.title || 'Cushion Jewelry | Alta Joyería & Esmeraldas'
+    },
+    {
+      property: 'og:description',
+      content: 'Descubre la colección exclusiva de Cushion. Alta joyería con esmeraldas colombianas certificadas, diseñadas en Bogotá.'
+    },
+    {
+      property: 'og:image',
+      content: 'https://cushionjewelry.com/images/og-cushion.png'
+    },
+    {
+      property: 'og:url',
+      content: () => `https://cushionjewelry.com${route.path}`
+    },
+    {
+      name: 'twitter:title',
+      content: () => route.meta.title || 'Cushion Jewelry | Alta Joyería'
+    },
+    {
+      name: 'twitter:description',
+      content: 'Alta joyería con esmeraldas colombianas certificadas. Piezas exclusivas diseñadas en Bogotá.'
+    },
+    {
+      name: 'twitter:image',
+      content: 'https://cushionjewelry.com/images/og-cushion.png'
+    },
+  ]
 });
 
 onMounted(() => {

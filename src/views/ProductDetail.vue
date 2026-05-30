@@ -124,6 +124,92 @@ useHead({
   ]
 });
 
+// ── Schema.org Product JSON-LD para Google Merchant Center ──────────────────
+// Google rastrea estas páginas y usa este esquema para Google Shopping orgánico.
+// Campos requeridos por Google Merchant: name, image, description, price,
+// availability, brand, sku, condition, shippingDetails, returnPolicy.
+
+const GOOGLE_CATEGORY_MAP = {
+  anillos:       'Apparel & Accessories > Jewelry > Rings',
+  collares:      'Apparel & Accessories > Jewelry > Necklaces',
+  gargantillas:  'Apparel & Accessories > Jewelry > Necklaces',
+  aretes:        'Apparel & Accessories > Jewelry > Earrings',
+  pulseras:      'Apparel & Accessories > Jewelry > Bracelets',
+  dijes:         'Apparel & Accessories > Jewelry > Charms & Pendants',
+  'piedras sueltas': 'Arts & Entertainment > Hobbies & Creative Arts > Collectibles > Gemstones',
+};
+
+const productJsonLd = computed(() => {
+  if (!product.value) return null;
+
+  const catKey  = (product.value.category || '').toLowerCase();
+  const gCat    = Object.entries(GOOGLE_CATEGORY_MAP).find(([k]) => catKey.includes(k))?.[1]
+                  ?? 'Apparel & Accessories > Jewelry';
+
+  const images  = (product.value.images || []).map(img =>
+    cloudinaryOptimize(img.imageUrl, { width: 1200, quality: 'auto:best' })
+  );
+
+  return {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name:        product.value.name,
+    description: product.value.description || '',
+    image:       images,
+    sku:         String(product.value.id),
+    brand:       { '@type': 'Brand', name: 'Cushion Jewelry' },
+    category:    gCat,
+    ...(product.value.metalType && { material: product.value.metalType }),
+    offers: {
+      '@type':            'Offer',
+      url:                `https://cushionjewelry.com/producto/${product.value.slug}`,
+      priceCurrency:      'COP',
+      price:              product.value.price.toString(),
+      priceValidUntil:    '2027-01-01',
+      availability:       product.value.stock > 0
+                            ? 'https://schema.org/InStock'
+                            : 'https://schema.org/OutOfStock',
+      itemCondition:      'https://schema.org/NewCondition',
+      seller: {
+        '@type': 'Organization',
+        name:    'Cushion Jewelry',
+        url:     'https://cushionjewelry.com',
+      },
+      // Detalles de envío — requeridos para el panel de envíos de Google
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'COP' },
+        shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'CO' },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+          transitTime:  { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2, unitCode: 'DAY' },
+        },
+      },
+      // Política de devoluciones — 2 días hábiles según política de la tienda
+      hasMerchantReturnPolicy: {
+        '@type':                  'MerchantReturnPolicy',
+        applicableCountry:        'CO',
+        returnPolicyCategory:     'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays:       2,
+        returnMethod:             'https://schema.org/ReturnByMail',
+        returnFees:               'https://schema.org/OriginalShippingFees',
+      },
+    },
+  };
+});
+
+// Inyecta el JSON-LD reactivo en el <head> — se actualiza cuando carga el producto
+useHead(computed(() => ({
+  script: productJsonLd.value ? [
+    {
+      key:       'product-schema',
+      type:      'application/ld+json',
+      innerHTML: JSON.stringify(productJsonLd.value),
+    },
+  ] : [],
+})));
+
 // Modifica tu fetchProduct para que quede así:
 const fetchProduct = async () => {
   loading.value = true;
@@ -170,12 +256,14 @@ const handleWhatsAppClick = () => {
     utmCampaign:  params.get('utm_campaign'),
   }).catch(() => {}); // silencioso — no interrumpir flujo
 
-  // 3. Abrir WhatsApp — mensaje distinto si está agotado
+  // 3. Abrir WhatsApp — incluye el link del producto para que el equipo sepa de cuál pieza se trata
   const isOutOfStock = product.value.stock === 0;
+  const productUrl   = `https://cushionjewelry.com/producto/${product.value.slug}`;
+
   const msg = encodeURIComponent(
     isOutOfStock
-      ? `Hola Cushion 💎 Vi la pieza *${product.value.name}* en su tienda y aparece agotada, pero me gustaría saber si pueden recrearla o hacer algo similar. ¿Me asesoran?`
-      : `Hola, me interesa la joya *${product.value.name}* ($${product.value.price.toLocaleString()} COP). ¿Me pueden dar más información?`
+      ? `Hola Cushion 💎 Vi esta pieza en su tienda y aparece agotada, me gustaría saber si pueden recrearla o hacer algo similar:\n\n*${product.value.name}*\n${productUrl}\n\n¿Me asesoran?`
+      : `Hola, me interesa esta joya:\n\n*${product.value.name}* — $${product.value.price.toLocaleString()} COP\n${productUrl}\n\n¿Me pueden dar más información?`
   );
   window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
 };
