@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/auth';
 import { Icon } from '@iconify/vue';
 import ProductGallery from '@/components/ProductGallery.vue';
 import RelatedProducts from '@/components/RelatedProducts.vue';
+import { RouterLink } from 'vue-router';
 import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { useProductsStore } from '@/stores/products';
@@ -179,6 +180,16 @@ const handleWhatsAppClick = () => {
   window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
 };
 
+// Enlace contextual a la guía de tallas según categoría del producto
+const sizeGuideLink = computed(() => {
+  const cat = product.value?.category?.toLowerCase() || '';
+  if (cat.includes('anillo'))    return '/guia-de-tallas#anillos';
+  if (cat.includes('collar') || cat.includes('gargantilla')) return '/guia-de-tallas#collares';
+  if (cat.includes('pulsera'))   return '/guia-de-tallas#pulseras';
+  if (cat.includes('dije') || cat.includes('arete') || cat.includes('piedra')) return null;
+  return null;
+});
+
 const relatedProducts = computed(() => {
   if (!product.value || !allProducts.value) return [];
   const inStock = allProducts.value.filter(p => p.stock > 0 && p.id !== product.value.id);
@@ -293,6 +304,17 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
+
+          <!-- ── Guía de tallas (contextual por categoría) ── -->
+          <RouterLink
+            v-if="sizeGuideLink"
+            :to="sizeGuideLink"
+            class="inline-flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.25em] transition-colors duration-300 mb-6 group"
+          >
+            <Icon icon="lucide:ruler" class="w-3.5 h-3.5 text-brand-gold/60 group-hover:text-brand-gold transition-colors" />
+            GUÍA DE TALLAS
+            <span class="text-brand-gold/50 group-hover:text-brand-gold transition-colors">→</span>
+          </RouterLink>
 
           <!-- ── CON STOCK: selector + carrito ── -->
           <div v-if="product.stock > 0" class="flex flex-col sm:flex-row items-stretch gap-4">

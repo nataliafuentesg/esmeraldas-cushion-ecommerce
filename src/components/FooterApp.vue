@@ -5,6 +5,7 @@ import { Icon } from '@iconify/vue';
 const supportItems = [
     { name: 'Garantías y Certificados', path: '/garantias' },
     { name: 'Política de Envíos', path: '/envios' },
+    { name: 'Guía de Tallas', path: '/guia-de-tallas' },
     { name: 'Preguntas Frecuentes (FAQ)', path: '/faq' },
     { name: 'Términos y Condiciones', path: '/terminos' },
 ];

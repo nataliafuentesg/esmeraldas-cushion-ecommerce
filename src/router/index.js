@@ -63,6 +63,12 @@ const router = createRouter({
       component: () => import('@/views/SearchView.vue')
     },
     {
+      path: '/guia-de-tallas',
+      name: 'size-guide',
+      component: () => import('@/views/SizeGuideView.vue'),
+      meta: { title: 'Guía de Tallas | Cushion' }
+    },
+    {
       path: '/garantias',
       name: 'garantias',
       component: () => import('@/views/GarantiasView.vue')
