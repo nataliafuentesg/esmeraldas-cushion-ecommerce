@@ -8,6 +8,7 @@ const supportItems = [
     { name: 'Guía de Tallas', path: '/guia-de-tallas' },
     { name: 'Preguntas Frecuentes (FAQ)', path: '/faq' },
     { name: 'Términos y Condiciones', path: '/terminos' },
+    { name: 'Política de Privacidad', path: '/privacidad' },
 ];
 
 const whatsappLink = 'https://wa.me/573136133822?text=Hola%2C%20me%20gustaría%20personalizar%20una%20joya%20Cushion.';

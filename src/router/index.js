@@ -89,6 +89,12 @@ const router = createRouter({
       component: () => import('@/views/TerminosView.vue')
     },
     {
+      path: '/privacidad',
+      name: 'privacidad',
+      component: () => import('@/views/PrivacidadView.vue'),
+      meta: { title: 'Política de Privacidad | Cushion' }
+    },
+    {
       path: '/admin',
       name: 'admin-dashboard',
       component: () => import('@/views/AdminDashboardView.vue')
