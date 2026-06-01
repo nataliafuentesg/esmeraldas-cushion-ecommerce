@@ -95,13 +95,13 @@ const submitOrder = async () => {
     // 3. Lógica de Contacto (WhatsApp vs Email)
     if (form.value.country === 'Colombia') {
       const waMessage = `¡Hola Cushion! Acabo de registrar el pedido #${orderNumber}.\n\n👤 Nombre: ${form.value.customerName}\n💎 Total: $${totalReal.toLocaleString()} COP\n\nQuiero coordinar el pago y envío.`;
-      const numeroWhatsApp = '573000000000'; // PON TU NÚMERO AQUÍ
+      const numeroWhatsApp = '573136133822'; // WhatsApp oficial Cushion
       const waUrl = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank');
     } else {
       const emailSubject = `Nuevo pedido internacional Cushion: #${orderNumber}`;
       const emailBody = `¡Hola Cushion!\n\nAcabo de realizar el pedido #${orderNumber} desde ${form.value.country}.\n\n👤 Nombre: ${form.value.customerName}\n💎 Total estimado: $${totalReal.toLocaleString()} COP\n\nPor favor, indíquenme las instrucciones para el pago internacional (PayPal, Zelle, Swift) y confirmación del envío.\n\nGracias.`;
-      const correoEmpresa = 'ventas@cushion.com'; // PON TU CORREO AQUÍ
+      const correoEmpresa = 'info@cushionjewelry.com'; // Correo oficial Cushion
       const mailtoUrl = `mailto:${correoEmpresa}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoUrl, '_blank');
     }
