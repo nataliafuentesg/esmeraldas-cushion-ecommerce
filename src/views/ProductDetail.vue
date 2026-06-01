@@ -12,6 +12,7 @@ import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { useProductsStore } from '@/stores/products';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = useRouter();
 
@@ -241,8 +242,12 @@ const WA_NUMBER = '573136133822';
 const handleWhatsAppClick = () => {
   if (!product.value) return;
 
-  // 1. Analytics
-  trackWhatsAppClick(product.value);
+  // event_id compartido — mismo valor en navegador (Pixel) y servidor (CAPI)
+  // para que Meta deduplique el evento Contact y no lo cuente dos veces.
+  const eventId = 'contact_' + uuidv4();
+
+  // 1. Analytics (dataLayer + Meta Pixel Contact con el event_id)
+  trackWhatsAppClick(product.value, eventId);
 
   // 2. Registrar en backend (fire & forget — no bloquea la UX)
   const params = new URLSearchParams(window.location.search);
@@ -251,6 +256,7 @@ const handleWhatsAppClick = () => {
     productName:  product.value.name,
     channel:      'WHATSAPP',
     clientEmail:  authStore.user?.email || null,
+    eventId:      eventId,
     utmSource:    params.get('utm_source'),
     utmMedium:    params.get('utm_medium'),
     utmCampaign:  params.get('utm_campaign'),

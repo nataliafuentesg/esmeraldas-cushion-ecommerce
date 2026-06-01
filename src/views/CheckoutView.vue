@@ -3,11 +3,13 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
+import { useAnalytics } from '@/composables/useAnalytics';
 import api from '@/api/axios';
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const router = useRouter();
+const { trackPurchase } = useAnalytics();
 
 const subtotal = computed(() => {
   return cartStore.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -70,10 +72,21 @@ const submitOrder = async () => {
       clientId: authStore.isAuthenticated ? authStore.user.id : null
     };
 
+    // Guardamos los items ANTES de limpiar el carrito (para el evento de compra)
+    const purchasedItems = cartStore.items.map(i => ({
+      id: i.productId,
+      name: i.productName,
+      price: i.price,
+      quantity: i.quantity,
+    }));
+
     // 1. Guardar la orden en el backend usando la sesión existente
     const response = await api.post(`/orders/create?sessionId=${cartStore.sessionId}`, orderData);
     const orderNumber = response.data.orderNumber;
     const totalReal = response.data.totalAmount;
+
+    // Meta Pixel — Purchase con dedup (mismo event_id = orderNumber que el backend/CAPI)
+    trackPurchase({ orderNumber, total: totalReal, items: purchasedItems });
 
     // 2. Limpiar el carrito completamente (items + total)
     cartStore.items = [];

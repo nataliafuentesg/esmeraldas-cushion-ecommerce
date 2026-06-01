@@ -114,4 +114,12 @@ router.beforeEach((to) => {
   return true;
 });
 
+// Meta Pixel — dispara PageView en cada navegación de la SPA
+// (el código base solo lo dispara en la carga inicial)
+router.afterEach(() => {
+  if (typeof window.fbq === 'function') {
+    window.fbq('track', 'PageView');
+  }
+});
+
 export default router;
