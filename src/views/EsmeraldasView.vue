@@ -2,6 +2,10 @@
 import { ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
+import { useAnalytics } from '@/composables/useAnalytics';
+import { v4 as uuidv4 } from 'uuid';
+
+const { trackEmeraldForm } = useAnalytics();
 
 // ── Estado del formulario ──────────────────────────────────────────────────
 const form = ref({
@@ -79,7 +83,14 @@ const submitRequest = async (contactMethod) => {
   errorMsg.value = '';
 
   try {
-    await api.post('/jewelry-requests', { ...form.value, contactMethod });
+    // event_id compartido — mismo valor en navegador (Pixel) y servidor (CAPI)
+    // para que Meta deduplique el evento Lead y no lo cuente dos veces.
+    const eventId = 'lead_' + uuidv4();
+
+    await api.post('/jewelry-requests', { ...form.value, contactMethod, eventId });
+
+    // Meta Pixel — Lead con dedup contra la Conversions API
+    trackEmeraldForm(contactMethod, eventId);
 
     if (contactMethod === 'WHATSAPP') {
       const msg = buildWhatsAppMessage();
