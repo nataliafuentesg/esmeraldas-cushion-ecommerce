@@ -10,6 +10,8 @@ const searchQuery = ref('');
 const filterCategory = ref('Todas');
 const filterStock = ref('Todos');
 const filterDate = ref(''); // ✨ Nuevo estado para la fecha
+const filterFeatured = ref(false); // Mostrar solo los del carrusel
+const togglingId = ref(null);      // ID del producto que se está actualizando
 
 const showProductModal = ref(false);
 const isEditing = ref(false);
@@ -74,9 +76,38 @@ const filteredProducts = computed(() => {
     // ✨ Filtro por fecha (Asume que el backend envía 'createdAt' tipo '2026-05-18T...')
     const matchesDate = !filterDate.value || (product.createdAt && product.createdAt.startsWith(filterDate.value));
 
-    return matchesSearch && matchesCategory && matchesStock && matchesDate;
+    const matchesFeatured = !filterFeatured.value || product.featured;
+
+    return matchesSearch && matchesCategory && matchesStock && matchesDate && matchesFeatured;
   });
 });
+
+// Cuántas piezas hay en el carrusel del inicio
+const featuredCount = computed(() => products.value.filter(p => p.featured).length);
+
+// Enciende/apaga el destacado de una pieza con un clic (sin abrir el formulario)
+const toggleFeatured = async (product) => {
+  if (togglingId.value) return; // evita dobles clics
+  const newVal = !product.featured;
+  togglingId.value = product.id;
+  product.featured = newVal; // actualización optimista (se ve al instante)
+
+  try {
+    const payload = {
+      ...product,
+      featured: newVal,
+      occasions: product.occasions ? [...product.occasions] : [],
+      images: (product.images || []).filter(img => img.imageUrl && img.imageUrl.trim() !== ''),
+    };
+    await api.put(`/admin/products/${product.id}`, payload);
+  } catch (error) {
+    product.featured = !newVal; // revertir si falla
+    console.error(error);
+    alert('No se pudo actualizar el destacado. Intenta de nuevo.');
+  } finally {
+    togglingId.value = null;
+  }
+};
 
 const openModalNew = () => {
   isEditing.value = false;
@@ -143,6 +174,35 @@ const deleteProduct = async (id, name) => {
       </button>
     </div>
 
+    <!-- Gestión del carrusel del inicio -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 bg-brand-gold/[0.04] border border-brand-gold/20 px-4 py-3">
+      <div class="flex items-center gap-3">
+        <Icon icon="lucide:sparkles" class="w-5 h-5 text-brand-gold shrink-0" />
+        <div>
+          <p class="text-brand-white text-xs tracking-wide">
+            Carrusel del Inicio:
+            <span class="text-brand-gold font-bold">{{ featuredCount }}</span>
+            {{ featuredCount === 1 ? 'pieza destacada' : 'piezas destacadas' }}
+          </p>
+          <p class="text-brand-white/40 text-[10px] tracking-wide mt-0.5">
+            <span v-if="featuredCount < 4" class="text-amber-400/80">Recomendado: 4 a 8 piezas para que el carrusel se vea completo.</span>
+            <span v-else-if="featuredCount > 8" class="text-amber-400/80">Tienes muchas — considera dejar entre 4 y 8 para mejor impacto.</span>
+            <span v-else>Toca la estrella ⭐ de cualquier fila para añadir o quitar del carrusel.</span>
+          </p>
+        </div>
+      </div>
+      <button
+        @click="filterFeatured = !filterFeatured"
+        class="shrink-0 px-4 py-2 text-[10px] font-bold tracking-wide border transition-colors flex items-center gap-2"
+        :class="filterFeatured
+          ? 'bg-brand-gold text-brand-black border-brand-gold'
+          : 'text-brand-gold border-brand-gold/40 hover:bg-brand-gold/10'"
+      >
+        <Icon :icon="filterFeatured ? 'lucide:list' : 'lucide:star'" class="w-3.5 h-3.5" />
+        {{ filterFeatured ? 'Ver todo el inventario' : 'Ver solo el carrusel' }}
+      </button>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-brand-white/5 p-4 border border-brand-white/10">
       <div class="relative">
         <Icon icon="lucide:search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-brand-white/50" />
@@ -178,6 +238,7 @@ const deleteProduct = async (id, name) => {
       <table class="w-full text-left border-collapse whitespace-nowrap">
         <thead class="bg-brand-white/5 text-[10px] tracking-wide text-brand-white/60">
           <tr>
+            <th class="p-4 border-b border-brand-white/10 font-medium text-center" title="Destacar en el carrusel del inicio">★</th>
             <th class="p-4 border-b border-brand-white/10 font-medium">Joya / Referencia</th>
             <th class="p-4 border-b border-brand-white/10 font-medium">Categoría</th>
             <th class="p-4 border-b border-brand-white/10 font-medium">Gema Principal</th>
@@ -188,9 +249,27 @@ const deleteProduct = async (id, name) => {
         </thead>
         <tbody class="text-sm font-sans-luxury text-brand-white">
           <tr v-if="filteredProducts.length === 0">
-            <td colspan="6" class="p-8 text-center text-brand-white/40 text-xs tracking-wide">No se encontraron piezas con esos filtros.</td>
+            <td colspan="7" class="p-8 text-center text-brand-white/40 text-xs tracking-wide">No se encontraron piezas con esos filtros.</td>
           </tr>
-          <tr v-for="product in filteredProducts" :key="product.id" class="border-b border-brand-white/5 hover:bg-brand-white/[0.02] transition-colors group">
+          <tr v-for="product in filteredProducts" :key="product.id"
+              class="border-b border-brand-white/5 hover:bg-brand-white/[0.02] transition-colors group"
+              :class="{ 'bg-brand-gold/[0.04]': product.featured }">
+            <td class="p-4 text-center">
+              <button
+                @click="toggleFeatured(product)"
+                :disabled="togglingId === product.id"
+                class="transition-all duration-200 disabled:opacity-40 hover:scale-110"
+                :title="product.featured ? 'Quitar del carrusel' : 'Añadir al carrusel'"
+              >
+                <Icon
+                  :icon="togglingId === product.id
+                    ? 'line-md:loading-twotone-loop'
+                    : (product.featured ? 'mdi:star' : 'mdi:star-outline')"
+                  class="w-5 h-5"
+                  :class="product.featured ? 'text-brand-gold' : 'text-brand-white/25 hover:text-brand-gold/60'"
+                />
+              </button>
+            </td>
             <td class="p-4">
               <div class="font-serif-elegant text-base text-brand-white">{{ product.name }}</div>
               <div class="text-[10px] text-brand-white/40 tracking-wide truncate max-w-[250px] mt-1">{{ product.description }}</div>
