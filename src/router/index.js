@@ -49,6 +49,12 @@ const router = createRouter({
       meta: { title: 'Resultado del Pago | Cushion' }
     },
     {
+      path: '/rastrear',
+      name: 'track-order',
+      component: () => import('@/views/TrackOrderView.vue'),
+      meta: { title: 'Rastrea tu Pedido | Cushion' }
+    },
+    {
       path: '/auth',
       name: 'auth',
       component: () => import('@/views/AuthView.vue')

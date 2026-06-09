@@ -3,6 +3,7 @@ import { RouterLink } from 'vue-router'
 import { Icon } from '@iconify/vue';
 
 const supportItems = [
+    { name: 'Rastrea tu Pedido', path: '/rastrear' },
     { name: 'Garantías y Certificados', path: '/garantias' },
     { name: 'Política de Envíos', path: '/envios' },
     { name: 'Guía de Tallas', path: '/guia-de-tallas' },

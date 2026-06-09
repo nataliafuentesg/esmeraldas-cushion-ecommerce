@@ -11,6 +11,10 @@ const statusOptions = ['PENDIENTE_PAGO', 'PAGADO', 'ENVIADO', 'ENTREGADO', 'CANC
 const selectedOrder = ref(null);
 const showModal = ref(false);
 
+// Envío
+const shipForm = ref({ trackingNumber: '', carrier: '' });
+const actionLoading = ref(false);
+
 onMounted(async () => {
   await loadOrders();
 });
@@ -38,7 +42,50 @@ const updateOrderStatus = async (orderId, newStatus) => {
 // Función para abrir los detalles
 const openOrderDetails = (order) => {
   selectedOrder.value = order;
+  shipForm.value = {
+    trackingNumber: order.trackingNumber || '',
+    carrier: order.shippingCarrier || '',
+  };
   showModal.value = true;
+};
+
+// Marcar como ENVIADO (guarda guía + transportadora y dispara el correo de envío)
+const markShipped = async () => {
+  if (!shipForm.value.trackingNumber.trim() || !shipForm.value.carrier.trim()) {
+    alert('Ingresa el número de guía y la transportadora.');
+    return;
+  }
+  actionLoading.value = true;
+  try {
+    const res = await api.post(
+      `/admin/orders/${selectedOrder.value.id}/ship` +
+      `?trackingNumber=${encodeURIComponent(shipForm.value.trackingNumber.trim())}` +
+      `&carrier=${encodeURIComponent(shipForm.value.carrier.trim())}`
+    );
+    Object.assign(selectedOrder.value, res.data);
+    await loadOrders();
+    alert('Pedido marcado como ENVIADO. Se envió el correo al cliente.');
+  } catch (e) {
+    alert('Error al marcar como enviado.');
+  } finally {
+    actionLoading.value = false;
+  }
+};
+
+// Marcar como ENTREGADO (dispara el correo de agradecimiento)
+const markDelivered = async () => {
+  if (!confirm('¿Confirmar que el pedido fue entregado? Se enviará el correo final al cliente.')) return;
+  actionLoading.value = true;
+  try {
+    const res = await api.post(`/admin/orders/${selectedOrder.value.id}/deliver`);
+    Object.assign(selectedOrder.value, res.data);
+    await loadOrders();
+    alert('Pedido marcado como ENTREGADO.');
+  } catch (e) {
+    alert('Error al marcar como entregado.');
+  } finally {
+    actionLoading.value = false;
+  }
 };
 </script>
 
@@ -139,6 +186,42 @@ const openOrderDetails = (order) => {
               <span class="text-brand-gold font-serif-elegant tracking-wider text-lg">Total Pagado</span>
               <span class="text-brand-gold font-serif-elegant tracking-wider text-xl">${{ selectedOrder.totalAmount.toLocaleString() }}</span>
             </div>
+          </div>
+
+          <!-- Gestión de envío -->
+          <div class="bg-brand-white/5 border border-brand-white/10 p-5">
+            <h4 class="text-brand-gold text-[10px] tracking-[0.3em] mb-4 flex items-center gap-2">
+              <Icon icon="lucide:truck" class="w-4 h-4" /> GESTIÓN DE ENVÍO
+            </h4>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="text-[9px] text-brand-white/40 tracking-wide block mb-1">Transportadora</label>
+                <input v-model="shipForm.carrier" type="text" placeholder="Ej: Servientrega, Coordinadora"
+                  class="w-full bg-transparent border-b border-brand-white/20 py-2 text-brand-white text-sm focus:outline-none focus:border-brand-gold placeholder:text-brand-white/25">
+              </div>
+              <div>
+                <label class="text-[9px] text-brand-white/40 tracking-wide block mb-1">Número de guía</label>
+                <input v-model="shipForm.trackingNumber" type="text" placeholder="Ej: 999000111222"
+                  class="w-full bg-transparent border-b border-brand-white/20 py-2 text-brand-white text-sm focus:outline-none focus:border-brand-gold placeholder:text-brand-white/25">
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button @click="markShipped" :disabled="actionLoading"
+                class="flex-1 bg-brand-gold text-brand-black px-4 py-3 text-[10px] font-bold tracking-[0.2em] hover:bg-brand-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                <Icon icon="lucide:send" class="w-3.5 h-3.5" />
+                {{ selectedOrder.status === 'ENVIADO' ? 'ACTUALIZAR GUÍA' : 'MARCAR ENVIADO' }}
+              </button>
+              <button @click="markDelivered" :disabled="actionLoading || selectedOrder.status === 'ENTREGADO'"
+                class="flex-1 border border-brand-gold/40 text-brand-gold px-4 py-3 text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold/10 transition-colors disabled:opacity-40 flex items-center justify-center gap-2">
+                <Icon icon="lucide:package-check" class="w-3.5 h-3.5" />
+                {{ selectedOrder.status === 'ENTREGADO' ? 'YA ENTREGADO' : 'MARCAR ENTREGADO' }}
+              </button>
+            </div>
+            <p class="text-[9px] text-brand-white/30 tracking-wide mt-3">
+              Al marcar enviado/entregado se envía automáticamente el correo correspondiente al cliente.
+            </p>
           </div>
 
         </div>

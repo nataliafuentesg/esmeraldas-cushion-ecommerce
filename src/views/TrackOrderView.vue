@@ -1,0 +1,158 @@
+<script setup>
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { Icon } from '@iconify/vue';
+import api from '@/api/axios';
+
+const route = useRoute();
+const orderNumber = ref(route.query.order || '');
+const contact = ref('');
+const order = ref(null);
+const errorMsg = ref('');
+const loading = ref(false);
+
+// Pasos del pedido en orden
+const steps = [
+  { key: 'PENDIENTE_PAGO', label: 'Orden recibida', icon: 'lucide:receipt' },
+  { key: 'PAGADO',         label: 'Pago confirmado', icon: 'lucide:credit-card' },
+  { key: 'ENVIADO',        label: 'En camino',       icon: 'lucide:truck' },
+  { key: 'ENTREGADO',      label: 'Entregado',       icon: 'lucide:package-check' },
+];
+
+const currentStepIndex = (status) => {
+  const i = steps.findIndex(s => s.key === status);
+  return i === -1 ? 0 : i;
+};
+
+const search = async () => {
+  if (!orderNumber.value.trim() || !contact.value.trim()) {
+    errorMsg.value = 'Ingresa tu número de pedido y tu correo o teléfono.';
+    return;
+  }
+  loading.value = true;
+  errorMsg.value = '';
+  order.value = null;
+  try {
+    const res = await api.get('/orders/track', {
+      params: { orderNumber: orderNumber.value.trim(), contact: contact.value.trim() }
+    });
+    order.value = res.data;
+  } catch (e) {
+    errorMsg.value = e.response?.data?.message
+      || 'No encontramos el pedido. Verifica los datos e intenta de nuevo.';
+  } finally {
+    loading.value = false;
+  }
+};
+</script>
+
+<template>
+  <div class="bg-brand-black min-h-screen py-16 lg:py-24 font-sans text-brand-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-20 max-w-3xl">
+
+      <header class="text-center mb-12">
+        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Seguimiento</span>
+        <h1 class="text-3xl md:text-4xl font-serif-elegant tracking-wide mb-4">Rastrea tu Pedido</h1>
+        <div class="h-[1px] w-20 bg-brand-gold mx-auto mb-5"></div>
+        <p class="text-brand-white/50 font-sans-luxury text-sm max-w-md mx-auto">
+          Ingresa tu número de pedido y el correo o teléfono con que lo realizaste.
+        </p>
+      </header>
+
+      <!-- Formulario -->
+      <div class="bg-brand-white/[0.02] border border-brand-white/10 p-6 md:p-8 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-[10px] text-brand-white/50 tracking-wide block mb-2">Número de pedido</label>
+            <input v-model="orderNumber" type="text" placeholder="CUSH-XXXXXXXX" @keydown.enter="search"
+              class="w-full bg-transparent border-b border-brand-white/20 py-2 text-brand-white text-sm focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/25 uppercase">
+          </div>
+          <div>
+            <label class="text-[10px] text-brand-white/50 tracking-wide block mb-2">Correo o teléfono</label>
+            <input v-model="contact" type="text" placeholder="tu@correo.com o 300..." @keydown.enter="search"
+              class="w-full bg-transparent border-b border-brand-white/20 py-2 text-brand-white text-sm focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/25">
+          </div>
+        </div>
+        <p v-if="errorMsg" class="text-red-400/80 text-xs font-sans-luxury mb-4">{{ errorMsg }}</p>
+        <button @click="search" :disabled="loading"
+          class="w-full sm:w-auto bg-brand-gold text-brand-black px-10 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-white transition-colors disabled:opacity-50">
+          {{ loading ? 'BUSCANDO…' : 'RASTREAR' }}
+        </button>
+      </div>
+
+      <!-- Resultado -->
+      <div v-if="order" class="border border-brand-gold/20 bg-brand-black/50 p-6 md:p-10 fade-in">
+        <div class="flex flex-wrap justify-between items-baseline gap-2 mb-8 border-b border-brand-white/10 pb-5">
+          <div>
+            <p class="text-[10px] text-brand-white/40 tracking-wide">Pedido</p>
+            <p class="text-xl font-serif-elegant text-brand-white tracking-wide">#{{ order.orderNumber }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[10px] text-brand-white/40 tracking-wide">Total</p>
+            <p class="text-lg font-serif-elegant text-brand-gold">${{ order.totalAmount.toLocaleString() }}</p>
+          </div>
+        </div>
+
+        <!-- Timeline de estados -->
+        <div v-if="order.status !== 'PAGO_RECHAZADO' && order.status !== 'CANCELADO'" class="mb-8">
+          <div class="flex justify-between relative">
+            <div class="absolute top-5 left-0 right-0 h-[1px] bg-brand-white/10"></div>
+            <div v-for="(step, idx) in steps" :key="step.key" class="relative flex flex-col items-center flex-1 z-10">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors"
+                :class="idx <= currentStepIndex(order.status)
+                  ? 'bg-brand-gold border-brand-gold text-brand-black'
+                  : 'bg-brand-black border-brand-white/20 text-brand-white/30'">
+                <Icon :icon="step.icon" class="w-4 h-4" />
+              </div>
+              <p class="text-[9px] tracking-wide mt-2 text-center"
+                :class="idx <= currentStepIndex(order.status) ? 'text-brand-gold' : 'text-brand-white/30'">
+                {{ step.label }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado rechazado -->
+        <div v-else class="bg-red-900/20 border border-red-900/40 p-4 mb-8 text-center">
+          <p class="text-red-300/80 text-sm font-sans-luxury">
+            {{ order.status === 'PAGO_RECHAZADO' ? 'El pago de este pedido fue rechazado o cancelado.' : 'Este pedido fue cancelado.' }}
+          </p>
+        </div>
+
+        <!-- Datos de envío (si ya fue enviado) -->
+        <div v-if="order.trackingNumber" class="bg-brand-white/[0.03] border border-brand-white/10 p-5 mb-6">
+          <h4 class="text-brand-gold text-[10px] tracking-[0.3em] mb-3">INFORMACIÓN DE ENVÍO</h4>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div>
+              <p class="text-[10px] text-brand-white/40">Transportadora</p>
+              <p class="text-brand-white">{{ order.shippingCarrier || '—' }}</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-brand-white/40">Número de guía</p>
+              <p class="text-brand-white tracking-wide">{{ order.trackingNumber }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artículos -->
+        <div v-if="order.items && order.items.length">
+          <h4 class="text-brand-white/60 text-[10px] tracking-[0.3em] mb-3 border-b border-brand-white/10 pb-2">ARTÍCULOS</h4>
+          <div v-for="(it, i) in order.items" :key="i" class="flex justify-between text-sm py-2">
+            <span class="text-brand-white/80"><span class="text-brand-gold">{{ it.quantity }}x</span> {{ it.name }}</span>
+            <span class="text-brand-white/70">${{ (it.price || 0).toLocaleString() }}</span>
+          </div>
+        </div>
+
+        <p class="text-center text-brand-white/30 text-[10px] mt-8 font-sans-luxury">
+          ¿Dudas con tu pedido?
+          <a href="https://wa.me/573136133822" target="_blank" class="text-brand-gold hover:underline">Escríbenos por WhatsApp</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.fade-in { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>

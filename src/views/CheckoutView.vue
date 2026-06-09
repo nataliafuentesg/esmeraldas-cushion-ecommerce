@@ -23,9 +23,14 @@ const form = ref({
   notes: ''
 });
 
-// Tarifa dinámica según el país
+// Tarifas de envío — se leen del backend (fuente única de verdad). Los valores
+// por defecto son solo un respaldo mientras carga la config.
+const shippingRates = ref({ nacional: 25000, internacional: 150000 });
+
 const shippingFee = computed(() => {
-  return form.value.country === 'Colombia' ? 25000 : 150000;
+  return form.value.country === 'Colombia'
+    ? shippingRates.value.nacional
+    : shippingRates.value.internacional;
 });
 
 const total = computed(() => subtotal.value + shippingFee.value);
@@ -40,12 +45,18 @@ const internationalDone = ref(false); // confirmación de pedido internacional
 
 const isColombia = computed(() => form.value.country === 'Colombia');
 
-onMounted(() => {
+onMounted(async () => {
   if (authStore.isAuthenticated) {
     form.value.customerName = `${authStore.user.firstName} ${authStore.user.lastName}`.trim();
     form.value.customerEmail = authStore.user.email;
     form.value.phoneNumber = authStore.user.phone || '';
   }
+  // Cargar las tarifas de envío del backend (mismo valor que se cobrará)
+  try {
+    const res = await api.get('/config/shipping');
+    if (res.data?.nacional != null) shippingRates.value.nacional = res.data.nacional;
+    if (res.data?.internacional != null) shippingRates.value.internacional = res.data.internacional;
+  } catch { /* usa los valores por defecto si falla */ }
 });
 
 const submitOrder = async () => {
