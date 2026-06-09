@@ -99,12 +99,21 @@ const goToProfile = () => {
                     <span class="hidden sm:block">Búsqueda</span>
                 </button>
 
-                <button @click="goToProfile"
-                        class="flex items-center space-x-2 font-sans-luxury text-xs
-                                hover:text-brand-gold transition-colors tracking-wider ml-auto">
-                    <Icon icon="lucide:user" class="w-4 h-4" />
-                    <span class="hidden sm:block">Mi Cuenta</span>
-                </button>
+                <div class="ml-auto flex items-center gap-5 sm:gap-8">
+                    <button @click="router.push('/rastrear')"
+                            class="flex items-center space-x-2 font-sans-luxury text-xs
+                                    hover:text-brand-gold transition-colors tracking-wider">
+                        <Icon icon="lucide:package-search" class="w-4 h-4" />
+                        <span class="hidden sm:block">Rastrear pedido</span>
+                    </button>
+
+                    <button @click="goToProfile"
+                            class="flex items-center space-x-2 font-sans-luxury text-xs
+                                    hover:text-brand-gold transition-colors tracking-wider">
+                        <Icon icon="lucide:user" class="w-4 h-4" />
+                        <span class="hidden sm:block">Mi Cuenta</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

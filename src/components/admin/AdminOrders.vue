@@ -261,6 +261,27 @@ const markDelivered = async () => {
             <p class="text-brand-white text-sm font-sans-luxury italic">"{{ selectedOrder.notes }}"</p>
           </div>
 
+          <!-- Información de pago (transacción Bold) -->
+          <div class="bg-brand-white/5 p-4 border border-brand-white/10">
+            <h4 class="text-brand-gold text-[10px] tracking-[0.3em] mb-3 flex items-center gap-2">
+              <Icon icon="lucide:credit-card" class="w-4 h-4" /> PAGO
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-sans-luxury">
+              <div>
+                <p class="text-[10px] text-brand-white/40">ID Transacción Bold</p>
+                <p class="text-brand-white break-all">
+                  {{ selectedOrder.paymentId
+                      ? (selectedOrder.paymentId === 'MANUAL_ADMIN' ? 'Confirmado manualmente' : selectedOrder.paymentId)
+                      : '— (pago no confirmado)' }}
+                </p>
+              </div>
+              <div>
+                <p class="text-[10px] text-brand-white/40">Método</p>
+                <p class="text-brand-white">Bold · Tarjeta / PSE</p>
+              </div>
+            </div>
+          </div>
+
           <div>
             <h4 class="text-brand-white tracking-wide text-xs border-b border-brand-white/10 pb-2 mb-4">Artículos en este pedido</h4>
             

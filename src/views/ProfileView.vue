@@ -46,6 +46,24 @@ const STATUS_MAP = {
     classes: 'bg-red-900/30 text-red-400 border border-red-500/30',
     step: -1,
   },
+  EXPIRADO: {
+    label: 'Reserva vencida',
+    icon: 'lucide:clock-alert',
+    classes: 'bg-brand-white/10 text-brand-white/40 border border-brand-white/20',
+    step: -1,
+  },
+  PAGO_RECHAZADO: {
+    label: 'Pago rechazado',
+    icon: 'lucide:x-circle',
+    classes: 'bg-red-900/30 text-red-400 border border-red-500/30',
+    step: -1,
+  },
+  PAGO_SIN_STOCK: {
+    label: 'En revisión',
+    icon: 'lucide:alert-triangle',
+    classes: 'bg-orange-900/30 text-orange-400 border border-orange-500/30',
+    step: -1,
+  },
 };
 
 const TIMELINE_STEPS = [
@@ -244,6 +262,42 @@ const handleLogout = () => {
                   <span class="text-brand-gold font-serif-elegant tracking-wide">
                     ${{ order.totalAmount.toLocaleString() }} COP
                   </span>
+                </div>
+
+                <!-- Detalle de pago -->
+                <div class="mt-5 pt-4 border-t border-brand-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-brand-gold/80 text-[9px] tracking-[0.3em] mb-2">PAGO</p>
+                    <div class="space-y-1.5 text-[11px] font-sans-luxury">
+                      <div class="flex justify-between">
+                        <span class="text-brand-white/40">Estado</span>
+                        <span class="text-brand-white/80">{{ getStatus(order.status).label }}</span>
+                      </div>
+                      <div v-if="order.paymentId && order.paymentId !== 'MANUAL_ADMIN'" class="flex justify-between gap-3">
+                        <span class="text-brand-white/40">Referencia</span>
+                        <span class="text-brand-white/80 truncate" :title="order.paymentId">{{ order.paymentId }}</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-brand-white/40">Método</span>
+                        <span class="text-brand-white/80">Bold · Tarjeta/PSE</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Detalle de envío (si ya fue despachado) -->
+                  <div v-if="order.trackingNumber">
+                    <p class="text-brand-gold/80 text-[9px] tracking-[0.3em] mb-2">ENVÍO</p>
+                    <div class="space-y-1.5 text-[11px] font-sans-luxury">
+                      <div class="flex justify-between gap-3">
+                        <span class="text-brand-white/40">Transportadora</span>
+                        <span class="text-brand-white/80">{{ order.shippingCarrier || '—' }}</span>
+                      </div>
+                      <div class="flex justify-between gap-3">
+                        <span class="text-brand-white/40">Guía</span>
+                        <span class="text-brand-white/80 truncate" :title="order.trackingNumber">{{ order.trackingNumber }}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </Transition>
