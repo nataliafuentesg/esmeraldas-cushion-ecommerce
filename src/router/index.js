@@ -43,6 +43,12 @@ const router = createRouter({
       component: () => import('@/views/CheckoutView.vue')
     },
     {
+      path: '/pago-resultado',
+      name: 'payment-result',
+      component: () => import('@/views/PaymentResultView.vue'),
+      meta: { title: 'Resultado del Pago | Cushion' }
+    },
+    {
       path: '/auth',
       name: 'auth',
       component: () => import('@/views/AuthView.vue')

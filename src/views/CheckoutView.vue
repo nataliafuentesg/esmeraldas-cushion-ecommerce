@@ -1,15 +1,14 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
-import { useAnalytics } from '@/composables/useAnalytics';
+import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const router = useRouter();
-const { trackPurchase } = useAnalytics();
 
 const subtotal = computed(() => {
   return cartStore.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -34,6 +33,13 @@ const total = computed(() => subtotal.value + shippingFee.value);
 const isSubmitting = ref(false);
 const errorMsg = ref('');
 
+// Estado del pago con Bold (Colombia)
+const boldData = ref(null);          // datos del botón devueltos por el backend
+const boldContainer = ref(null);     // contenedor donde se inyecta el botón
+const internationalDone = ref(false); // confirmación de pedido internacional
+
+const isColombia = computed(() => form.value.country === 'Colombia');
+
 onMounted(() => {
   if (authStore.isAuthenticated) {
     form.value.customerName = `${authStore.user.firstName} ${authStore.user.lastName}`.trim();
@@ -53,16 +59,13 @@ const submitOrder = async () => {
   errorMsg.value = '';
 
   try {
-    // Verificar que exista una sesión de carrito válida antes de continuar
     if (!cartStore.sessionId) {
       errorMsg.value = "No se encontró tu sesión de carrito. Por favor recarga la página e intenta de nuevo.";
       isSubmitting.value = false;
       return;
     }
 
-    // Unimos el país a la dirección para que el backend calcule el flete correctamente
     const fullAddress = `[${form.value.country.toUpperCase()}] - ${form.value.shippingAddress}`;
-
     const orderData = {
       customerName: form.value.customerName,
       customerEmail: form.value.customerEmail,
@@ -72,46 +75,30 @@ const submitOrder = async () => {
       clientId: authStore.isAuthenticated ? authStore.user.id : null
     };
 
-    // Guardamos los items ANTES de limpiar el carrito (para el evento de compra)
-    const purchasedItems = cartStore.items.map(i => ({
-      id: i.productId,
-      name: i.productName,
-      price: i.price,
-      quantity: i.quantity,
-    }));
-
-    // 1. Guardar la orden en el backend usando la sesión existente
+    // Crear la orden en el backend (queda PENDIENTE_PAGO — aún NO descuenta inventario)
     const response = await api.post(`/orders/create?sessionId=${cartStore.sessionId}`, orderData);
-    const orderNumber = response.data.orderNumber;
-    const totalReal = response.data.totalAmount;
+    const data = response.data;
 
-    // Meta Pixel — Purchase con dedup (mismo event_id = orderNumber que el backend/CAPI)
-    trackPurchase({ orderNumber, total: totalReal, items: purchasedItems });
-
-    // 2. Limpiar el carrito completamente (items + total)
-    cartStore.items = [];
-    cartStore.total = 0;
-
-    // 3. Lógica de Contacto (WhatsApp vs Email)
-    if (form.value.country === 'Colombia') {
-      const waMessage = `¡Hola Cushion! Acabo de registrar el pedido #${orderNumber}.\n\n👤 Nombre: ${form.value.customerName}\n💎 Total: $${totalReal.toLocaleString()} COP\n\nQuiero coordinar el pago y envío.`;
-      const numeroWhatsApp = '573136133822'; // WhatsApp oficial Cushion
-      const waUrl = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(waMessage)}`;
-      window.open(waUrl, '_blank');
+    if (isColombia.value) {
+      // ── Colombia: pago en línea con Bold ──
+      // Guardamos resumen para la página de resultado (Pixel Purchase con dedup)
+      sessionStorage.setItem('cushion_pending_order', JSON.stringify({
+        orderNumber: data.orderNumber,
+        total: data.totalAmount,
+        items: cartStore.items.map(i => ({
+          id: i.productId, name: i.productName, price: i.price, quantity: i.quantity,
+        })),
+      }));
+      boldData.value = data;
+      await nextTick();
+      renderBoldButton();
     } else {
-      const emailSubject = `Nuevo pedido internacional Cushion: #${orderNumber}`;
-      const emailBody = `¡Hola Cushion!\n\nAcabo de realizar el pedido #${orderNumber} desde ${form.value.country}.\n\n👤 Nombre: ${form.value.customerName}\n💎 Total estimado: $${totalReal.toLocaleString()} COP\n\nPor favor, indíquenme las instrucciones para el pago internacional (PayPal, Zelle, Swift) y confirmación del envío.\n\nGracias.`;
-      const correoEmpresa = 'info@cushionjewelry.com'; // Correo oficial Cushion
-      const mailtoUrl = `mailto:${correoEmpresa}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      // ── Internacional: coordinación por correo (Bold es solo Colombia) ──
+      const emailSubject = `Nuevo pedido internacional Cushion: #${data.orderNumber}`;
+      const emailBody = `¡Hola Cushion!\n\nAcabo de realizar el pedido #${data.orderNumber} desde ${form.value.country}.\n\n👤 Nombre: ${form.value.customerName}\n💎 Total estimado: $${data.totalAmount.toLocaleString()} COP\n\nPor favor, indíquenme las instrucciones para el pago internacional (PayPal, Zelle, Swift) y confirmación del envío.\n\nGracias.`;
+      const mailtoUrl = `mailto:info@cushionjewelry.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoUrl, '_blank');
-    }
-
-    alert(`¡Pedido #${orderNumber} creado con éxito!`);
-
-    if (authStore.isAuthenticated) {
-      router.push('/perfil');
-    } else {
-      router.push('/');
+      internationalDone.value = true;
     }
 
   } catch (error) {
@@ -124,6 +111,30 @@ const submitOrder = async () => {
     isSubmitting.value = false;
   }
 };
+
+// Inyecta el botón de Bold con los datos + firma que devolvió el backend.
+// La librería de Bold (cargada en index.html) lo renderiza automáticamente.
+const renderBoldButton = () => {
+  if (!boldContainer.value || !boldData.value) return;
+  boldContainer.value.innerHTML = '';
+
+  const script = document.createElement('script');
+  script.setAttribute('data-bold-button', 'dark-L');
+  script.setAttribute('data-order-id', boldData.value.orderNumber);
+  script.setAttribute('data-currency', boldData.value.boldCurrency);
+  script.setAttribute('data-amount', String(boldData.value.boldAmount));
+  script.setAttribute('data-api-key', boldData.value.boldApiKey);
+  script.setAttribute('data-integrity-signature', boldData.value.boldIntegritySignature);
+  script.setAttribute('data-description', `Pedido Cushion ${boldData.value.orderNumber}`);
+  script.setAttribute('data-redirection-url',
+    `https://cushionjewelry.com/pago-resultado?order=${boldData.value.orderNumber}`);
+  script.setAttribute('data-customer-data', JSON.stringify({
+    email: form.value.customerEmail,
+    fullName: form.value.customerName,
+    phone: form.value.phoneNumber,
+  }));
+  boldContainer.value.appendChild(script);
+};
 </script>
 
 <template>
@@ -133,7 +144,8 @@ const submitOrder = async () => {
         Finalizar Compra
       </h1>
 
-      <div class="flex flex-col lg:flex-row gap-12">
+      <!-- ESTADO 1: Formulario de envío -->
+      <div v-if="!boldData && !internationalDone" class="flex flex-col lg:flex-row gap-12">
         <div class="flex-1">
           <h2 class="text-2xl font-serif-elegant text-brand-white mb-8 tracking-wide">Detalles de envío</h2>
           
@@ -193,13 +205,57 @@ const submitOrder = async () => {
             </div>
 
             <button type="submit" form="checkout-form" :disabled="isSubmitting || cartStore.items.length === 0" class="w-full bg-brand-white text-brand-black px-6 py-4 text-xs font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300 disabled:opacity-50">
-              {{ isSubmitting ? 'Procesando...' : 'Confirmar Pedido' }}
+              {{ isSubmitting ? 'Procesando...' : (isColombia ? 'Continuar al pago' : 'Confirmar Pedido') }}
             </button>
-            
+
             <p v-if="form.country !== 'Colombia'" class="text-center text-brand-white/40 text-[10px] font-sans-luxury tracking-wide mt-4">
               Los pagos internacionales se coordinan por correo posterior a la compra.
             </p>
           </div>
+        </div>
+      </div>
+
+      <!-- ESTADO 2: Pago en línea con Bold (Colombia) -->
+      <div v-else-if="boldData" class="max-w-lg mx-auto">
+        <div class="border border-brand-gold/30 bg-brand-black/50 p-8 md:p-10 text-center">
+          <Icon icon="lucide:shield-check" class="w-12 h-12 text-brand-gold mx-auto mb-4" />
+          <h2 class="text-2xl font-serif-elegant text-brand-white mb-2 tracking-wide">Tu pedido está reservado</h2>
+          <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mb-1">
+            Pedido <span class="text-brand-gold">#{{ boldData.orderNumber }}</span>
+          </p>
+          <p class="text-brand-white/60 text-sm font-sans-luxury mb-8">
+            Completa el pago de forma segura para confirmar tu compra.
+          </p>
+
+          <div class="border-t border-b border-brand-white/10 py-5 mb-8">
+            <div class="flex justify-between items-center">
+              <span class="text-brand-gold font-serif-elegant text-lg tracking-wide">Total a pagar</span>
+              <span class="text-brand-gold font-serif-elegant text-2xl tracking-wide">${{ boldData.totalAmount.toLocaleString() }}</span>
+            </div>
+          </div>
+
+          <!-- Contenedor donde la librería de Bold renderiza el botón -->
+          <div ref="boldContainer" class="bold-button-wrapper flex justify-center"></div>
+
+          <p class="text-brand-white/30 text-[10px] font-sans-luxury tracking-wide mt-6 flex items-center justify-center gap-1.5">
+            <Icon icon="lucide:lock" class="w-3 h-3" />
+            Pago protegido por Bold · Tarjeta, PSE y más
+          </p>
+        </div>
+      </div>
+
+      <!-- ESTADO 3: Pedido internacional registrado -->
+      <div v-else-if="internationalDone" class="max-w-lg mx-auto">
+        <div class="border border-brand-gold/30 bg-brand-black/50 p-8 md:p-10 text-center">
+          <Icon icon="lucide:mail-check" class="w-12 h-12 text-brand-gold mx-auto mb-4" />
+          <h2 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">¡Pedido registrado!</h2>
+          <p class="text-brand-white/60 text-sm font-sans-luxury leading-relaxed mb-8">
+            Abrimos tu correo con los detalles del pedido. Nuestro equipo te enviará las instrucciones
+            de pago internacional (PayPal, Zelle, Swift) y la confirmación del envío en menos de 24 horas hábiles.
+          </p>
+          <button @click="router.push('/')" class="border border-brand-gold text-brand-gold px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-colors">
+            Volver al inicio
+          </button>
         </div>
       </div>
     </div>
