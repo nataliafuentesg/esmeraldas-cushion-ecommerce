@@ -31,6 +31,27 @@ const loadOrders = async () => {
   }
 };
 
+// Descargar todas las ventas en Excel (CSV con el ID de transacción de Bold)
+const exporting = ref(false);
+const exportOrders = async () => {
+  exporting.value = true;
+  try {
+    const res = await api.get('/admin/orders/export', { responseType: 'blob' });
+    const url = URL.createObjectURL(new Blob([res.data], { type: 'text/csv' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cushion-ventas-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Error al exportar las ventas.');
+  } finally {
+    exporting.value = false;
+  }
+};
+
 const updateOrderStatus = async (orderId, newStatus) => {
   try {
     await api.put(`/admin/orders/${orderId}/status?status=${newStatus}`);
@@ -47,6 +68,23 @@ const openOrderDetails = (order) => {
     carrier: order.shippingCarrier || '',
   };
   showModal.value = true;
+};
+
+// Confirmar pago manualmente (para órdenes internacionales o pruebas donde el
+// webhook de Bold no llegó). Hace lo mismo que el webhook: PAGADO + inventario + correo.
+const confirmPaymentManually = async () => {
+  if (!confirm('¿Confirmar el pago de este pedido manualmente? Se descontará inventario y se enviará el correo de pago.')) return;
+  actionLoading.value = true;
+  try {
+    await api.post(`/admin/orders/${selectedOrder.value.orderNumber}/confirm-payment`);
+    selectedOrder.value.status = 'PAGADO';
+    await loadOrders();
+    alert('Pago confirmado. Inventario descontado y correo enviado.');
+  } catch (e) {
+    alert(e.response?.data?.message || 'Error al confirmar el pago.');
+  } finally {
+    actionLoading.value = false;
+  }
 };
 
 // Marcar como ENVIADO (guarda guía + transportadora y dispara el correo de envío)
@@ -91,7 +129,14 @@ const markDelivered = async () => {
 
 <template>
   <div>
-    <h3 class="text-2xl font-serif-elegant text-brand-white tracking-wide mb-8 border-b border-brand-white/10 pb-4">Gestión de Pedidos</h3>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-8 border-b border-brand-white/10 pb-4">
+      <h3 class="text-2xl font-serif-elegant text-brand-white tracking-wide">Gestión de Pedidos</h3>
+      <button @click="exportOrders" :disabled="exporting"
+        class="shrink-0 flex items-center gap-2 border border-brand-gold/40 text-brand-gold px-4 py-2 text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold hover:text-brand-black transition-colors disabled:opacity-50">
+        <Icon icon="lucide:download" class="w-3.5 h-3.5" />
+        {{ exporting ? 'GENERANDO…' : 'DESCARGAR VENTAS (EXCEL)' }}
+      </button>
+    </div>
     
     <div v-if="loading" class="text-brand-gold tracking-wide text-xs animate-pulse">Cargando...</div>
     
@@ -186,6 +231,20 @@ const markDelivered = async () => {
               <span class="text-brand-gold font-serif-elegant tracking-wider text-lg">Total Pagado</span>
               <span class="text-brand-gold font-serif-elegant tracking-wider text-xl">${{ selectedOrder.totalAmount.toLocaleString() }}</span>
             </div>
+          </div>
+
+          <!-- Confirmar pago manual (solo si está pendiente de pago) -->
+          <div v-if="selectedOrder.status === 'PENDIENTE_PAGO'" class="bg-brand-gold/[0.06] border border-brand-gold/30 p-5">
+            <h4 class="text-brand-gold text-[10px] tracking-[0.3em] mb-3 flex items-center gap-2">
+              <Icon icon="lucide:credit-card" class="w-4 h-4" /> PAGO PENDIENTE
+            </h4>
+            <p class="text-brand-white/50 text-[11px] mb-4">
+              Usa esto para pagos internacionales coordinados por correo, o si el webhook de Bold no llegó.
+            </p>
+            <button @click="confirmPaymentManually" :disabled="actionLoading"
+              class="w-full bg-brand-gold text-brand-black px-4 py-3 text-[10px] font-bold tracking-[0.2em] hover:bg-brand-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+              <Icon icon="lucide:check-circle" class="w-3.5 h-3.5" /> CONFIRMAR PAGO MANUALMENTE
+            </button>
           </div>
 
           <!-- Gestión de envío -->
