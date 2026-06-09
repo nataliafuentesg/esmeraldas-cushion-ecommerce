@@ -52,9 +52,8 @@
   <!-- End Meta Pixel Code -->
   <!-- Nota: el <noscript> del Pixel se omite porque la app es una SPA que requiere JS;
        sin JavaScript no se renderiza nada, así que el fallback no aplica. -->
-
-  <!-- Bold — botón de pagos -->
-  <script src="https://checkout.bold.co/library/boldPaymentButton.js"></script>
+  <!-- Bold: la librería del botón se inyecta dinámicamente en el checkout
+       (script con src + data-attributes en el mismo tag, según la integración manual). -->
 </head>
 
 <body>

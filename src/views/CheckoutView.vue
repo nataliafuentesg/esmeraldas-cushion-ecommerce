@@ -112,28 +112,41 @@ const submitOrder = async () => {
   }
 };
 
-// Inyecta el botón de Bold con los datos + firma que devolvió el backend.
-// La librería de Bold (cargada en index.html) lo renderiza automáticamente.
+// Patrón oficial de Bold para SPAs (React/Vue):
+//   1. El botón (script con SOLO los data-attributes, sin src) se coloca en el
+//      DOM dentro de un <form>.
+//   2. LUEGO se inyecta la librería en el <head>; al cargar, escanea el DOM y
+//      renderiza el botón. Si se revisita el checkout, recargamos la librería
+//      para forzar que vuelva a procesar el botón nuevo.
 const renderBoldButton = () => {
   if (!boldContainer.value || !boldData.value) return;
   boldContainer.value.innerHTML = '';
 
-  const script = document.createElement('script');
-  script.setAttribute('data-bold-button', 'dark-L');
-  script.setAttribute('data-order-id', boldData.value.orderNumber);
-  script.setAttribute('data-currency', boldData.value.boldCurrency);
-  script.setAttribute('data-amount', String(boldData.value.boldAmount));
-  script.setAttribute('data-api-key', boldData.value.boldApiKey);
-  script.setAttribute('data-integrity-signature', boldData.value.boldIntegritySignature);
-  script.setAttribute('data-description', `Pedido Cushion ${boldData.value.orderNumber}`);
-  script.setAttribute('data-redirection-url',
-    `https://cushionjewelry.com/pago-resultado?order=${boldData.value.orderNumber}`);
-  script.setAttribute('data-customer-data', JSON.stringify({
+  const d = boldData.value;
+  const btn = document.createElement('script');
+  btn.setAttribute('data-bold-button', 'dark-L');
+  btn.setAttribute('data-order-id', d.orderNumber);
+  btn.setAttribute('data-currency', d.boldCurrency);
+  btn.setAttribute('data-amount', String(d.boldAmount));
+  btn.setAttribute('data-api-key', d.boldApiKey);
+  btn.setAttribute('data-integrity-signature', d.boldIntegritySignature);
+  btn.setAttribute('data-description', `Pedido Cushion ${d.orderNumber}`);
+  btn.setAttribute('data-redirection-url',
+    `https://cushionjewelry.com/pago-resultado?order=${d.orderNumber}`);
+  btn.setAttribute('data-customer-data', JSON.stringify({
     email: form.value.customerEmail,
     fullName: form.value.customerName,
     phone: form.value.phoneNumber,
   }));
-  boldContainer.value.appendChild(script);
+  boldContainer.value.appendChild(btn);
+
+  // Inyectar (o reinyectar) la librería en el <head> para que procese el botón
+  const prev = document.getElementById('bold-checkout-lib');
+  if (prev) prev.remove();
+  const lib = document.createElement('script');
+  lib.id = 'bold-checkout-lib';
+  lib.src = 'https://checkout.bold.co/library/boldPaymentButton.js';
+  document.head.appendChild(lib);
 };
 </script>
 
@@ -234,8 +247,8 @@ const renderBoldButton = () => {
             </div>
           </div>
 
-          <!-- Contenedor donde la librería de Bold renderiza el botón -->
-          <div ref="boldContainer" class="bold-button-wrapper flex justify-center"></div>
+          <!-- Bold renderiza el botón dentro de este form -->
+          <form ref="boldContainer" class="bold-button-wrapper flex justify-center"></form>
 
           <p class="text-brand-white/30 text-[10px] font-sans-luxury tracking-wide mt-6 flex items-center justify-center gap-1.5">
             <Icon icon="lucide:lock" class="w-3 h-3" />
