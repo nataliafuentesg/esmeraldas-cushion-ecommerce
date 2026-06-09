@@ -1,11 +1,46 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
 
 const orders = ref([]);
 const loading = ref(true);
-const statusOptions = ['PENDIENTE_PAGO', 'PAGADO', 'ENVIADO', 'ENTREGADO', 'CANCELADO'];
+
+// Filtros por estado
+const statusFilter = ref('TODOS');
+const filterTabs = [
+  { key: 'TODOS',          label: 'Todos' },
+  { key: 'PENDIENTE_PAGO', label: 'Pendientes' },
+  { key: 'PAGADO',         label: 'Pagados' },
+  { key: 'ENVIADO',        label: 'Enviados' },
+  { key: 'ENTREGADO',      label: 'Entregados' },
+];
+
+const countByStatus = (key) =>
+  key === 'TODOS' ? orders.value.length : orders.value.filter(o => o.status === key).length;
+
+const filteredOrders = computed(() =>
+  statusFilter.value === 'TODOS'
+    ? orders.value
+    : orders.value.filter(o => o.status === statusFilter.value)
+);
+
+// Estilo del badge según el estado
+const statusStyle = (status) => {
+  switch (status) {
+    case 'PAGADO':         return 'bg-green-500/15 text-green-400 border-green-500/30';
+    case 'ENVIADO':        return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+    case 'ENTREGADO':      return 'bg-brand-gold/15 text-brand-gold border-brand-gold/40';
+    case 'PENDIENTE_PAGO': return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+    case 'EXPIRADO':       return 'bg-brand-white/10 text-brand-white/40 border-brand-white/20';
+    case 'PAGO_SIN_STOCK': return 'bg-orange-500/15 text-orange-400 border-orange-500/40';
+    case 'PAGO_RECHAZADO':
+    case 'CANCELADO':      return 'bg-red-500/15 text-red-400 border-red-500/30';
+    default:               return 'bg-brand-white/10 text-brand-white/50 border-brand-white/20';
+  }
+};
+
+const statusLabel = (status) => (status || '').replace(/_/g, ' ');
 
 // Control del Modal de Detalles
 const selectedOrder = ref(null);
@@ -49,14 +84,6 @@ const exportOrders = async () => {
     alert('Error al exportar las ventas.');
   } finally {
     exporting.value = false;
-  }
-};
-
-const updateOrderStatus = async (orderId, newStatus) => {
-  try {
-    await api.put(`/admin/orders/${orderId}/status?status=${newStatus}`);
-  } catch (error) {
-    alert("Error al actualizar el estado");
   }
 };
 
@@ -138,8 +165,28 @@ const markDelivered = async () => {
       </button>
     </div>
     
+    <!-- Filtros por estado -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button v-for="tab in filterTabs" :key="tab.key"
+        @click="statusFilter = tab.key"
+        class="px-4 py-2 text-[10px] font-bold tracking-[0.15em] border transition-colors flex items-center gap-2"
+        :class="statusFilter === tab.key
+          ? 'bg-brand-gold text-brand-black border-brand-gold'
+          : 'text-brand-white/60 border-brand-white/15 hover:border-brand-gold/40 hover:text-brand-white'">
+        {{ tab.label }}
+        <span class="px-1.5 py-0.5 rounded-full text-[9px]"
+          :class="statusFilter === tab.key ? 'bg-brand-black/20' : 'bg-brand-white/10'">
+          {{ countByStatus(tab.key) }}
+        </span>
+      </button>
+    </div>
+
     <div v-if="loading" class="text-brand-gold tracking-wide text-xs animate-pulse">Cargando...</div>
-    
+
+    <div v-else-if="filteredOrders.length === 0" class="text-center py-16 text-brand-white/40 text-xs tracking-wide border border-brand-white/10 bg-brand-white/[0.02]">
+      No hay pedidos en esta categoría.
+    </div>
+
     <div v-else class="overflow-x-auto bg-brand-white/5 border border-brand-white/10 p-1">
       <table class="w-full text-left min-w-[900px]">
         <thead class="bg-brand-black/50">
@@ -152,7 +199,7 @@ const markDelivered = async () => {
           </tr>
         </thead>
         <tbody class="text-sm font-sans-luxury text-brand-white/80">
-          <tr v-for="order in orders" :key="order.id" class="border-t border-brand-white/10 hover:bg-brand-black/50 transition-colors">
+          <tr v-for="order in filteredOrders" :key="order.id" class="border-t border-brand-white/10 hover:bg-brand-black/50 transition-colors">
             <td class="p-4 font-bold text-brand-white">#{{ order.orderNumber }}</td>
             <td class="p-4">
               <p class="text-brand-white">{{ order.customerName }}</p>
@@ -160,13 +207,13 @@ const markDelivered = async () => {
             </td>
             <td class="p-4 text-brand-gold font-bold">${{ order.totalAmount.toLocaleString() }}</td>
             <td class="p-4">
-              <select v-model="order.status" @change="updateOrderStatus(order.id, order.status)" class="bg-transparent border border-brand-white/20 text-brand-white text-[10px] tracking-wide p-2 focus:border-brand-gold focus:outline-none w-full cursor-pointer">
-                <option v-for="status in statusOptions" :key="status" :value="status" class="bg-brand-black">{{ status.replace('_', ' ') }}</option>
-              </select>
+              <span class="inline-block px-3 py-1 text-[9px] font-bold tracking-wide border rounded-sm" :class="statusStyle(order.status)">
+                {{ statusLabel(order.status) }}
+              </span>
             </td>
             <td class="p-4 text-center">
               <button @click="openOrderDetails(order)" class="text-brand-gold text-[10px] tracking-wide underline underline-offset-4 hover:text-brand-white transition-colors">
-                Ver Detalles
+                Gestionar
               </button>
             </td>
           </tr>
@@ -181,9 +228,14 @@ const markDelivered = async () => {
           <Icon icon="lucide:x" class="w-6 h-6" />
         </button>
 
-        <h3 class="text-2xl font-serif-elegant text-brand-gold mb-2 tracking-wider">
-          Pedido #{{ selectedOrder.orderNumber }}
-        </h3>
+        <div class="flex items-center gap-3 mb-2">
+          <h3 class="text-2xl font-serif-elegant text-brand-gold tracking-wider">
+            Pedido #{{ selectedOrder.orderNumber }}
+          </h3>
+          <span class="inline-block px-3 py-1 text-[9px] font-bold tracking-wide border rounded-sm" :class="statusStyle(selectedOrder.status)">
+            {{ statusLabel(selectedOrder.status) }}
+          </span>
+        </div>
         <p class="text-[10px] text-brand-white/50 tracking-wide mb-8 border-b border-brand-white/10 pb-4">
           Fecha: {{ new Date(selectedOrder.createdAt).toLocaleString() }}
         </p>
