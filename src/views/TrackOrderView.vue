@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
@@ -10,6 +10,8 @@ const contact = ref('');
 const order = ref(null);
 const errorMsg = ref('');
 const loading = ref(false);
+const boldContainer = ref(null);
+const showPayment = ref(false);
 
 // Pasos del pedido en orden
 const steps = [
@@ -32,6 +34,7 @@ const search = async () => {
   loading.value = true;
   errorMsg.value = '';
   order.value = null;
+  showPayment.value = false;
   try {
     const res = await api.get('/orders/track', {
       params: { orderNumber: orderNumber.value.trim(), contact: contact.value.trim() }
@@ -43,6 +46,43 @@ const search = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+// Completar el pago de una orden pendiente desde el rastreo
+const payPending = async () => {
+  showPayment.value = true;
+  await nextTick();
+  renderBoldButton();
+};
+
+const renderBoldButton = () => {
+  const o = order.value;
+  if (!boldContainer.value || !o || !o.boldApiKey) return;
+  boldContainer.value.innerHTML = '';
+
+  const btn = document.createElement('script');
+  btn.setAttribute('data-bold-button', 'dark-L');
+  btn.setAttribute('data-order-id', o.orderNumber);
+  btn.setAttribute('data-currency', o.boldCurrency || 'COP');
+  btn.setAttribute('data-amount', String(o.boldAmount));
+  btn.setAttribute('data-api-key', o.boldApiKey);
+  btn.setAttribute('data-integrity-signature', o.boldIntegritySignature);
+  btn.setAttribute('data-description', `Pedido Cushion ${o.orderNumber}`);
+  btn.setAttribute('data-redirection-url',
+    `https://cushionjewelry.com/pago-resultado?order=${o.orderNumber}`);
+  btn.setAttribute('data-customer-data', JSON.stringify({
+    email: o.customerEmail || '',
+    fullName: o.customerName || '',
+    phone: o.phoneNumber || '',
+  }));
+  boldContainer.value.appendChild(btn);
+
+  const prev = document.getElementById('bold-checkout-lib');
+  if (prev) prev.remove();
+  const lib = document.createElement('script');
+  lib.id = 'bold-checkout-lib';
+  lib.src = 'https://checkout.bold.co/library/boldPaymentButton.js';
+  document.head.appendChild(lib);
 };
 </script>
 
@@ -117,6 +157,38 @@ const search = async () => {
           <p class="text-red-300/80 text-sm font-sans-luxury">
             {{ order.status === 'PAGO_RECHAZADO' ? 'El pago de este pedido fue rechazado o cancelado.' : 'Este pedido fue cancelado.' }}
           </p>
+        </div>
+
+        <!-- Completar pago (orden pendiente) -->
+        <div v-if="order.status === 'PENDIENTE_PAGO'" class="bg-brand-gold/[0.06] border border-brand-gold/30 p-6 mb-8 text-center">
+          <Icon icon="lucide:alert-circle" class="w-8 h-8 text-brand-gold mx-auto mb-3" />
+          <h4 class="text-brand-white font-serif-elegant text-lg mb-2">Tu pago está pendiente</h4>
+          <p class="text-brand-white/50 text-xs font-sans-luxury mb-6 max-w-sm mx-auto">
+            Tu pedido está reservado. Completa el pago para confirmar tu compra antes de que venza la reserva.
+          </p>
+
+          <button v-if="!showPayment" @click="payPending"
+            class="bg-brand-gold text-brand-black px-10 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-white transition-colors">
+            COMPLETAR PAGO
+          </button>
+
+          <!-- Bold renderiza el botón aquí -->
+          <form v-show="showPayment" ref="boldContainer" class="flex justify-center"></form>
+
+          <p v-if="showPayment" class="text-brand-white/30 text-[10px] font-sans-luxury tracking-wide mt-4 flex items-center justify-center gap-1.5">
+            <Icon icon="lucide:lock" class="w-3 h-3" /> Pago protegido por Bold
+          </p>
+        </div>
+
+        <!-- Reserva vencida -->
+        <div v-if="order.status === 'EXPIRADO'" class="bg-brand-white/[0.03] border border-brand-white/10 p-5 mb-8 text-center">
+          <p class="text-brand-white/60 text-sm font-sans-luxury mb-4">
+            La reserva de este pedido venció y la(s) pieza(s) volvieron a estar disponibles.
+          </p>
+          <RouterLink to="/coleccion"
+            class="inline-block border border-brand-gold text-brand-gold px-8 py-2.5 text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold hover:text-brand-black transition-colors">
+            VOLVER A LA COLECCIÓN
+          </RouterLink>
         </div>
 
         <!-- Datos de envío (si ya fue enviado) -->
