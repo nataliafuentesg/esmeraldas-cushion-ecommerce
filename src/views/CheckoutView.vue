@@ -41,9 +41,6 @@ const errorMsg = ref('');
 // Estado del pago con Bold (Colombia)
 const boldData = ref(null);          // datos del botón devueltos por el backend
 const boldContainer = ref(null);     // contenedor donde se inyecta el botón
-const internationalDone = ref(false); // confirmación de pedido internacional
-
-const isColombia = computed(() => form.value.country === 'Colombia');
 
 onMounted(async () => {
   if (authStore.isAuthenticated) {
@@ -90,27 +87,18 @@ const submitOrder = async () => {
     const response = await api.post(`/orders/create?sessionId=${cartStore.sessionId}`, orderData);
     const data = response.data;
 
-    if (isColombia.value) {
-      // ── Colombia: pago en línea con Bold ──
-      // Guardamos resumen para la página de resultado (Pixel Purchase con dedup)
-      sessionStorage.setItem('cushion_pending_order', JSON.stringify({
-        orderNumber: data.orderNumber,
-        total: data.totalAmount,
-        items: cartStore.items.map(i => ({
-          id: i.productId, name: i.productName, price: i.price, quantity: i.quantity,
-        })),
-      }));
-      boldData.value = data;
-      await nextTick();
-      renderBoldButton();
-    } else {
-      // ── Internacional: coordinación por correo (Bold es solo Colombia) ──
-      const emailSubject = `Nuevo pedido internacional Cushion: #${data.orderNumber}`;
-      const emailBody = `¡Hola Cushion!\n\nAcabo de realizar el pedido #${data.orderNumber} desde ${form.value.country}.\n\n👤 Nombre: ${form.value.customerName}\n💎 Total estimado: $${data.totalAmount.toLocaleString()} COP\n\nPor favor, indíquenme las instrucciones para el pago internacional (PayPal, Zelle, Swift) y confirmación del envío.\n\nGracias.`;
-      const mailtoUrl = `mailto:info@cushionjewelry.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-      window.open(mailtoUrl, '_blank');
-      internationalDone.value = true;
-    }
+    // Pago en línea con Bold — para Colombia E internacional (Bold acepta
+    // tarjetas internacionales; el cobro es en COP, incluyendo el flete del país).
+    sessionStorage.setItem('cushion_pending_order', JSON.stringify({
+      orderNumber: data.orderNumber,
+      total: data.totalAmount,
+      items: cartStore.items.map(i => ({
+        id: i.productId, name: i.productName, price: i.price, quantity: i.quantity,
+      })),
+    }));
+    boldData.value = data;
+    await nextTick();
+    renderBoldButton();
 
   } catch (error) {
     console.error("Error al crear la orden:", error);
@@ -169,7 +157,7 @@ const renderBoldButton = () => {
       </h1>
 
       <!-- ESTADO 1: Formulario de envío -->
-      <div v-if="!boldData && !internationalDone" class="flex flex-col lg:flex-row gap-12">
+      <div v-if="!boldData" class="flex flex-col lg:flex-row gap-12">
         <div class="flex-1">
           <h2 class="text-2xl font-serif-elegant text-brand-white mb-8 tracking-wide">Detalles de envío</h2>
           
@@ -229,17 +217,17 @@ const renderBoldButton = () => {
             </div>
 
             <button type="submit" form="checkout-form" :disabled="isSubmitting || cartStore.items.length === 0" class="w-full bg-brand-white text-brand-black px-6 py-4 text-xs font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300 disabled:opacity-50">
-              {{ isSubmitting ? 'Procesando...' : (isColombia ? 'Continuar al pago' : 'Confirmar Pedido') }}
+              {{ isSubmitting ? 'Procesando...' : 'Continuar al pago' }}
             </button>
 
             <p v-if="form.country !== 'Colombia'" class="text-center text-brand-white/40 text-[10px] font-sans-luxury tracking-wide mt-4">
-              Los pagos internacionales se coordinan por correo posterior a la compra.
+              Aceptamos tarjetas internacionales. El cobro se realiza en pesos colombianos (COP).
             </p>
           </div>
         </div>
       </div>
 
-      <!-- ESTADO 2: Pago en línea con Bold (Colombia) -->
+      <!-- ESTADO 2: Pago en línea con Bold (nacional e internacional) -->
       <div v-else-if="boldData" class="max-w-lg mx-auto">
         <div class="border border-brand-gold/30 bg-brand-black/50 p-8 md:p-10 text-center">
           <Icon icon="lucide:shield-check" class="w-12 h-12 text-brand-gold mx-auto mb-4" />
@@ -268,20 +256,6 @@ const renderBoldButton = () => {
         </div>
       </div>
 
-      <!-- ESTADO 3: Pedido internacional registrado -->
-      <div v-else-if="internationalDone" class="max-w-lg mx-auto">
-        <div class="border border-brand-gold/30 bg-brand-black/50 p-8 md:p-10 text-center">
-          <Icon icon="lucide:mail-check" class="w-12 h-12 text-brand-gold mx-auto mb-4" />
-          <h2 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">¡Pedido registrado!</h2>
-          <p class="text-brand-white/60 text-sm font-sans-luxury leading-relaxed mb-8">
-            Abrimos tu correo con los detalles del pedido. Nuestro equipo te enviará las instrucciones
-            de pago internacional (PayPal, Zelle, Swift) y la confirmación del envío en menos de 24 horas hábiles.
-          </p>
-          <button @click="router.push('/')" class="border border-brand-gold text-brand-gold px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-colors">
-            Volver al inicio
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
