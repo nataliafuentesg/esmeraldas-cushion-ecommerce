@@ -431,7 +431,7 @@ onUnmounted(() => {
             <div class="flex items-center gap-2 mb-3">
               <span class="w-2 h-2 rounded-full bg-brand-white/20 flex-shrink-0"></span>
               <p class="text-brand-white/50 font-sans-luxury text-[10px] tracking-[0.25em] uppercase">
-                Esta pieza esta Agotada
+                Esta pieza está agotada
               </p>
             </div>
             <p class="text-brand-white/35 font-sans-luxury text-xs leading-relaxed mb-5">

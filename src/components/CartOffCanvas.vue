@@ -49,7 +49,7 @@ watch(isOffCanvasOpen, async (isOpen) => {
         <Icon icon="lucide:alert-triangle" class="w-4 h-4 flex-shrink-0 mt-0.5" />
         <span>
           <b>{{ removedItems.join(', ') }}</b>
-          {{ removedItems.length === 1 ? ' ya encontró a su dueña' : ' ya encontraron dueña' }}
+          {{ removedItems.length === 1 ? ' se agotó' : ' se agotaron' }}
           y {{ removedItems.length === 1 ? 'fue removida' : 'fueron removidas' }} de tu selección.
         </span>
       </p>
