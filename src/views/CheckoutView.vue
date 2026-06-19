@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { Icon } from '@iconify/vue';
+import { getAttribution } from '@/utils/utm';
 import api from '@/api/axios';
 
 const cartStore = useCartStore();
@@ -74,13 +75,19 @@ const submitOrder = async () => {
     }
 
     const fullAddress = `[${form.value.country.toUpperCase()}] - ${form.value.shippingAddress}`;
+    const attribution = getAttribution() || {};
     const orderData = {
       customerName: form.value.customerName,
       customerEmail: form.value.customerEmail,
       phoneNumber: form.value.phoneNumber,
       shippingAddress: fullAddress,
       notes: form.value.notes,
-      clientId: authStore.isAuthenticated ? authStore.user.id : null
+      clientId: authStore.isAuthenticated ? authStore.user.id : null,
+      // Atribución de campaña — para saber qué anuncio trajo esta venta
+      utmSource: attribution.utm_source || null,
+      utmMedium: attribution.utm_medium || null,
+      utmCampaign: attribution.utm_campaign || null,
+      utmContent: attribution.utm_content || null,
     };
 
     // Crear la orden en el backend (queda PENDIENTE_PAGO — aún NO descuenta inventario)

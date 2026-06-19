@@ -12,6 +12,7 @@ import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { useProductsStore } from '@/stores/products';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
+import { getAttribution } from '@/utils/utm';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = useRouter();
@@ -250,16 +251,17 @@ const handleWhatsAppClick = () => {
   trackWhatsAppClick(product.value, eventId);
 
   // 2. Registrar en backend (fire & forget — no bloquea la UX)
-  const params = new URLSearchParams(window.location.search);
+  // Usa la atribución persistida (la URL ya no trae los UTM tras navegar)
+  const attribution = getAttribution() || {};
   api.post('/product-inquiries', {
     productSlug:  product.value.slug,
     productName:  product.value.name,
     channel:      'WHATSAPP',
     clientEmail:  authStore.user?.email || null,
     eventId:      eventId,
-    utmSource:    params.get('utm_source'),
-    utmMedium:    params.get('utm_medium'),
-    utmCampaign:  params.get('utm_campaign'),
+    utmSource:    attribution.utm_source || null,
+    utmMedium:    attribution.utm_medium || null,
+    utmCampaign:  attribution.utm_campaign || null,
   }).catch(() => {}); // silencioso — no interrumpir flujo
 
   // 3. Abrir WhatsApp — incluye el link del producto para que el equipo sepa de cuál pieza se trata
