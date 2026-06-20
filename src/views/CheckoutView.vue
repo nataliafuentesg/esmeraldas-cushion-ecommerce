@@ -5,11 +5,13 @@ import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { Icon } from '@iconify/vue';
 import { getAttribution } from '@/utils/utm';
+import { useAnalytics } from '@/composables/useAnalytics';
 import api from '@/api/axios';
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const router = useRouter();
+const { trackBeginCheckout } = useAnalytics();
 
 const subtotal = computed(() => {
   return cartStore.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -49,6 +51,15 @@ onMounted(async () => {
     form.value.customerEmail = authStore.user.email;
     form.value.phoneNumber = authStore.user.phone || '';
   }
+
+  // Medición — InitiateCheckout (inició el proceso de compra)
+  if (cartStore.items.length > 0) {
+    trackBeginCheckout(
+      cartStore.items.map(i => ({ id: i.productId, name: i.productName, category: i.category, price: i.price, quantity: i.quantity })),
+      total.value
+    );
+  }
+
   // Cargar las tarifas de envío del backend (mismo valor que se cobrará)
   try {
     const res = await api.get('/config/shipping');

@@ -3,11 +3,13 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useProductsStore } from '@/stores/products';
+import { useAnalytics } from '@/composables/useAnalytics';
 import ProductCard from '@/components/ProductCard.vue';
 
 const route = useRoute();
 const router = useRouter();
 const productsStore = useProductsStore();
+const { trackSearch } = useAnalytics();
 
 const allProducts = ref([]);
 const loading = ref(true);
@@ -65,9 +67,13 @@ const triggerLocalSearch = () => {
 
 watch(() => route.query.q, (newQuery) => {
     localSearchQuery.value = newQuery || '';
+    if (newQuery && newQuery.trim()) trackSearch(newQuery.trim()); // medición de búsqueda
 });
 
-onMounted(fetchProducts);
+onMounted(() => {
+    fetchProducts();
+    if (route.query.q && route.query.q.trim()) trackSearch(route.query.q.trim());
+});
 </script>
 
 <template>
