@@ -198,7 +198,7 @@ onMounted(fetchData);
     <Transition name="slide-panel">
       <div v-if="selectedRequest" class="fixed inset-0 z-50 flex justify-end">
         <div class="absolute inset-0 bg-brand-black/70 backdrop-blur-sm" @click="selectedRequest = null"></div>
-        <div class="relative w-full max-w-md bg-[#0D1A14] border-l border-brand-white/10 h-full overflow-y-auto p-6 shadow-2xl">
+        <div class="relative w-full max-w-md bg-brand-black border-l border-brand-white/10 h-full overflow-y-auto p-6 shadow-2xl">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-lg font-serif-elegant text-brand-gold">Consulta #{{ selectedRequest.id }}</h2>
             <button @click="selectedRequest = null" class="text-brand-white/40 hover:text-brand-white transition-colors">
@@ -264,7 +264,7 @@ onMounted(fetchData);
                 @change="updateStatus(selectedRequest.id, $event.target.value)"
                 :disabled="updatingId === selectedRequest.id"
                 class="w-full bg-brand-white/5 border border-brand-white/20 rounded px-3 py-2 text-brand-white text-xs outline-none cursor-pointer hover:border-brand-gold/40 transition-colors">
-                <option v-for="s in statusOptions" :key="s" :value="s" class="bg-[#0D1A14] text-brand-white">{{ s }}</option>
+                <option v-for="s in statusOptions" :key="s" :value="s" class="bg-brand-black text-brand-white">{{ s }}</option>
               </select>
             </div>
             <div>

@@ -48,11 +48,11 @@ const gemstones = [
   { value: 'Abierto a sugerencias', label: 'Me guío por ustedes', sub: 'Asesoría experta' },
 ];
 
+// Cushion trabaja únicamente en oro de 18k
 const metals = [
   { value: 'Oro amarillo', label: 'Oro amarillo' },
   { value: 'Oro blanco', label: 'Oro blanco' },
   { value: 'Oro rosado', label: 'Oro rosado' },
-  { value: 'Platino', label: 'Platino' },
   { value: 'Sin preferencia', label: 'Sin preferencia' },
 ];
 
