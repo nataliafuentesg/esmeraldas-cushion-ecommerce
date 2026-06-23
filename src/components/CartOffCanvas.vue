@@ -71,7 +71,10 @@ watch(isOffCanvasOpen, async (isOpen) => {
               <img v-if="item.imageUrl" :src="item.imageUrl" class="w-full h-full object-cover" />
             </div>
             <div class="flex-grow ml-6">
-              <p class="font-serif-elegant text-sm text-brand-white tracking-wider mb-2">{{ item.productName }}</p>
+              <p class="font-serif-elegant text-sm text-brand-white tracking-wider mb-1">{{ item.productName }}</p>
+              <p v-if="item.selectedSize" class="text-[10px] text-brand-gold/80 tracking-wide font-sans-luxury mb-2">
+                Talla: {{ item.selectedSize }}
+              </p>
 
               <div class="flex items-center justify-between">
                 <div class="flex items-center border border-brand-white/10 bg-brand-black">

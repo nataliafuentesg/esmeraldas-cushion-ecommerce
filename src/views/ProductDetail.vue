@@ -28,7 +28,8 @@ const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
 const allProducts = ref([]);
 const loading = ref(true);
-const selectedQuantity = ref(1);
+const selectedSize = ref('');     // talla elegida por el cliente
+const sizeError = ref(false);     // aviso si no eligió talla
 
 // ESTADOS DEL LIGHTBOX PREMIUM
 const isLightboxOpen = ref(false);
@@ -215,6 +216,8 @@ useHead(computed(() => ({
 // Modifica tu fetchProduct para que quede así:
 const fetchProduct = async () => {
   loading.value = true;
+  selectedSize.value = '';   // resetear talla al cambiar de pieza
+  sizeError.value = false;
   try {
     const res = await api.get(`/products/${props.slug}`);
     product.value = res.data;
@@ -233,8 +236,13 @@ const fetchProduct = async () => {
 
 const addToCart = async () => {
   if (!product.value) return;
-  trackAddToCart(product.value, selectedQuantity.value); // ← analytics
-  await cartStore.addItem(product.value, selectedQuantity.value);
+  // Si la pieza requiere talla y no eligió, mostramos el aviso y no continuamos
+  if (needsSize.value && !selectedSize.value) {
+    sizeError.value = true;
+    return;
+  }
+  trackAddToCart(product.value, 1); // ← analytics (siempre 1, piezas únicas)
+  await cartStore.addItem(product.value, 1, selectedSize.value || null);
   cartStore.isOffCanvasOpen = true;
 };
 
@@ -285,6 +293,22 @@ const sizeGuideLink = computed(() => {
   if (cat.includes('dije') || cat.includes('arete') || cat.includes('piedra')) return null;
   return null;
 });
+
+// Configuración de talla según la categoría (label + opciones)
+const sizeConfig = computed(() => {
+  const cat = product.value?.category?.toLowerCase() || '';
+  if (cat.includes('anillo')) {
+    return { label: 'Talla del anillo', options: ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13'] };
+  }
+  if (cat.includes('collar') || cat.includes('gargantilla')) {
+    return { label: 'Largo de la cadena', options: ['40 cm', '42 cm', '45 cm', '50 cm', '55 cm', '60 cm'] };
+  }
+  if (cat.includes('pulsera')) {
+    return { label: 'Talla de la pulsera', options: ['15 cm', '16 cm', '17 cm', '18 cm', '19 cm', '20 cm'] };
+  }
+  return null;
+});
+const needsSize = computed(() => !!sizeConfig.value);
 
 const relatedProducts = computed(() => {
   if (!product.value || !allProducts.value) return [];
@@ -363,9 +387,15 @@ onUnmounted(() => {
             {{ product.name }}
           </h1>
 
-          <p class="text-2xl md:text-3xl text-brand-white/90 mb-8 font-serif-elegant tracking-tight">
+          <p class="text-2xl md:text-3xl text-brand-white/90 mb-3 font-serif-elegant tracking-tight">
             $ {{ product.price.toLocaleString() }}
           </p>
+
+          <!-- Incentivo: envío gratis nacional -->
+          <div class="inline-flex items-center gap-2 text-brand-gold text-[11px] tracking-wide font-sans-luxury mb-8">
+            <Icon icon="lucide:truck" class="w-4 h-4" />
+            Envío gratis a toda Colombia
+          </div>
 
           <div class="border-l-2 border-brand-gold pl-6 mb-10">
             <p class="text-brand-white/75 leading-relaxed font-sans-luxury italic text-sm md:text-base">
@@ -401,29 +431,32 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <!-- ── Guía de tallas (contextual por categoría) ── -->
-          <RouterLink
-            v-if="sizeGuideLink"
-            :to="sizeGuideLink"
-            class="inline-flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.25em] transition-colors duration-300 mb-6 group"
-          >
-            <Icon icon="lucide:ruler" class="w-3.5 h-3.5 text-brand-gold/60 group-hover:text-brand-gold transition-colors" />
-            GUÍA DE TALLAS
-            <span class="text-brand-gold/50 group-hover:text-brand-gold transition-colors">→</span>
-          </RouterLink>
-
-          <!-- ── CON STOCK: selector + carrito ── -->
-          <div v-if="product.stock > 0" class="flex flex-col sm:flex-row items-stretch gap-4">
-            <div
-              class="flex items-center justify-between border border-brand-white/20 bg-brand-white/[0.02] px-4 py-3 sm:w-32">
-              <button @click="selectedQuantity > 1 && selectedQuantity--"
-                class="text-brand-white/60 hover:text-brand-gold text-lg px-2">-</button>
-              <span class="text-brand-white font-sans-luxury text-sm font-bold">{{ selectedQuantity }}</span>
-              <button @click="selectedQuantity < product.stock && selectedQuantity++"
-                class="text-brand-white/60 hover:text-brand-gold text-lg px-2">+</button>
+          <!-- ── Selector de talla (anillos / collares / pulseras) ── -->
+          <div v-if="needsSize && product.stock > 0" class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-brand-white/60 text-[10px] tracking-[0.3em] uppercase">{{ sizeConfig.label }}</label>
+              <RouterLink v-if="sizeGuideLink" :to="sizeGuideLink"
+                class="inline-flex items-center gap-1.5 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.2em] transition-colors group">
+                <Icon icon="lucide:ruler" class="w-3.5 h-3.5 text-brand-gold/60 group-hover:text-brand-gold transition-colors" />
+                Guía de tallas →
+              </RouterLink>
             </div>
+            <select v-model="selectedSize" @change="sizeError = false"
+              class="w-full bg-brand-white/[0.02] border px-4 py-3.5 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors cursor-pointer"
+              :class="sizeError ? 'border-red-500/60' : 'border-brand-white/20'">
+              <option value="" disabled class="bg-brand-black">Selecciona tu talla</option>
+              <option v-for="s in sizeConfig.options" :key="s" :value="s" class="bg-brand-black">{{ s }}</option>
+              <option value="No estoy seguro/a" class="bg-brand-black">No estoy seguro/a — recibir asesoría</option>
+            </select>
+            <p v-if="sizeError" class="text-red-400/80 text-[11px] font-sans-luxury mt-2">
+              Por favor elige una talla para continuar.
+            </p>
+          </div>
+
+          <!-- ── CON STOCK: añadir al carrito ── -->
+          <div v-if="product.stock > 0">
             <button @click="addToCart"
-              class="flex-1 bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold tracking-wide text-xs py-4 px-8 flex items-center justify-center gap-3 transition-colors duration-300">
+              class="w-full bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold tracking-wide text-xs py-4 px-8 flex items-center justify-center gap-3 transition-colors duration-300">
               <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa
             </button>
           </div>

@@ -4,10 +4,10 @@ import { ref, onMounted, onUnmounted } from 'vue';
 defineOptions({ name: 'TopBar' });
 
 const messages = [
+  { icon: '✦', text: 'Envío gratis a nivel nacional' },
   { icon: '✦', text: 'Esmeraldas 100% colombianas' },
   { icon: '✦', text: 'Asesoría personalizada sin costo' },
   { icon: '✦', text: 'Diseño a la medida de tu historia' },
-  { icon: '✦', text: 'Atención directa con expertos' },
 ];
 
 const current = ref(0);

@@ -250,6 +250,7 @@ const handleLogout = () => {
                       <span class="text-brand-gold font-bold text-xs font-sans-luxury">{{ item.quantity }}×</span>
                       <span class="text-brand-white font-sans-luxury tracking-wide">
                         {{ item.product?.name || 'Artículo no disponible' }}
+                        <span v-if="item.selectedSize" class="text-[10px] text-brand-gold/70 ml-1">· Talla: {{ item.selectedSize }}</span>
                       </span>
                     </div>
                     <span class="text-brand-white/60 font-sans-luxury tracking-wide text-xs">

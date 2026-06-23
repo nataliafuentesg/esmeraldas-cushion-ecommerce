@@ -1,9 +1,17 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 
 const route = useRoute();
+const router = useRouter();
+
+// Volver a la página anterior (normalmente el producto). Si no hay historial,
+// va a la colección.
+const goBack = () => {
+  if (window.history.length > 1) router.back();
+  else router.push('/coleccion');
+};
 
 // Tab activo controlado por el hash de la URL (/guia-de-tallas#collares)
 const validTabs = ['anillos', 'collares', 'pulseras'];
@@ -16,23 +24,24 @@ watch(() => route.hash, (hash) => {
   if (validTabs.includes(tab)) activeTab.value = tab;
 });
 
-// Tabla de tallas de anillos — fuente: ISO 8653 + sistemas internacionales
+// Tabla de tallas de anillos — la TALLA USA es la que se selecciona al comprar.
+// "common" marca el rango más usado en mujeres; "mostCommon" la talla típica (6).
 const ringSizes = [
-  { diam: '14.9', circ: '46.8', usa: '4',   eur: '47', uk: 'H' },
-  { diam: '15.3', circ: '48.0', usa: '4½',  eur: '48', uk: 'I' },
-  { diam: '15.7', circ: '49.3', usa: '5',   eur: '49', uk: 'J' },
-  { diam: '16.1', circ: '50.6', usa: '5½',  eur: '51', uk: 'K' },
-  { diam: '16.5', circ: '51.8', usa: '6',   eur: '52', uk: 'L' },
-  { diam: '16.9', circ: '53.1', usa: '6½',  eur: '53', uk: 'M' },
-  { diam: '17.3', circ: '54.4', usa: '7',   eur: '54', uk: 'N', popular: true },
-  { diam: '17.7', circ: '55.7', usa: '7½',  eur: '56', uk: 'O', popular: true },
-  { diam: '18.2', circ: '57.2', usa: '8',   eur: '57', uk: 'P', popular: true },
-  { diam: '18.6', circ: '58.5', usa: '8½',  eur: '58', uk: 'Q' },
-  { diam: '19.0', circ: '59.7', usa: '9',   eur: '60', uk: 'R' },
-  { diam: '19.4', circ: '61.0', usa: '9½',  eur: '61', uk: 'S' },
-  { diam: '19.8', circ: '62.3', usa: '10',  eur: '62', uk: 'T' },
-  { diam: '20.2', circ: '63.5', usa: '10½', eur: '64', uk: 'U' },
-  { diam: '20.6', circ: '64.8', usa: '11',  eur: '65', uk: 'V' },
+  { diam: '14.9', circ: '46.8', usa: '4'  },
+  { diam: '15.3', circ: '48.0', usa: '4½' },
+  { diam: '15.7', circ: '49.3', usa: '5'  },
+  { diam: '16.1', circ: '50.6', usa: '5½' },
+  { diam: '16.5', circ: '51.8', usa: '6',  popular: true, mostCommon: true },
+  { diam: '16.9', circ: '53.1', usa: '6½', popular: true },
+  { diam: '17.3', circ: '54.4', usa: '7',  popular: true },
+  { diam: '17.7', circ: '55.7', usa: '7½' },
+  { diam: '18.2', circ: '57.2', usa: '8'  },
+  { diam: '18.6', circ: '58.5', usa: '8½' },
+  { diam: '19.0', circ: '59.7', usa: '9'  },
+  { diam: '19.4', circ: '61.0', usa: '9½' },
+  { diam: '19.8', circ: '62.3', usa: '10' },
+  { diam: '20.2', circ: '63.5', usa: '10½' },
+  { diam: '20.6', circ: '64.8', usa: '11' },
 ];
 
 // Longitudes de cadena y dónde caen en el cuerpo
@@ -50,6 +59,13 @@ const waLink = `https://wa.me/573136133822?text=${encodeURIComponent('Hola Cushi
 <template>
   <div class="bg-brand-black min-h-screen py-16 lg:py-24 font-sans text-brand-white">
     <div class="container mx-auto px-4 sm:px-6 lg:px-20 max-w-4xl">
+
+      <!-- Volver al producto -->
+      <button @click="goBack"
+        class="group flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.3em] transition-colors duration-300 mb-8">
+        <Icon icon="lucide:arrow-left" class="w-3 h-3 transform group-hover:-translate-x-1 transition-transform duration-300 text-brand-gold/60 group-hover:text-brand-gold" />
+        <span>VOLVER AL PRODUCTO</span>
+      </button>
 
       <!-- Encabezado -->
       <header class="text-center mb-12">
@@ -135,14 +151,24 @@ const waLink = `https://wa.me/573136133822?text=${encodeURIComponent('Hola Cushi
 
         <!-- Tabla de tallas -->
         <section class="mb-8">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-serif-elegant text-brand-white flex items-center gap-3">
-              <Icon icon="lucide:table" class="text-brand-gold w-5 h-5" />
-              Tabla de Equivalencias
-            </h2>
-            <span class="text-brand-gold/60 text-[9px] tracking-wide border border-brand-gold/20 px-2 py-1">
-              ⚑ = tallas más comunes en mujeres
-            </span>
+          <h2 class="text-lg font-serif-elegant text-brand-white flex items-center gap-3 mb-3">
+            <Icon icon="lucide:table" class="text-brand-gold w-5 h-5" />
+            Encuentra tu Talla USA
+          </h2>
+          <p class="text-brand-white/50 text-xs leading-relaxed mb-5">
+            Mide el <strong class="text-brand-white">diámetro</strong> o la <strong class="text-brand-white">circunferencia</strong> de tu dedo
+            (en mm, con los métodos de arriba) y busca tu número en la tabla. Ese número de la columna
+            <strong class="text-brand-gold">TU TALLA (USA)</strong> es exactamente el que eliges al comprar la pieza.
+          </p>
+
+          <!-- Aviso: talla más común -->
+          <div class="flex items-start gap-3 bg-brand-gold/[0.06] border border-brand-gold/25 p-4 mb-5">
+            <Icon icon="lucide:sparkles" class="text-brand-gold w-5 h-5 mt-0.5 shrink-0" />
+            <p class="text-brand-white/70 text-xs leading-relaxed">
+              <strong class="text-brand-gold">La talla más común en mujeres es la 6</strong> (USA).
+              La mayoría está entre la <strong class="text-brand-white">6 y la 7</strong> — si vas a regalar y no sabes la talla,
+              la <strong class="text-brand-white">6</strong> es la apuesta más segura.
+            </p>
           </div>
 
           <div class="overflow-x-auto">
@@ -150,10 +176,8 @@ const waLink = `https://wa.me/573136133822?text=${encodeURIComponent('Hola Cushi
               <thead>
                 <tr class="border-b border-brand-gold/30">
                   <th class="text-left py-3 px-3 text-brand-gold/80 text-[10px] tracking-[0.2em] font-bold">DIÁMETRO (mm)</th>
-                  <th class="text-left py-3 px-3 text-brand-gold/80 text-[10px] tracking-[0.2em] font-bold">CIRCUNF. (mm)</th>
-                  <th class="text-center py-3 px-3 text-brand-gold/80 text-[10px] tracking-[0.2em] font-bold">USA</th>
-                  <th class="text-center py-3 px-3 text-brand-gold/80 text-[10px] tracking-[0.2em] font-bold">EUROPA</th>
-                  <th class="text-center py-3 px-3 text-brand-gold/80 text-[10px] tracking-[0.2em] font-bold">UK</th>
+                  <th class="text-left py-3 px-3 text-brand-gold/80 text-[10px] tracking-[0.2em] font-bold">CIRCUNFERENCIA (mm)</th>
+                  <th class="text-center py-3 px-3 text-brand-gold text-[10px] tracking-[0.2em] font-bold bg-brand-gold/[0.05]">TU TALLA (USA)</th>
                 </tr>
               </thead>
               <tbody>
@@ -165,30 +189,24 @@ const waLink = `https://wa.me/573136133822?text=${encodeURIComponent('Hola Cushi
                     ? 'bg-brand-gold/[0.04] border-brand-gold/15'
                     : 'hover:bg-brand-white/[0.02]'"
                 >
-                  <td class="py-3 px-3 text-brand-white/80">
-                    {{ size.diam }} mm
-                  </td>
+                  <td class="py-3 px-3 text-brand-white/70">{{ size.diam }} mm</td>
                   <td class="py-3 px-3">
-                    <span :class="size.popular ? 'text-brand-white font-bold' : 'text-brand-white/70'">
-                      {{ size.circ }} mm
-                    </span>
+                    <span :class="size.popular ? 'text-brand-white font-bold' : 'text-brand-white/70'">{{ size.circ }} mm</span>
                   </td>
-                  <td class="py-3 px-3 text-center">
-                    <span :class="size.popular ? 'text-brand-gold font-bold' : 'text-brand-white/60'">
+                  <td class="py-3 px-3 text-center bg-brand-gold/[0.03]">
+                    <span class="text-base font-bold" :class="size.mostCommon ? 'text-brand-gold' : size.popular ? 'text-brand-gold/90' : 'text-brand-white/80'">
                       {{ size.usa }}
                     </span>
-                    <span v-if="size.popular" class="ml-1 text-brand-gold/50 text-[9px]">⚑</span>
+                    <span v-if="size.mostCommon" class="block text-brand-gold text-[8px] tracking-[0.15em] font-bold mt-0.5">★ MÁS COMÚN</span>
                   </td>
-                  <td class="py-3 px-3 text-center text-brand-white/60">{{ size.eur }}</td>
-                  <td class="py-3 px-3 text-center text-brand-white/60">{{ size.uk }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <p class="mt-3 text-brand-white/30 text-[10px] font-sans-luxury">
-            Cushion trabaja con la circunferencia interior como medida base. Al hacer tu pedido,
-            indícanos cualquiera de estos valores y lo ajustamos.
+            ¿No estás seguro/a? Al comprar puedes elegir <strong class="text-brand-white/50">"No estoy seguro/a"</strong> y nuestros
+            asesores te ayudan a confirmar la talla antes de hacer la pieza.
           </p>
         </section>
 

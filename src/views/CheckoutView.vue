@@ -231,7 +231,10 @@ const renderBoldButton = () => {
             
             <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
               <div v-for="item in cartStore.items" :key="item.productId" class="flex justify-between text-sm">
-                <span class="text-brand-white/80 font-sans-luxury tracking-wide flex-1 pr-4">{{ item.quantity }}x {{ item.productName || 'Joya Cushion' }}</span>
+                <span class="text-brand-white/80 font-sans-luxury tracking-wide flex-1 pr-4">
+                  {{ item.quantity }}x {{ item.productName || 'Joya Cushion' }}
+                  <span v-if="item.selectedSize" class="block text-[10px] text-brand-gold/70">Talla: {{ item.selectedSize }}</span>
+                </span>
                 <span class="text-brand-white font-sans-luxury tracking-wide">${{ (item.price * item.quantity).toLocaleString() }}</span>
               </div>
             </div>

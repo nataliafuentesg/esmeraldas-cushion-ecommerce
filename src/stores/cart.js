@@ -66,12 +66,13 @@ export const useCartStore = defineStore('cart', {
       this.removedDueToStock = [];
     },
 
-    async addItem(product, quantity) {
+    async addItem(product, quantity, selectedSize = null) {
       if (!this.sessionId) await this.initSession();
       try {
         const res = await api.post(`/cart/${this.sessionId}/add`, {
           productId: product.id,
           quantity: quantity,
+          selectedSize: selectedSize,
         });
         this.items = res.data.items;
         this.total = res.data.total;

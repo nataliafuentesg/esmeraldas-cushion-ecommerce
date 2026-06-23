@@ -210,7 +210,10 @@ const renderBoldButton = () => {
         <div v-if="order.items && order.items.length">
           <h4 class="text-brand-white/60 text-[10px] tracking-[0.3em] mb-3 border-b border-brand-white/10 pb-2">ARTÍCULOS</h4>
           <div v-for="(it, i) in order.items" :key="i" class="flex justify-between text-sm py-2">
-            <span class="text-brand-white/80"><span class="text-brand-gold">{{ it.quantity }}x</span> {{ it.name }}</span>
+            <span class="text-brand-white/80">
+              <span class="text-brand-gold">{{ it.quantity }}x</span> {{ it.name }}
+              <span v-if="it.size" class="block text-[10px] text-brand-gold/70">Talla: {{ it.size }}</span>
+            </span>
             <span class="text-brand-white/70">${{ (it.price || 0).toLocaleString() }}</span>
           </div>
         </div>

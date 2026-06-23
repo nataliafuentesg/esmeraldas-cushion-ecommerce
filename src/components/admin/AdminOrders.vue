@@ -288,8 +288,9 @@ const markDelivered = async () => {
             <div v-if="selectedOrder.items && selectedOrder.items.length > 0" class="space-y-3">
               <div v-for="item in selectedOrder.items" :key="item.id" class="flex justify-between items-center text-sm border-b border-brand-white/5 pb-2">
                 <p class="text-brand-white/80 font-sans-luxury tracking-wide flex-1">
-                  <span class="text-brand-gold font-bold mr-2">{{ item.quantity }}x</span> 
+                  <span class="text-brand-gold font-bold mr-2">{{ item.quantity }}x</span>
                   {{ item.product?.name || 'Joya Eliminada del Catálogo' }}
+                  <span v-if="item.selectedSize" class="block text-[11px] text-brand-gold/90 mt-0.5">📏 Talla: {{ item.selectedSize }}</span>
                 </p>
                 <p class="text-brand-white/80 font-sans-luxury tracking-wide">
                   ${{ item.priceAtPurchase.toLocaleString() }}
