@@ -284,23 +284,24 @@ const handleWhatsAppClick = () => {
   window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
 };
 
-// Enlace contextual a la guía de tallas según categoría del producto
+// Enlace contextual a la guía de tallas según categoría del producto.
+// Las gargantillas vienen en tamaño fijo → no llevan guía ni selector de talla.
 const sizeGuideLink = computed(() => {
   const cat = product.value?.category?.toLowerCase() || '';
-  if (cat.includes('anillo'))    return '/guia-de-tallas#anillos';
-  if (cat.includes('collar') || cat.includes('gargantilla')) return '/guia-de-tallas#collares';
-  if (cat.includes('pulsera'))   return '/guia-de-tallas#pulseras';
-  if (cat.includes('dije') || cat.includes('arete') || cat.includes('piedra')) return null;
+  if (cat.includes('anillo'))  return '/guia-de-tallas#anillos';
+  if (cat.includes('collar'))  return '/guia-de-tallas#collares';
+  if (cat.includes('pulsera')) return '/guia-de-tallas#pulseras';
   return null;
 });
 
-// Configuración de talla según la categoría (label + opciones)
+// Configuración de talla según la categoría (label + opciones).
+// Gargantillas, aretes, dijes y piedras NO piden talla.
 const sizeConfig = computed(() => {
   const cat = product.value?.category?.toLowerCase() || '';
   if (cat.includes('anillo')) {
     return { label: 'Talla del anillo', options: ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13'] };
   }
-  if (cat.includes('collar') || cat.includes('gargantilla')) {
+  if (cat.includes('collar')) {
     return { label: 'Largo de la cadena', options: ['40 cm', '42 cm', '45 cm', '50 cm', '55 cm', '60 cm'] };
   }
   if (cat.includes('pulsera')) {

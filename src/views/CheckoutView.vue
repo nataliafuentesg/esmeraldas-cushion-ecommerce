@@ -7,6 +7,7 @@ import { Icon } from '@iconify/vue';
 import { getAttribution } from '@/utils/utm';
 import { suggestEmail } from '@/utils/emailSuggest';
 import { useAnalytics } from '@/composables/useAnalytics';
+import { COLOMBIA, DEPARTAMENTOS } from '@/utils/colombia';
 import api from '@/api/axios';
 
 const cartStore = useCartStore();
@@ -23,9 +24,24 @@ const form = ref({
   customerEmail: '',
   phoneNumber: '',
   country: 'Colombia', // País por defecto
+  // Colombia: dirección estructurada
+  department: '',
+  city: '',
+  customCity: '',      // si elige "Otra ciudad"
+  streetAddress: '',   // calle, número, barrio, detalles
+  // Internacional: dirección libre
   shippingAddress: '',
   notes: ''
 });
+
+// Ciudades del departamento seleccionado (cascada)
+const cities = computed(() => COLOMBIA[form.value.department] || []);
+
+// Al cambiar de departamento, reiniciamos la ciudad
+const onDepartmentChange = () => {
+  form.value.city = '';
+  form.value.customCity = '';
+};
 
 // Tarifas de envío — se leen del backend (fuente única de verdad). Los valores
 // por defecto son solo un respaldo mientras carga la config.
@@ -96,7 +112,24 @@ const submitOrder = async () => {
       return;
     }
 
-    const fullAddress = `[${form.value.country.toUpperCase()}] - ${form.value.shippingAddress}`;
+    // Armar la dirección según el destino
+    let fullAddress;
+    if (form.value.country === 'Colombia') {
+      const ciudad = form.value.city === 'Otra ciudad' ? form.value.customCity.trim() : form.value.city;
+      if (!form.value.department || !ciudad || !form.value.streetAddress.trim()) {
+        errorMsg.value = "Completa departamento, ciudad y dirección para continuar.";
+        isSubmitting.value = false;
+        return;
+      }
+      fullAddress = `[COLOMBIA] - ${form.value.streetAddress.trim()}, ${ciudad}, ${form.value.department}`;
+    } else {
+      if (!form.value.shippingAddress.trim()) {
+        errorMsg.value = "Ingresa tu dirección de envío.";
+        isSubmitting.value = false;
+        return;
+      }
+      fullAddress = `[${form.value.country.toUpperCase()}] - ${form.value.shippingAddress.trim()}`;
+    }
     const attribution = getAttribution() || {};
     const orderData = {
       customerName: form.value.customerName,
@@ -219,7 +252,37 @@ const renderBoldButton = () => {
               </select>
             </div>
 
-            <input v-model="form.shippingAddress" type="text" placeholder="Dirección completa (Estado, Ciudad, Código Postal)" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+            <!-- COLOMBIA: dirección estructurada (departamento → ciudad → dirección) -->
+            <template v-if="form.country === 'Colombia'">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="border-b border-brand-white/20 py-2">
+                  <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">Departamento</label>
+                  <select v-model="form.department" @change="onDepartmentChange" required
+                    class="w-full bg-transparent text-brand-white text-sm font-sans-luxury focus:outline-none focus:text-brand-gold transition-colors cursor-pointer tracking-wide">
+                    <option value="" disabled class="bg-brand-black">Selecciona…</option>
+                    <option v-for="dep in DEPARTAMENTOS" :key="dep" :value="dep" class="bg-brand-black">{{ dep }}</option>
+                  </select>
+                </div>
+                <div class="border-b border-brand-white/20 py-2">
+                  <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">Ciudad / Municipio</label>
+                  <select v-model="form.city" :disabled="!form.department" required
+                    class="w-full bg-transparent text-brand-white text-sm font-sans-luxury focus:outline-none focus:text-brand-gold transition-colors cursor-pointer tracking-wide disabled:opacity-40">
+                    <option value="" disabled class="bg-brand-black">{{ form.department ? 'Selecciona…' : 'Elige el departamento primero' }}</option>
+                    <option v-for="c in cities" :key="c" :value="c" class="bg-brand-black">{{ c }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <input v-if="form.city === 'Otra ciudad'" v-model="form.customCity" type="text" placeholder="Escribe tu ciudad / municipio" required
+                class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+
+              <input v-model="form.streetAddress" type="text" placeholder="Dirección (calle, número, barrio, apto, indicaciones)" required
+                class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+            </template>
+
+            <!-- INTERNACIONAL: dirección libre -->
+            <input v-else v-model="form.shippingAddress" type="text" placeholder="Dirección completa (Estado, Ciudad, Código Postal)" required
+              class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
 
             <textarea v-model="form.notes" rows="3" placeholder="Notas adicionales (Opcional)" class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide resize-none"></textarea>
           </form>
