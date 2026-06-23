@@ -5,6 +5,7 @@ import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { Icon } from '@iconify/vue';
 import { getAttribution } from '@/utils/utm';
+import { suggestEmail } from '@/utils/emailSuggest';
 import { useAnalytics } from '@/composables/useAnalytics';
 import api from '@/api/axios';
 
@@ -40,6 +41,16 @@ const total = computed(() => subtotal.value + shippingFee.value);
 
 const isSubmitting = ref(false);
 const errorMsg = ref('');
+
+// Sugerencia de corrección de correo (detecta typos como gmial.com)
+const emailSuggestion = ref('');
+const checkEmail = () => {
+  emailSuggestion.value = suggestEmail(form.value.customerEmail) || '';
+};
+const acceptEmailSuggestion = () => {
+  form.value.customerEmail = emailSuggestion.value;
+  emailSuggestion.value = '';
+};
 
 // Estado del pago con Bold (Colombia)
 const boldData = ref(null);          // datos del botón devueltos por el backend
@@ -189,7 +200,13 @@ const renderBoldButton = () => {
               <input v-model="form.phoneNumber" type="tel" placeholder="Teléfono / WhatsApp" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
             </div>
 
-            <input v-model="form.customerEmail" type="email" placeholder="Correo electrónico" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+            <div>
+              <input v-model="form.customerEmail" @blur="checkEmail" @input="emailSuggestion = ''" type="email" placeholder="Correo electrónico" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+              <p v-if="emailSuggestion" class="text-[11px] text-brand-gold/90 font-sans-luxury mt-2">
+                ¿Quisiste decir
+                <button type="button" @click="acceptEmailSuggestion" class="underline underline-offset-2 font-bold hover:text-brand-gold">{{ emailSuggestion }}</button>?
+              </p>
+            </div>
 
             <div class="border-b border-brand-white/20 py-2">
               <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">Destino del envío</label>
