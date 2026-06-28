@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/auth';
 import { Icon } from '@iconify/vue';
 import ProductGallery from '@/components/ProductGallery.vue';
 import RelatedProducts from '@/components/RelatedProducts.vue';
+import ReviewsSection from '@/components/ReviewsSection.vue';
 import { RouterLink } from 'vue-router';
 import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
@@ -521,6 +522,9 @@ onUnmounted(() => {
         </div>
       </div>
     </Transition>
+
+    <!-- Reseñas — prueba social donde la gente decide -->
+    <ReviewsSection />
   </div>
 </template>
 

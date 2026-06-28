@@ -4,6 +4,8 @@ import HeroSection from '@/components/HeroSection.vue'
 import FeaturedSection from '@/components/FeaturedSection.vue'
 import CategoryShowcase from '@/components/CategoryShowcase.vue';
 import OccasionBadges from '@/components/OccasionBadges.vue';
+import ReviewsSection from '@/components/ReviewsSection.vue';
+import StoreSection from '@/components/StoreSection.vue';
 const homeOccasions = ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Regalo'];
 
 
@@ -20,6 +22,10 @@ const homeOccasions = ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Reg
     <CategoryShowcase />
 
     <FeaturedSection />
+
+    <ReviewsSection />
+
+    <StoreSection />
   </main>
 </template>
 

@@ -5,82 +5,38 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
   <url>
     <loc>https://cushionjewelry.com/coleccion</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-
   <url>
     <loc>https://cushionjewelry.com/buscar</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-
   <url>
-    <loc>https://cushionjewelry.com/revista</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://cushionjewelry.com/contacto</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://cushionjewelry.com/auth</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <url>
-    <loc>https://cushionjewelry.com/faq</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://cushionjewelry.com/garantias</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
-    <loc>https://cushionjewelry.com/envios</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://cushionjewelry.com/terminos</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-esmeralda-corte-corazon-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/topos-esmeralda-cristal-pequeno-blanco-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-tipo-topo-para-bebe-con-esmeraldas-corte-redondo</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-oro-amarillo-con-esmeralda-rectangular-y-5-diamantes-a-cada-lado</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-solitario-clasico-con-esmeralda-corte-redondo</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-cluster-en-oro-con-esmeralda-lagrima-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-estilo-cluster-en-oro-blanco-con-esmeralda-corte-lagrima-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-esmeralda-corte-corazon-y-diamantes-medio-punto</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/pulsera-estilo-tennis-maciza-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-solitario-redondo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -90,32 +46,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-estilo-argolla-asimetrica-con-esmeraldas-corte-baguette</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-estilo-dona-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/pulsera-estilo-tennis-en-oro-con-esmeraldas-corte-redondo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/aretes-tipo-topo-en-oro-con-moissanita</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/aretes-tipo-topo-en-oro-blanco-con-esmeralda-cristal-corte-redondo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/aretes-largos-en-oro-blanco-con-rubi-corte-marquise-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -125,12 +56,22 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-amarillo-con-esmeralda-corte-rectangular-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/aretes-largos-en-oro-blanco-con-rubi-corte-marquise-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-con-broche-omega-en-oro-amarillo-con-zafiros-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/pulsera-estilo-tennis-maciza-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-estilo-cluster-en-oro-blanco-con-esmeralda-corte-lagrima-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-estilo-dona-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -140,17 +81,22 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-corte-ovalo-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/topos-tambor-redondo-en-oro-amarillo-con-esmeraldas-redondas-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-peridoto-ovalado-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-con-seis-diamantes-colores-6,6gramos-oro-blanco</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/argolla-minimalista-en-oro-blanco-estilo-bague</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-estilo-vintage-en-oro-blanco-con-esmeralda-cuadrada</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-peridoto-ovalado-verde-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -160,17 +106,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-diseno-trilogia-de-rosas-con-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/argolla-bague-en-oro-blanco-con-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-siete-diamantes-de-colores-estilo-banda</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-solitario-en-oro-blanco-con-diamante-central-corte-cuadrado</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-ovalo-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -185,12 +126,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-tipo-argolla-en-oro-amarillo-con-siete-diamantes-corte-carre</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-estilo-vintage-en-oro-blanco-con-esmeralda-cuadrada</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-diamante-central-corte-cuadrado</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -210,27 +146,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-dueto-de-esmeraldas-corte-ovalo-y-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-esmeralda-cuadrada-estilo-slice-y-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-detalles-en-filigrana-y-esmeralda-cuadrada</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/pulsera-de-alta-joyeria-en-oro-con-opalo-exclusivo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/gargantilla-de-alta-joyeria-en-oro-amarillo-con-esmeralda,-rubi,-zafiro-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -240,7 +156,17 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/gargantilla-de-alta-joyeria-en-oro-blanco-con-esmeralda-lagrima-premium-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/aretes-de-bola-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-dueto-de-esmeraldas-corte-ovalo-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/gargantilla-de-alta-joyeria-en-oro-amarillo-con-esmeralda,-rubi,-zafiro-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -250,12 +176,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-de-bola-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
+    <loc>https://cushionjewelry.com/producto/dije-con-esmeralda-rectangular-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/collar-de-perlas-naturales-de-esfericidad-regular</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-con-esmeralda-cuadrada-slice-en-oro-blanco-con-cuatro-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -270,22 +196,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/gargantilla-de-alta-joyeria-en-oro-amarillo-con-rubies-corte-carre-y-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-de-14k-con-esmeralda-ovalo,-doble-halo-de-diamantes-y-laterales-carre</loc>
+    <loc>https://cushionjewelry.com/producto/collar-de-perlas-naturales</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://cushionjewelry.com/producto/anillo-flor-en-oro-blanco-de-18k-con-esmeraldas-ovalo-y-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-bicolor-en-oro-con-esmeralda-lagrima-y-doble-halo-de-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -310,7 +226,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-corte-redondo-y-halo-estilo-tortica-de-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-aro-amarillo-cabeza-blanca-lagrima-con-doble-halo-de-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-tres-rosas-de-punto-4,7-gramos-solo-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -320,37 +241,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-de-alta-joyeria-con-esmeralda-rectangular-premium</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-de-14k-con-diseno-en-trenza-de-zafiros-y-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-estilo-lady-en-oro-con-zafiro-azul-y-halo-de-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-ovalo-premium-y-cluster-de-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-ovalo-y-cluster-de-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-en-oro-blanco-con-montura-cushion,-esmeralda-redonda-y-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-rectangular-horizontal-y-diamantes-laterales</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-corte-redondo-y-diamantes-tortica</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -360,27 +256,47 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-en-oro-amarillo-estilo-cluster-pequeno</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-rectangular-horizontal-y-diamantes-laterales</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-amarillo-con-esmeralda-rectangular-grande-y-diamantes-de-3-puntos</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-solitario-en-oro-con-esmeralda-redonda-y-cinco-diamantes-a-cada-lado</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-en-oro-blanco-estilo-cluster-pequeno</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/pulsera-opalo-</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-cluster-en-oro-con-esmeralda-ovalo-y-diamantes-</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-cluster-en-oro-con-esmeralda-ovalo-y-de-diamantes-4,9gr</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-lady-en-oro-con-zafiro-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/pulsera-tennis-en-oro-blanco-con-diamantes-y-esmeraldas</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://cushionjewelry.com/producto/aretes-topos-solitarios-en-corte-ovalo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-corazon-en-oro-blanco-estilo-cluster-premium</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-cuadrado-de-gran-formato-en-oro-amarillo-estilo-cluster-premium</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -405,22 +321,42 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-pasante-en-oro-amarillo-con-silueta-estilo-cushion</loc>
+    <loc>https://cushionjewelry.com/producto/topos-cuadrados-caja</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-cuadrados-con-bisel-tipo-caja</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-rectangular-grande-y-diamantes-de-3-puntos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-esmeralda-corte-corazon-y-halo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-rectangular-cluster-en-oro-blanco</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-esmeralda-rectangular-con-diamanates-baguetes-y-redondos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-corazon-cluster-en-oro-blanco</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-cuadrado-cluster-en-oro-amarillo-grande</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://cushionjewelry.com/producto/aretes-topos-grandes-en-oro-blanco-con-diseno-lagrima-estilo-cluster-premium</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-de-alta-joyeria-con-diseno-tradicional-estilo-canotillo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -440,16 +376,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-catedral-en-oro-blanco-con-diamantes-triangulares-laterales</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-esmeralda-cuadrada-y-halo-de-diamantes-premium</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/anillo-en-oro-amarillo-con-esmeralda-lagrima-y-halo-de-diamantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -460,22 +386,32 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-rosa-con-zafiro-rosa-y-diamantes</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/aretes-topos-redondos</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-banda-mitad-en-oro-con-esmeraldas-y-diamantes</loc>
+    <loc>https://cushionjewelry.com/producto/topos-tifany-cuadrados-pequenos</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-imponente-en-oro-con-diseno-lagrima-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-rosa-con-zafiro-rosa-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-halo-rectangular-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-con-esmeralda-cuadrada-y-halo-de-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-canotillo-en-oro-amarillo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -485,37 +421,37 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-en-oro-blanco-con-diseno-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-y-engaste-de-doble-una</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/dije-pasante-con-silueta-cuadrada</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-abierto-con-diseno-cuadrado-y-diamante-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-doble-una-en-oro-con-esmeralda-cuadrada</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-abierto-en-oro-amarillo-con-disenos-lagrima-y-redonda-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-cluster-abierto-en-oro-amarillo-con-esmeraldas-lagrima-y-redonda-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-abierto-en-oro-blanco-con-disenos-ovalo-y-redonda-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/aretes-tambores-en-oro-blanco-con-zafiro-rosa-estilo-cluster</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/candongas-pequenas-en-oro</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-cluster-abierto-en-oro-blanco-con-esmeraldas-ovalo-y-redonda</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-tipo-argolla-en-oro-amarillo-con-siete-diamantes-carre</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-cluster-oro-blanco-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -530,42 +466,22 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/cadena-tejido-lazo</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-con-esmeralda-cluster-cuadrado</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-lagrima-en-oro-amarillo</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-abierto-con-diamante-cluster-y-esmeralda-cuadrada</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-tambores-en-oro-blanco-con-zafiro-rosa-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/candongas-pequenas-en-oro-amarillo-con-esmeraldas-redondas</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-con-diseno-lagrima-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/candongas-baby-en-oro-blanco-con-esmeraldas</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-cuadrada-y-diamantes-en-linea-lateral</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-cuadrada-grande-y-diamantes-laterales</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-silueta-dona-en-oro-blanco</loc>
+    <loc>https://cushionjewelry.com/producto/cadena-lazo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -575,42 +491,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/cadena-tejido-cola-de-topo</loc>
+    <loc>https://cushionjewelry.com/producto/dije-dona-con-esmeraldas-en-oro-blanco-sencillo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-tambores-redondos-en-oro-amarillo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-roseta-en-oro-blanco</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-redondos-tipo-jackets-en-oro-blanco</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-con-silueta-marquesa-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-cuadrados-en-oro-blanco-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-rectangular-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-redondo-grande-en-oro-blanco-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-cuadrada-grande-y-cinco-diamantes-a-cada-lado</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -620,47 +506,67 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-de-corazon-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/candongas-baby-en-oro-blanco-con-esmeraldas</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-estilo-cluster-horizontal</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-marquesa-cluster-con-esmeralda-cuadrada-y-diamanantes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-tambor-redondo-en-oro-blanco</loc>
+    <loc>https://cushionjewelry.com/producto/dije-rectangular-estilo-cluster</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-tambores-redondos-en-oro-blanco</loc>
+    <loc>https://cushionjewelry.com/producto/dije-cluster-en-oro-blanco-redondo-grande</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-tambor-redondo-en-oro-blanco</loc>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-redondos-tipo-jackets-en-oro-blanco</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-ovalo-en-oro-blanco-estilo-cluster</loc>
+    <loc>https://cushionjewelry.com/producto/argolla-crazy-de-esmeraldas-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-solitario-con-banda-trenzada-en-oro-amarillo</loc>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-con-diseno-lagrima-estilo-cluster</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-solitario</loc>
+    <loc>https://cushionjewelry.com/producto/dije-corazon-cluster-en-oro-amarillo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/dije-de-dona-con-halo-en-oro-amarillo</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-roseta-en-oro-blanco</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-cuatro-esmeraldas-pasante</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-amarillo-rectangular-diagonal-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-con-esmeralda-cuadrada-y-tres-diamantes-a-cada-lado-en-linea</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-tambor-en-oro-blanco-con-esmeralda-redonda</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -675,27 +581,77 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://cushionjewelry.com/producto/dije-marquiz-halo-de-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-con-esmeralda-redondo-cluster</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-media-argolla-esmeralda-y-diamante-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-pasante-lagrima</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-6-unas-pequeno</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-banda-mitad-esmeraldas-y-diamantes-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-tambores-redondos-en-oro-blanco</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-tambor-redondo-en-oro-blanco</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-solitario-trenzado-en-oro-amarillo-con-esmeralda-redonda</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-de-dona-con-halo-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-ovalo-en-oro-blanco-estilo-cluster</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-cluster-en-oro-blanco-horizontal</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-solitario-con-esmeralda-redonda</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://cushionjewelry.com/producto/topos-lagrima-en-oro-amarillo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/aretes-topos-cuadrados-con-halo-en-oro-amarillo</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://cushionjewelry.com/producto/aretes-topos-cuadrados-en-oro-amarillo-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/dije-ovalo-en-oro-amarillo-estilo-cluster</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://cushionjewelry.com/producto/anillo-en-oro-amarillo-con-siluetas-redonda-y-marquesa</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -710,7 +666,17 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-"crazy"-en-oro-amarillo</loc>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-en-oro-blanco-con-montura-cushion,-esmeralda-redonda-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/gargantilla-de-alta-joyeria-en-oro-blanco-con-esmeralda-lagrima-premium-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-lagrima-en-oro-amarillo</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -725,7 +691,132 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cushionjewelry.com/producto/anillo-solitario-en-oro-con-esmeralda-redonda-y-diamantes-laterales-al-carril</loc>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-amarillo-redonda-y-marquiz</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-"crazy"-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/cadena-cola-de-topo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-cuadrados-con-halo-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-cluster-en-oro-blanco-cuadrados</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-ovalo-cluster-en-oro-amarillo-con-esmeralda</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/gargantilla-de-alta-joyeria-en-oro-amarillo-con-rubies-corte-carre-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-dona-en-oro-blanco-con-esmeralda-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-ovalo-pasante-en-oro-blanco-con-esmeralda-corte-ovalo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-cluster-pequeno-en-oro-con-esmeralda-redonda-y-diamantes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-unas-delgado-en-oro-amarillo-con-esmeraldas-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-en-oro-de-10k-con-diamantes-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-cuadrado-estilo-tiffany-en-oro-blanco-con-esmeralda</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-corazon-en-oro-con-esmeraldas-y-cristales-diamante</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/pulsera-estilo-tennis-en-oro-amarillo-con-zafiros-corte-rainbow</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-cluster-redondos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-lagrima-pasante-en-oro-con-esmeralda-corte-lagrima</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-en-oro-blanco-y-diamantes-en-diferentes-formas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-broche-omega-zafiro-y-diamantes-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-topos-en-oro-blanco-con-diamantes-de-10-puntos-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/aretes-tipo-topo-para-bebe-con-esmeraldas-corte-redondo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/dije-pasante-cushion-en-oro-amarillo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-cluster-cuadrados-en-oro-blanco</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/topos-moissanita-redondas</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-en-oro-blanco-de-14k-con-esmeralda-ovalo,-doble-halo-de-diamantes-y-esmeraldas-carre-laterales</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cushionjewelry.com/producto/anillo-catedral-en-oro-con-diamantes-triangulares-laterales</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
