@@ -72,6 +72,36 @@ const handleGoBack = () => {
 };
 
 // OG tags dinámicas — la imagen del producto aparece al compartir en WhatsApp / iMessage
+// ── SEO por ocasión ──────────────────────────────────────────────────────
+// La gente busca "anillo de compromiso", "aretes para quinceañera", etc.
+// Convertimos las ocasiones del producto en frases de búsqueda de alta intención.
+const categorySingular = (cat) => {
+  const c = (cat || '').toLowerCase();
+  if (c.includes('anillo'))      return 'anillo';
+  if (c.includes('gargantilla')) return 'gargantilla';
+  if (c.includes('collar'))      return 'collar';
+  if (c.includes('arete'))       return 'aretes';
+  if (c.includes('pulsera'))     return 'pulsera';
+  if (c.includes('dije'))        return 'dije';
+  return 'joya';
+};
+
+const occasionKeywords = computed(() => {
+  const occ = product.value?.occasions || [];
+  if (!occ.length) return '';
+  const base = categorySingular(product.value?.category);
+  return occ.map(o => `${base} de ${o.toLowerCase()}`).join(', ');
+});
+
+const seoDescription = computed(() => {
+  const base = product.value?.description?.replace(/\s+/g, ' ').trim().substring(0, 115)
+    || 'Alta joyería con esmeraldas colombianas certificadas.';
+  const occ = product.value?.occasions?.length
+    ? ` Ideal para ${product.value.occasions.join(', ').toLowerCase()}.`
+    : '';
+  return (base + occ).substring(0, 160);
+});
+
 useHead({
   title: () => product.value ? `${product.value.name} | Cushion` : 'Cushion | Alta Joyería',
   meta: [
@@ -85,9 +115,11 @@ useHead({
     },
     {
       property: 'og:description',
-      content: () => product.value?.description
-        ? product.value.description.substring(0, 155)
-        : 'Alta joyería con esmeraldas colombianas exclusivas. Diseñado en Bogotá.'
+      content: () => seoDescription.value
+    },
+    {
+      name: 'keywords',
+      content: () => occasionKeywords.value
     },
     {
       property: 'og:image',
@@ -109,7 +141,7 @@ useHead({
     },
     {
       name: 'description',
-      content: () => product.value?.description?.substring(0, 155) || 'Alta joyería con esmeraldas colombianas.'
+      content: () => seoDescription.value
     },
     {
       name: 'twitter:card',
@@ -163,6 +195,7 @@ const productJsonLd = computed(() => {
     sku:         String(product.value.id),
     brand:       { '@type': 'Brand', name: 'Cushion Jewelry' },
     category:    gCat,
+    ...(occasionKeywords.value && { keywords: occasionKeywords.value }),
     ...(product.value.metalType && { material: product.value.metalType }),
     offers: {
       '@type':            'Offer',
@@ -399,10 +432,22 @@ onUnmounted(() => {
             Envío gratis a toda Colombia
           </div>
 
-          <div class="border-l-2 border-brand-gold pl-6 mb-10">
+          <div class="border-l-2 border-brand-gold pl-6 mb-8">
             <p class="text-brand-white/75 leading-relaxed font-sans-luxury italic text-sm md:text-base">
               "{{ product.description }}"
             </p>
+          </div>
+
+          <!-- Etiquetas de ocasión (SEO + intención de compra) -->
+          <div v-if="product.occasions && product.occasions.length" class="mb-10">
+            <p class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-3">IDEAL PARA</p>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="occ in product.occasions" :key="occ"
+                class="inline-flex items-center gap-1.5 border border-brand-gold/30 bg-brand-gold/[0.04] text-brand-gold/90 px-3 py-1.5 text-[10px] tracking-wide font-sans-luxury">
+                <Icon icon="lucide:sparkles" class="w-3 h-3" />
+                {{ occ }}
+              </span>
+            </div>
           </div>
 
           <div class="bg-brand-white/[0.03] border border-brand-white/10 p-6 md:p-10 mb-8">
