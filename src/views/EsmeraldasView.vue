@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
 import { useAnalytics } from '@/composables/useAnalytics';
+import { getAttribution } from '@/utils/utm';
 import { v4 as uuidv4 } from 'uuid';
 
 const { trackEmeraldForm } = useAnalytics();
@@ -87,7 +88,14 @@ const submitRequest = async (contactMethod) => {
     // para que Meta deduplique el evento Lead y no lo cuente dos veces.
     const eventId = 'lead_' + uuidv4();
 
-    await api.post('/jewelry-requests', { ...form.value, contactMethod, eventId });
+    // Atribución de campaña — de qué anuncio vino esta cotización
+    const attribution = getAttribution() || {};
+    await api.post('/jewelry-requests', {
+      ...form.value, contactMethod, eventId,
+      utmSource: attribution.utm_source || null,
+      utmMedium: attribution.utm_medium || null,
+      utmCampaign: attribution.utm_campaign || null,
+    });
 
     // Meta Pixel — Lead con dedup contra la Conversions API
     trackEmeraldForm(contactMethod, eventId);
