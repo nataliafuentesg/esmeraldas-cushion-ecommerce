@@ -195,6 +195,14 @@ const filteredProducts = computed(() => {
   if (sortBy.value === 'price-desc') {
     return [...inStock.sort((a, b) => b.price - a.price), ...outOfStock.sort((a, b) => b.price - a.price)];
   }
+  if (sortBy.value === 'newest') {
+    // Más recientes primero: por createdAt si existe, si no por ID (secuencial = recencia)
+    const byRecency = (a, b) => {
+      if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
+      return (b.id || 0) - (a.id || 0);
+    };
+    return [...inStock.sort(byRecency), ...outOfStock.sort(byRecency)];
+  }
 
   return [...inStock, ...outOfStock];
 });
@@ -318,6 +326,7 @@ onUnmounted(() => {
                 class="bg-brand-black text-brand-white/80 border border-brand-white/10 text-[10px] tracking-wider px-3 py-1.5 focus:border-brand-gold outline-none cursor-pointer font-sans-luxury"
               >
                 <option value="default">Recomendados</option>
+                <option value="newest">Novedades primero</option>
                 <option value="price-asc">Precio: Menor a Mayor</option>
                 <option value="price-desc">Precio: Mayor a Menor</option>
               </select>

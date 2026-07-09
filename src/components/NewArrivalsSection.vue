@@ -77,7 +77,8 @@ const swiperBreakpoints = {
         class="na-swiper pb-4"
       >
         <swiper-slide v-for="product in newArrivals" :key="product.id" class="py-4 h-auto !flex !items-stretch">
-          <div class="w-full flex flex-col bg-brand-black/40 border border-brand-white/5">
+          <!-- Sin borde/fondo propio: la ProductCard ya los trae (y su borde verde si es nueva) -->
+          <div class="w-full flex flex-col">
             <ProductCard :product="product" class="h-full" />
           </div>
         </swiper-slide>

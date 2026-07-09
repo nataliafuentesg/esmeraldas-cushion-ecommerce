@@ -29,6 +29,9 @@ const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
 const allProducts = ref([]);
 const loading = ref(true);
+
+// ¿Es una de las piezas más nuevas? (misma fuente que el marcador de las cards)
+const isNew = computed(() => !!product.value && productsStore.newArrivalIds.includes(product.value.id));
 const selectedSize = ref('');     // talla elegida por el cliente
 const sizeError = ref(false);     // aviso si no eligió talla
 
@@ -415,6 +418,11 @@ onUnmounted(() => {
         <div class="flex flex-col">
           <div class="flex flex-wrap items-center gap-3 mb-4">
             <span class="text-brand-gold text-[10px] tracking-[0.5em] font-bold">{{ product.category }}</span>
+            <!-- Pieza nueva destacada -->
+            <span v-if="isNew"
+              class="inline-flex items-center gap-1.5 bg-brand-primary text-brand-black px-3 py-1 text-[9px] font-bold tracking-[0.15em] shadow-sm">
+              <Icon icon="lucide:sparkles" class="w-3 h-3" /> NUEVA PIEZA
+            </span>
             <!-- Metal precioso destacado -->
             <span v-if="product.metalType?.trim()"
               class="inline-flex items-center gap-1.5 bg-brand-gold text-brand-black px-3 py-1 text-[9px] font-bold tracking-[0.15em] shadow-sm">

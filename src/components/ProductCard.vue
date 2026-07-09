@@ -58,6 +58,7 @@ watch(mainImage, () => {
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
     class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
+    :class="{ 'card-new': isNew }"
   >
     <!-- Shimmer de lujo en hover -->
     <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
@@ -177,6 +178,21 @@ watch(mainImage, () => {
   box-shadow: 0 20px 40px rgba(184, 155, 106, 0.12),
               0 8px 16px rgba(0, 0, 0, 0.3);
   border-color: rgba(184, 155, 106, 0.25);
+}
+
+/* Pieza nueva: borde verde esmeralda visible para distinguirla de un vistazo.
+   Color pleno + anillo interno (inset) → se ve ~2px sin descuadrar el layout. */
+.product-card.card-new {
+  border-color: #4C7F62;
+  box-shadow: inset 0 0 0 1px rgba(76, 127, 98, 0.7),
+              0 4px 24px rgba(0, 0, 0, 0.25);
+}
+
+.product-card.card-new:hover {
+  border-color: #4C7F62;
+  box-shadow: inset 0 0 0 1px rgba(76, 127, 98, 0.9),
+              0 20px 40px rgba(76, 127, 98, 0.22),
+              0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .card-shimmer {
