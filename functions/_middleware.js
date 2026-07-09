@@ -55,8 +55,9 @@ export async function onRequest(context) {
     ? product.description.replace(/\s+/g, ' ').trim().slice(0, 200)
     : 'Alta joyería con esmeraldas colombianas certificadas. Diseñado en Bogotá.';
 
-  // Imagen optimizada de Cloudinary (1200px) o el OG genérico de respaldo
-  const rawImg = product?.images?.[0]?.imageUrl;
+  // Imagen de portada (isThumbnail) o la primera como respaldo → optimizada 1200px
+  const cover = product?.images?.find(i => i.isThumbnail) || product?.images?.[0];
+  const rawImg = cover?.imageUrl;
   const image = rawImg && rawImg.includes('res.cloudinary.com')
     ? rawImg.replace('/upload/', '/upload/f_auto,q_auto:best,w_1200/')
     : (rawImg || 'https://cushionjewelry.com/images/og-cushion.png');

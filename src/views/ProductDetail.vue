@@ -93,6 +93,13 @@ const occasionKeywords = computed(() => {
   return occ.map(o => `${base} de ${o.toLowerCase()}`).join(', ');
 });
 
+// Imagen de portada (isThumbnail) o la primera como respaldo — para OG/redes
+const coverImageUrl = computed(() => {
+  const imgs = product.value?.images || [];
+  const cover = imgs.find(i => i.isThumbnail) || imgs[0];
+  return cover?.imageUrl || null;
+});
+
 const seoDescription = computed(() => {
   const base = product.value?.description?.replace(/\s+/g, ' ').trim().substring(0, 115)
     || 'Alta joyería con esmeraldas colombianas certificadas.';
@@ -123,8 +130,8 @@ useHead({
     },
     {
       property: 'og:image',
-      content: () => product.value?.images?.[0]?.imageUrl
-        ? cloudinaryOptimize(product.value.images[0].imageUrl, { width: 1200, quality: 'auto:best' })
+      content: () => coverImageUrl.value
+        ? cloudinaryOptimize(coverImageUrl.value, { width: 1200, quality: 'auto:best' })
         : 'https://cushionjewelry.com/images/og-cushion.png'
     },
     {
@@ -153,8 +160,8 @@ useHead({
     },
     {
       name: 'twitter:image',
-      content: () => product.value?.images?.[0]?.imageUrl
-        ? cloudinaryOptimize(product.value.images[0].imageUrl, { width: 1200, quality: 'auto:best' })
+      content: () => coverImageUrl.value
+        ? cloudinaryOptimize(coverImageUrl.value, { width: 1200, quality: 'auto:best' })
         : 'https://cushionjewelry.com/images/og-cushion.png'
     },
   ]

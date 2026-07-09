@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import api from '@/api/axios';
 
 /**
@@ -42,5 +42,19 @@ export const useProductsStore = defineStore('products', () => {
     return inflight;
   }
 
-  return { products, loading, loaded, fetchProducts };
+  // IDs de los 8 diseños más recientes — fuente única de verdad para el badge
+  // "NUEVO" (ProductCard) y la sección "Recién Llegados". Ordena por createdAt
+  // si existe, si no por ID descendente (secuencial = recencia).
+  const NEW_ARRIVALS_COUNT = 8;
+  const newArrivalIds = computed(() => {
+    return [...products.value]
+      .sort((a, b) => {
+        if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
+        return (b.id || 0) - (a.id || 0);
+      })
+      .slice(0, NEW_ARRIVALS_COUNT)
+      .map((p) => p.id);
+  });
+
+  return { products, loading, loaded, fetchProducts, newArrivalIds };
 });

@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, computed, ref, watch } from 'vue';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
+import { useProductsStore } from '@/stores/products';
 
 const props = defineProps({
   product: {
@@ -9,7 +10,12 @@ const props = defineProps({
   }
 });
 
+const productsStore = useProductsStore();
+
 const isOutOfStock = computed(() => props.product.stock === 0);
+
+// Recién agregado: está entre los 8 más nuevos → badge "NUEVO" para distinguirlo
+const isNew = computed(() => productsStore.newArrivalIds.includes(props.product.id));
 
 // Marca de metal compacta para la tarjeta: "Oro amarillo 18K" → "Oro 18K"
 const metalBadge = computed(() => {
@@ -132,8 +138,10 @@ watch(mainImage, () => {
     <div class="p-5 md:p-6 text-center flex-1 flex flex-col justify-between gap-4">
 
       <div>
-        <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
-          {{ product.category }}
+        <p class="text-[9px] tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
+          <span class="text-brand-gold">{{ product.category }}</span>
+          <!-- Marca discreta de pieza nueva: texto, no badge sobre la foto -->
+          <span v-if="isNew" class="text-brand-primary">&nbsp;✦ Nuevo</span>
         </p>
         <h3 class="font-serif-elegant text-base md:text-lg tracking-wide line-clamp-2 min-h-[3rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
           {{ product.name }}
