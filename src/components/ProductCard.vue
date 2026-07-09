@@ -58,12 +58,14 @@ watch(mainImage, () => {
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
     class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
-    :class="{ 'card-new': isNew }"
   >
     <!-- Shimmer de lujo en hover -->
     <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
 
     <div class="aspect-square overflow-hidden relative bg-brand-white/[0.02] border-b border-brand-white/5">
+
+      <!-- Acento de esquina para piezas nuevas: marca al vistazo sin encajonar -->
+      <span v-if="isNew" class="new-corner" aria-hidden="true"></span>
 
       <!-- Placeholder sin imagen -->
       <div v-if="!mainImage || mainImageFailed"
@@ -139,10 +141,13 @@ watch(mainImage, () => {
     <div class="p-5 md:p-6 text-center flex-1 flex flex-col justify-between gap-4">
 
       <div>
-        <p class="text-[9px] tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
-          <span class="text-brand-gold">{{ product.category }}</span>
-          <!-- Marca discreta de pieza nueva: texto, no badge sobre la foto -->
-          <span v-if="isNew" class="text-brand-primary">&nbsp;✦ Nuevo</span>
+        <!-- Etiqueta "NUEVO" propia (esmeralda), separada del tipo de pieza -->
+        <p v-if="isNew" class="flex items-center justify-center gap-1.5 text-[8px] tracking-[0.4em] font-bold text-brand-primary mb-1.5">
+          <span class="inline-block w-1 h-1 rounded-full bg-brand-primary"></span>
+          NUEVO
+        </p>
+        <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
+          {{ product.category }}
         </p>
         <h3 class="font-serif-elegant text-base md:text-lg tracking-wide line-clamp-2 min-h-[3rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
           {{ product.name }}
@@ -180,19 +185,26 @@ watch(mainImage, () => {
   border-color: rgba(184, 155, 106, 0.25);
 }
 
-/* Pieza nueva: borde verde esmeralda visible para distinguirla de un vistazo.
-   Color pleno + anillo interno (inset) → se ve ~2px sin descuadrar el layout. */
-.product-card.card-new {
-  border-color: #4C7F62;
-  box-shadow: inset 0 0 0 1px rgba(76, 127, 98, 0.7),
-              0 4px 24px rgba(0, 0, 0, 0.25);
+/* Pieza nueva: acento de esquina esmeralda (dos trazos finos en L).
+   Marca al vistazo sin encajonar la joya → conserva el minimalismo limpio. */
+.new-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  border-top: 2px solid #4C7F62;
+  border-left: 2px solid #4C7F62;
+  z-index: 15;
+  pointer-events: none;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.product-card.card-new:hover {
-  border-color: #4C7F62;
-  box-shadow: inset 0 0 0 1px rgba(76, 127, 98, 0.9),
-              0 20px 40px rgba(76, 127, 98, 0.22),
-              0 8px 16px rgba(0, 0, 0, 0.3);
+/* En hover, la esquina se estira sutilmente (detalle vivo, no invasivo) */
+.product-card:hover .new-corner {
+  width: 30px;
+  height: 30px;
 }
 
 .card-shimmer {
