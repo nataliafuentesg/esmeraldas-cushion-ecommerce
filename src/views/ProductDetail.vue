@@ -408,6 +408,11 @@ onUnmounted(() => {
         <div class="flex flex-col">
           <div class="flex flex-wrap items-center gap-3 mb-4">
             <span class="text-brand-gold text-[10px] tracking-[0.5em] font-bold">{{ product.category }}</span>
+            <!-- Metal precioso destacado -->
+            <span v-if="product.metalType?.trim()"
+              class="inline-flex items-center gap-1.5 bg-brand-gold text-brand-black px-3 py-1 text-[9px] font-bold tracking-[0.15em] shadow-sm">
+              <Icon icon="lucide:gem" class="w-3 h-3" /> {{ product.metalType.toUpperCase() }}
+            </span>
             <span v-if="product.featured && product.stock > 0"
               class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold tracking-wide">Pieza
               Exclusiva</span>
@@ -472,8 +477,8 @@ onUnmounted(() => {
                 <span class="text-brand-white text-sm font-sans-luxury">{{ product.totalWeight }}</span>
               </div>
               <div v-if="product.metalType?.trim()" class="flex flex-col">
-                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Metal Precioso</span>
-                <span class="text-brand-white text-sm font-sans-luxury">{{ product.metalType }}</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-gold/60 mb-1">Metal Precioso</span>
+                <span class="text-brand-gold text-sm font-sans-luxury font-bold">{{ product.metalType }}</span>
               </div>
             </div>
           </div>
