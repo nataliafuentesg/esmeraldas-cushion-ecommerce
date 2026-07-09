@@ -11,6 +11,14 @@ const props = defineProps({
 
 const isOutOfStock = computed(() => props.product.stock === 0);
 
+// Marca de metal compacta para la tarjeta: "Oro amarillo 18K" → "Oro 18K"
+const metalBadge = computed(() => {
+  const m = (props.product.metalType || '').trim();
+  if (!m) return null;
+  const karat = m.match(/(\d{1,2})\s*k/i);
+  return karat ? `Oro ${karat[1]}K` : m;
+});
+
 const mainImage = computed(() => {
   if (props.product.images && props.product.images.length > 0) {
     const thumb = props.product.images.find(img => img.isThumbnail);
@@ -102,6 +110,15 @@ watch(mainImage, () => {
         class="absolute top-4 left-4 bg-brand-black/80 backdrop-blur-md text-brand-gold border border-brand-gold/30 px-2.5 py-1 text-[8px] font-bold tracking-wide z-10"
       >
         Exclusivo
+      </span>
+
+      <!-- Marca de metal (Oro 18K) -->
+      <span
+        v-if="metalBadge"
+        class="absolute top-4 right-4 inline-flex items-center gap-1 bg-brand-black/70 backdrop-blur-sm text-brand-gold border border-brand-gold/30 px-2.5 py-1 text-[8px] font-bold tracking-[0.15em] z-10"
+      >
+        <svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.8L12 17l-5.5 3 1-6.8L3 8.9 9 8z"/></svg>
+        {{ metalBadge }}
       </span>
 
       <!-- Overlay hover -->
