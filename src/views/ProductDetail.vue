@@ -478,6 +478,15 @@ onUnmounted(() => {
             </div>
           </div>
 
+          <!-- ── Personalización de oro (todos los productos) ── -->
+          <div class="flex items-start gap-3 border border-brand-gold/25 bg-brand-gold/[0.04] p-4 mb-8">
+            <Icon icon="lucide:sparkles" class="w-5 h-5 text-brand-gold mt-0.5 shrink-0" />
+            <p class="text-brand-white/70 text-xs font-sans-luxury leading-relaxed">
+              Esta pieza se puede fabricar en el <strong class="text-brand-gold">color de oro de tu preferencia</strong>:
+              amarillo, blanco o rosado. Cuéntanos al momento de tu compra o escríbenos por WhatsApp.
+            </p>
+          </div>
+
           <!-- ── Selector de talla (anillos / collares / pulseras) ── -->
           <div v-if="needsSize && product.stock > 0" class="mb-6">
             <div class="flex items-center justify-between mb-3">
@@ -508,24 +517,28 @@ onUnmounted(() => {
             </button>
           </div>
 
-          <!-- ── AGOTADO: aviso + CTA ── -->
-          <div v-else class="border border-brand-white/10 bg-brand-white/[0.02] p-6">
+          <!-- ── AGOTADO / BAJO PEDIDO: aviso invitador + CTA ── -->
+          <div v-else class="border border-brand-gold/30 bg-brand-gold/[0.05] p-6">
             <div class="flex items-center gap-2 mb-3">
-              <span class="w-2 h-2 rounded-full bg-brand-white/20 flex-shrink-0"></span>
-              <p class="text-brand-white/50 font-sans-luxury text-[10px] tracking-[0.25em] uppercase">
-                Esta pieza está agotada
+              <Icon icon="lucide:hammer" class="w-4 h-4 text-brand-gold shrink-0" />
+              <p class="text-brand-gold font-sans-luxury text-[11px] font-bold tracking-[0.2em] uppercase">
+                Agotada · Se fabrica bajo pedido
               </p>
             </div>
-            <p class="text-brand-white/35 font-sans-luxury text-xs leading-relaxed mb-5">
-              Sin embargo, podemos recrearla a tu medida con una esmeralda colombiana exclusiva.
-              Cada diseño es único — cuéntanos tu visión y nuestros expertos te guían.
+            <p class="text-brand-white/70 font-sans-luxury text-sm leading-relaxed mb-2">
+              Esta pieza no está en inventario, pero <strong class="text-brand-white">la fabricamos especialmente para ti</strong>
+              en aproximadamente <strong class="text-brand-gold">10 días hábiles</strong>, con una esmeralda colombiana exclusiva
+              y en el color de oro que prefieras.
+            </p>
+            <p class="text-brand-white/40 font-sans-luxury text-xs leading-relaxed mb-5">
+              Escríbenos y coordinamos tu pieza a la medida — sin costo de asesoría.
             </p>
             <button @click="handleWhatsAppClick"
-              class="w-full flex items-center justify-center gap-3 bg-[#25D366]/10 border border-[#25D366]/40
-                     text-[#25D366] hover:bg-[#25D366]/20 py-4 text-xs font-sans-luxury tracking-wide
+              class="w-full flex items-center justify-center gap-3 bg-[#25D366]/15 border border-[#25D366]/50
+                     text-[#25D366] hover:bg-[#25D366]/25 py-4 text-xs font-sans-luxury tracking-wide
                      transition-all duration-300 group">
               <Icon icon="simple-icons:whatsapp" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
-              Quiero una pieza como esta
+              Solicitar esta pieza bajo pedido
             </button>
           </div>
 

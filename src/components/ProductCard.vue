@@ -43,13 +43,10 @@ watch(mainImage, () => {
 <template>
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
-    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border text-brand-white relative overflow-hidden"
-    :class="isOutOfStock
-      ? 'border-brand-white/5 opacity-80'
-      : 'border-brand-white/5'"
+    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
   >
-    <!-- Shimmer de lujo en hover (solo si hay stock) -->
-    <div v-if="!isOutOfStock" class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
+    <!-- Shimmer de lujo en hover -->
+    <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
 
     <div class="aspect-square overflow-hidden relative bg-brand-white/[0.02] border-b border-brand-white/5">
 
@@ -73,20 +70,14 @@ watch(mainImage, () => {
         :src="cloudinaryOptimize(mainImage, { width: 600 })"
         :alt="product.name"
         loading="lazy"
-        class="w-full h-full object-cover transition-all duration-500 ease-out"
+        class="w-full h-full object-cover transition-all duration-500 ease-out group-hover:scale-[1.06]"
         :class="[
           imgLoaded ? 'opacity-100' : 'opacity-0',
-          isOutOfStock
-            ? 'grayscale-[70%] brightness-70'
-            : 'group-hover:scale-[1.06]',
           { 'group-hover:opacity-0': hoverImage && !isOutOfStock }
         ]"
         @load="onMainImageLoad"
         @error="onMainImageError"
       />
-
-      <!-- Overlay oscuro permanente para agotados -->
-      <div v-if="isOutOfStock" class="absolute inset-0 bg-brand-black/40 z-[5] pointer-events-none"></div>
 
       <!-- Imagen en hover (solo si hay stock) -->
       <img
@@ -97,12 +88,12 @@ watch(mainImage, () => {
         class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-[1.06]"
       />
 
-      <!-- Badge AGOTADO -->
+      <!-- Badge BAJO PEDIDO (agotado pero se fabrica) -->
       <span
         v-if="isOutOfStock"
-        class="absolute top-4 left-4 bg-brand-black/95 backdrop-blur-sm text-brand-white border border-brand-white/30 px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10"
+        class="absolute top-4 left-4 bg-brand-gold text-brand-black px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10 shadow-lg"
       >
-        AGOTADO
+        BAJO PEDIDO
       </span>
 
       <!-- Badge Exclusivo (solo si hay stock) -->
@@ -113,14 +104,10 @@ watch(mainImage, () => {
         Exclusivo
       </span>
 
-      <!-- Overlay hover: distinto según stock -->
-      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10"
-           :class="isOutOfStock ? 'bg-brand-black/30' : 'bg-brand-black/20'">
-        <span class="font-sans-luxury translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
-              :class="isOutOfStock
-                ? 'text-brand-white/50 text-[9px] tracking-[0.25em]'
-                : 'text-brand-white/80 text-[9px] tracking-[0.3em]'">
-          {{ isOutOfStock ? 'Consultar diseño' : 'Ver pieza' }}
+      <!-- Overlay hover -->
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10 bg-brand-black/20">
+        <span class="font-sans-luxury text-brand-white/80 text-[9px] tracking-[0.3em] translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+          Ver pieza
         </span>
       </div>
     </div>
@@ -131,27 +118,19 @@ watch(mainImage, () => {
         <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
           {{ product.category }}
         </p>
-        <h3 class="font-serif-elegant text-base md:text-lg tracking-wide line-clamp-2 min-h-[3rem] flex items-center justify-center transition-colors duration-300"
-            :class="isOutOfStock ? 'text-brand-white/50' : 'group-hover:text-brand-gold'">
+        <h3 class="font-serif-elegant text-base md:text-lg tracking-wide line-clamp-2 min-h-[3rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
           {{ product.name }}
         </h3>
       </div>
 
-      <div class="pt-3 border-t transition-colors duration-500"
-           :class="isOutOfStock ? 'border-brand-white/5' : 'border-brand-white/5 group-hover:border-brand-gold/20'">
-        <p v-if="!isOutOfStock"
-           class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
+      <div class="pt-3 border-t border-brand-white/5 group-hover:border-brand-gold/20 transition-colors duration-500">
+        <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
           $ {{ product.price.toLocaleString() }}
         </p>
-        <!-- Agotado: precio tachado + aviso -->
-        <div v-else class="flex flex-col items-center gap-1">
-          <p class="font-sans-luxury text-brand-white/25 text-xs tracking-wide line-through">
-            $ {{ product.price.toLocaleString() }}
-          </p>
-          <p class="font-sans-luxury text-brand-white/40 text-[9px] tracking-[0.2em]">
-            Se puede mandar a hacer
-          </p>
-        </div>
+        <!-- Agotado: nota invitadora de fabricación bajo pedido -->
+        <p v-if="isOutOfStock" class="font-sans-luxury text-brand-gold/80 text-[9px] tracking-[0.15em] mt-1.5">
+          ✦ Se fabrica bajo pedido · 10 días hábiles
+        </p>
       </div>
 
     </div>
@@ -168,17 +147,11 @@ watch(mainImage, () => {
               border-color 0.4s ease;
 }
 
-.product-card:not(.opacity-80):hover {
+.product-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 20px 40px rgba(184, 155, 106, 0.12),
               0 8px 16px rgba(0, 0, 0, 0.3);
   border-color: rgba(184, 155, 106, 0.25);
-}
-
-/* Sin elevación en agotados */
-.product-card.opacity-80:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .card-shimmer {
