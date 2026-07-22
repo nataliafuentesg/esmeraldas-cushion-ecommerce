@@ -321,6 +321,11 @@ const renderBoldButton = () => {
               {{ isSubmitting ? 'Procesando...' : 'Continuar al pago' }}
             </button>
 
+            <p class="text-center text-brand-white/40 text-[10px] font-sans-luxury tracking-wide mt-4 flex items-center justify-center gap-1.5">
+              <Icon icon="lucide:shield-check" class="w-3 h-3 text-brand-gold/60" />
+              Reservamos tu pieza y te llevamos al pago seguro con Bold.
+            </p>
+
             <p v-if="form.country !== 'Colombia'" class="text-center text-brand-white/40 text-[10px] font-sans-luxury tracking-wide mt-4">
               Aceptamos tarjetas internacionales. El cobro se realiza en pesos colombianos (COP).
             </p>
@@ -336,9 +341,28 @@ const renderBoldButton = () => {
           <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mb-1">
             Pedido <span class="text-brand-gold">#{{ boldData.orderNumber }}</span>
           </p>
-          <p class="text-brand-white/60 text-sm font-sans-luxury mb-8">
+          <p class="text-brand-white/60 text-sm font-sans-luxury mb-6">
             Completa el pago de forma segura para confirmar tu compra.
           </p>
+
+          <!-- Qué va a pasar: transparencia antes de pagar -->
+          <div class="text-left bg-brand-black/40 border border-brand-white/10 p-5 mb-8">
+            <p class="text-brand-gold text-[10px] tracking-[0.3em] font-bold mb-3">CÓMO FUNCIONA</p>
+            <ul class="space-y-2.5 text-brand-white/60 text-xs font-sans-luxury">
+              <li class="flex items-start gap-2.5">
+                <Icon icon="lucide:credit-card" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
+                Al pagar serás dirigido a <span class="text-brand-white/80">Bold</span>, nuestra pasarela segura (tarjeta, PSE, Nequi y más).
+              </li>
+              <li class="flex items-start gap-2.5">
+                <Icon icon="lucide:mail-check" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
+                Cuando tu pago se confirme, recibirás un <span class="text-brand-white/80">correo de confirmación</span> automáticamente.
+              </li>
+              <li class="flex items-start gap-2.5">
+                <Icon icon="lucide:gem" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
+                Prepararemos tu pieza y te enviaremos el número de guía para rastrearla.
+              </li>
+            </ul>
+          </div>
 
           <div class="border-t border-b border-brand-white/10 py-5 mb-8">
             <div class="flex justify-between items-center">
