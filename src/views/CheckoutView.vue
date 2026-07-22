@@ -351,15 +351,15 @@ const renderBoldButton = () => {
             <ul class="space-y-2.5 text-brand-white/60 text-xs font-sans-luxury">
               <li class="flex items-start gap-2.5">
                 <Icon icon="lucide:credit-card" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
-                Al pagar serás dirigido a <span class="text-brand-white/80">Bold</span>, nuestra pasarela segura (tarjeta, PSE, Nequi y más).
+                <span>Al pagar serás dirigido a <span class="text-brand-white/80">Bold</span>, nuestra pasarela segura (tarjeta, PSE, Nequi y más).</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <Icon icon="lucide:mail-check" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
-                Cuando tu pago se confirme, recibirás un <span class="text-brand-white/80">correo de confirmación</span> automáticamente.
+                <span>Cuando tu pago se confirme, recibirás un <span class="text-brand-white/80">correo de confirmación</span> automáticamente.</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <Icon icon="lucide:gem" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
-                Prepararemos tu pieza y te enviaremos el número de guía para rastrearla.
+                <span>Prepararemos tu pieza y te enviaremos el número de guía para rastrearla.</span>
               </li>
             </ul>
           </div>
