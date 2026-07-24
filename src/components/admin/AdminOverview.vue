@@ -5,6 +5,7 @@ import api from '@/api/axios';
 
 const orders = ref([]);
 const clients = ref([]);
+const inquiryStats = ref({ total: 0, topProducts: [] });
 const loading = ref(true);
 const error = ref('');
 
@@ -14,12 +15,14 @@ const isPaid = (o) => PAID.includes(o.status);
 
 onMounted(async () => {
   try {
-    const [ordRes, cliRes] = await Promise.allSettled([
+    const [ordRes, cliRes, inqRes] = await Promise.allSettled([
       api.get('/admin/orders'),
       api.get('/admin/clients'),
+      api.get('/product-inquiries/admin/stats'),
     ]);
     if (ordRes.status === 'fulfilled') orders.value = ordRes.value.data || [];
     if (cliRes.status === 'fulfilled') clients.value = cliRes.value.data || [];
+    if (inqRes.status === 'fulfilled') inquiryStats.value = inqRes.value.data || { total: 0, topProducts: [] };
     if (ordRes.status === 'rejected') error.value = 'No se pudieron cargar los pedidos.';
   } catch (e) {
     error.value = 'Error cargando el panel.';
@@ -117,6 +120,13 @@ const attribution = computed(() => {
   const arr = Object.values(map).sort((a, b) => b.revenue - a.revenue || b.orders - a.orders);
   const max = Math.max(1, ...arr.map(s => s.orders));
   return arr.map(s => ({ ...s, pct: (s.orders / max) * 100 }));
+});
+
+// Piezas más consultadas por WhatsApp (señal de visibilidad / interés real)
+const topInquiries = computed(() => {
+  const arr = (inquiryStats.value.topProducts || []).slice(0, 8);
+  const max = Math.max(1, ...arr.map(p => Number(p.count) || 0));
+  return arr.map(p => ({ ...p, count: Number(p.count) || 0, pct: ((Number(p.count) || 0) / max) * 100 }));
 });
 
 // Actividad reciente
@@ -265,6 +275,29 @@ const newUsersThisMonth = computed(() => {
             </div>
           </div>
           <p v-else class="text-brand-white/30 text-xs mt-6">Sin datos de atribución todavía.</p>
+        </section>
+
+        <!-- Piezas más consultadas por WhatsApp -->
+        <section class="panel lg:col-span-2">
+          <div class="flex items-baseline justify-between gap-3">
+            <h2 class="panel-title flex items-center gap-2">
+              <Icon icon="lucide:message-circle" class="w-3.5 h-3.5" /> Piezas más consultadas
+              <span class="text-brand-white/30 font-normal normal-case tracking-normal">(botón WhatsApp)</span>
+            </h2>
+            <span class="text-[11px] text-brand-white/50 shrink-0">{{ inquiryStats.total }} consultas en total</span>
+          </div>
+          <div v-if="topInquiries.length" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 mt-6">
+            <div v-for="p in topInquiries" :key="p.slug">
+              <div class="flex justify-between items-baseline mb-1 gap-3">
+                <span class="text-xs text-brand-white/70 truncate">{{ p.name }}</span>
+                <span class="text-[11px] text-brand-white/50 shrink-0">{{ p.count }}</span>
+              </div>
+              <div class="h-1.5 bg-brand-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500/60 rounded-full" :style="{ width: p.pct + '%' }"></div>
+              </div>
+            </div>
+          </div>
+          <p v-else class="text-brand-white/30 text-xs mt-6">Aún no hay consultas registradas por WhatsApp.</p>
         </section>
 
       </div>
