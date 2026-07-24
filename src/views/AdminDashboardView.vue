@@ -11,6 +11,7 @@ const AdminProducts = defineAsyncComponent(() => import('@/components/admin/Admi
 const AdminMessages = defineAsyncComponent(() => import('@/components/admin/AdminMessages.vue'));
 const AdminReviews = defineAsyncComponent(() => import('@/components/admin/AdminReviews.vue'));
 const AdminEsmeraldas = defineAsyncComponent(() => import('@/components/admin/AdminEsmeraldas.vue'));
+const AdminInquiries = defineAsyncComponent(() => import('@/components/admin/AdminInquiries.vue'));
 const AdminUsers = defineAsyncComponent(() => import('@/components/admin/AdminUsers.vue'));
 
 const authStore = useAuthStore();
@@ -73,6 +74,9 @@ const selectTab = (tab) => {
         <button @click="selectTab('esmeraldas')" :class="activeTab === 'esmeraldas' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
           <Icon icon="lucide:gem" class="w-5 h-5 md:w-4 md:h-4 text-emerald-400" /><span>Consultas Esmeraldas</span>
         </button>
+        <button @click="selectTab('consultas')" :class="activeTab === 'consultas' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
+          <Icon icon="lucide:message-circle" class="w-5 h-5 md:w-4 md:h-4" /><span>Consultas WhatsApp</span>
+        </button>
         <button @click="selectTab('usuarios')" :class="activeTab === 'usuarios' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
           <Icon icon="lucide:users" class="w-5 h-5 md:w-4 md:h-4" /><span>Usuarios</span>
         </button>
@@ -93,6 +97,7 @@ const selectTab = (tab) => {
           activeTab === 'productos'   ? AdminProducts :
           activeTab === 'mensajes'    ? AdminMessages :
           activeTab === 'esmeraldas'  ? AdminEsmeraldas :
+          activeTab === 'consultas'   ? AdminInquiries :
           activeTab === 'usuarios'    ? AdminUsers :
           AdminReviews
         " />
