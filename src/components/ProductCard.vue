@@ -155,13 +155,18 @@ watch(mainImage, () => {
       </div>
 
       <div class="pt-3 border-t border-brand-white/5 group-hover:border-brand-gold/20 transition-colors duration-500">
-        <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
+        <!-- Con stock: precio. Agotado (bajo pedido): no mostramos precio, invitamos a consultar. -->
+        <p v-if="!isOutOfStock" class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
           $ {{ product.price.toLocaleString() }}
         </p>
-        <!-- Agotado: nota invitadora de fabricación bajo pedido -->
-        <p v-if="isOutOfStock" class="font-sans-luxury text-brand-gold/80 text-[9px] tracking-[0.15em] mt-1.5">
-          ✦ Se fabrica bajo pedido · 10 días hábiles
-        </p>
+        <template v-else>
+          <p class="font-sans-luxury text-brand-gold text-sm tracking-wide font-medium">
+            Consultar precio
+          </p>
+          <p class="font-sans-luxury text-brand-gold/70 text-[9px] tracking-[0.15em] mt-1.5">
+            ✦ Se fabrica bajo pedido · 10 días hábiles
+          </p>
+        </template>
       </div>
 
     </div>

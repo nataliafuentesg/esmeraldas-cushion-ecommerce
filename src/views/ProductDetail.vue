@@ -442,9 +442,14 @@ onUnmounted(() => {
             {{ product.name }}
           </h1>
 
-          <p class="text-2xl md:text-3xl text-brand-white/90 mb-3 font-serif-elegant tracking-tight">
+          <!-- Con stock: precio. Agotado (bajo pedido): ocultamos el precio e invitamos a consultar. -->
+          <p v-if="product.stock !== 0" class="text-2xl md:text-3xl text-brand-white/90 mb-3 font-serif-elegant tracking-tight">
             $ {{ product.price.toLocaleString() }}
           </p>
+          <div v-else class="mb-3">
+            <p class="text-2xl md:text-3xl text-brand-gold font-serif-elegant tracking-tight">Consultar precio</p>
+            <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mt-1.5">Pieza bajo pedido · se fabrica en 10 días hábiles</p>
+          </div>
 
           <!-- Incentivo: envío gratis nacional -->
           <div class="inline-flex items-center gap-2 text-brand-gold text-[11px] tracking-wide font-sans-luxury mb-8">
