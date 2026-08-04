@@ -31,7 +31,12 @@ const form = ref({
   streetAddress: '',   // calle, número, barrio, detalles
   // Internacional: dirección libre
   shippingAddress: '',
-  notes: ''
+  notes: '',
+  // Factura electrónica (opcional)
+  wantsInvoice: false,
+  billingId: '',        // cédula o NIT
+  billingEmail: '',     // correo de facturación
+  billingAddress: '',   // dirección de facturación
 });
 
 // Ciudades del departamento seleccionado (cascada)
@@ -130,6 +135,14 @@ const submitOrder = async () => {
       }
       fullAddress = `[${form.value.country.toUpperCase()}] - ${form.value.shippingAddress.trim()}`;
     }
+
+    // Si pidieron factura electrónica, la cédula/NIT es obligatoria
+    if (form.value.wantsInvoice && !form.value.billingId.trim()) {
+      errorMsg.value = "Para la factura electrónica ingresa tu cédula o NIT (o desactiva la opción).";
+      isSubmitting.value = false;
+      return;
+    }
+
     const attribution = getAttribution() || {};
     const orderData = {
       customerName: form.value.customerName,
@@ -138,6 +151,12 @@ const submitOrder = async () => {
       shippingAddress: fullAddress,
       notes: form.value.notes,
       clientId: authStore.isAuthenticated ? authStore.user.id : null,
+      // Factura electrónica (opcional). Si la pidieron, mandamos los datos;
+      // el correo/dirección caen al de contacto/envío si los dejó vacíos.
+      wantsInvoice: form.value.wantsInvoice,
+      billingId: form.value.wantsInvoice ? form.value.billingId.trim() : null,
+      billingEmail: form.value.wantsInvoice ? (form.value.billingEmail.trim() || form.value.customerEmail) : null,
+      billingAddress: form.value.wantsInvoice ? (form.value.billingAddress.trim() || fullAddress) : null,
       // Atribución de campaña — para saber qué anuncio trajo esta venta
       utmSource: attribution.utm_source || null,
       utmMedium: attribution.utm_medium || null,
@@ -285,6 +304,26 @@ const renderBoldButton = () => {
               class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
 
             <textarea v-model="form.notes" rows="3" placeholder="Notas adicionales (Opcional)" class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide resize-none"></textarea>
+
+            <!-- Factura electrónica (opcional) -->
+            <div class="mt-8 pt-6 border-t border-brand-white/10">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" v-model="form.wantsInvoice" class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0">
+                <span>
+                  <span class="text-brand-white/85 text-sm font-sans-luxury tracking-wide">Quiero factura electrónica</span>
+                  <span class="block text-brand-white/40 text-[11px] mt-0.5">Opcional. Si no la activas, te pedimos los datos al confirmar tu pedido.</span>
+                </span>
+              </label>
+
+              <div v-if="form.wantsInvoice" class="mt-5 space-y-4 md:pl-7">
+                <input v-model="form.billingId" type="text" placeholder="Cédula o NIT *" required
+                  class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+                <input v-model="form.billingEmail" type="email" placeholder="Correo de facturación (si es distinto al de contacto)"
+                  class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+                <input v-model="form.billingAddress" type="text" placeholder="Dirección de facturación (si es distinta a la de envío)"
+                  class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+              </div>
+            </div>
           </form>
         </div>
 

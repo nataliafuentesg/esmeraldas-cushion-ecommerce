@@ -256,6 +256,16 @@ const markDelivered = async () => {
             </div>
           </div>
 
+          <!-- Factura electrónica (si el cliente la pidió) -->
+          <div v-if="selectedOrder.wantsInvoice" class="bg-emerald-500/[0.07] p-4 border border-emerald-500/25">
+            <h4 class="text-emerald-400 text-[10px] tracking-wide mb-2 flex items-center gap-1.5">
+              <Icon icon="lucide:receipt" class="w-3.5 h-3.5" /> FACTURA ELECTRÓNICA SOLICITADA
+            </h4>
+            <p class="text-brand-white text-sm font-sans-luxury">Cédula / NIT: <span class="text-brand-gold">{{ selectedOrder.billingId || '—' }}</span></p>
+            <p class="text-brand-white/70 text-sm font-sans-luxury">Correo: {{ selectedOrder.billingEmail || selectedOrder.customerEmail }}</p>
+            <p class="text-brand-white/70 text-sm font-sans-luxury">Dirección: {{ selectedOrder.billingAddress || selectedOrder.shippingAddress }}</p>
+          </div>
+
           <div v-if="selectedOrder.notes" class="bg-brand-gold/10 p-4 border border-brand-gold/30">
             <h4 class="text-brand-gold text-[10px] tracking-wide mb-2">Notas del Cliente</h4>
             <p class="text-brand-white text-sm font-sans-luxury italic">"{{ selectedOrder.notes }}"</p>
