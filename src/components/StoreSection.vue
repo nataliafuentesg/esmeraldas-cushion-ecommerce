@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref } from 'vue';
 import { Icon } from '@iconify/vue';
 
@@ -8,9 +10,9 @@ const store = {
   city: 'Bogotá, Colombia',
   phone: '+57 313 613 3822',
   hours: [
-    { d: 'Lunes a Viernes', h: '9:00 a.m. – 6:00 p.m.' },
-    { d: 'Sábado', h: '9:00 a.m. – 5:00 p.m.' },
-    { d: 'Domingo', h: 'Cerrado' },
+    { dKey: 'store.hours.weekdays', h: '9:00 a.m. – 6:00 p.m.', closed: false },
+    { dKey: 'store.hours.saturday', h: '9:00 a.m. – 5:00 p.m.', closed: false },
+    { dKey: 'store.hours.sunday', h: null, closed: true },
   ],
 };
 
@@ -33,11 +35,10 @@ const mapsLink = 'https://www.google.com/maps/search/?api=1&query=Emerald+Trade+
     <div class="container mx-auto px-4 sm:px-6 lg:px-20">
 
       <div class="text-center mb-12">
-        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Visítanos</span>
-        <h2 class="text-3xl md:text-4xl font-serif-elegant text-brand-white tracking-wide mb-4">Nuestra Tienda Física</h2>
+        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">{{ L.t('store.eyebrow') }}</span>
+        <h2 class="text-3xl md:text-4xl font-serif-elegant text-brand-white tracking-wide mb-4">{{ L.t('store.title') }}</h2>
         <p class="text-brand-white/50 font-sans-luxury text-sm max-w-xl mx-auto leading-relaxed">
-          No somos solo una tienda en línea. Te esperamos en nuestro espacio en el corazón joyero de Bogotá,
-          con asesoría personalizada y nuestras piezas para que las veas de cerca.
+          {{ L.t('store.desc') }}
         </p>
       </div>
 
@@ -72,10 +73,10 @@ const mapsLink = 'https://www.google.com/maps/search/?api=1&query=Emerald+Trade+
           <div class="flex items-start gap-4 mb-7">
             <Icon icon="lucide:clock" class="w-6 h-6 text-brand-gold mt-1 shrink-0" />
             <div class="flex-1">
-              <p class="text-brand-gold text-[10px] tracking-[0.3em] mb-2">HORARIOS</p>
-              <div v-for="h in store.hours" :key="h.d" class="flex justify-between text-sm font-sans-luxury py-0.5">
-                <span class="text-brand-white/70">{{ h.d }}</span>
-                <span :class="h.h === 'Cerrado' ? 'text-brand-white/30' : 'text-brand-white/80'">{{ h.h }}</span>
+              <p class="text-brand-gold text-[10px] tracking-[0.3em] mb-2">{{ L.t('store.hoursTitle') }}</p>
+              <div v-for="h in store.hours" :key="h.dKey" class="flex justify-between text-sm font-sans-luxury py-0.5">
+                <span class="text-brand-white/70">{{ L.t(h.dKey) }}</span>
+                <span :class="h.closed ? 'text-brand-white/30' : 'text-brand-white/80'">{{ h.closed ? L.t('store.closed') : h.h }}</span>
               </div>
             </div>
           </div>
@@ -88,7 +89,7 @@ const mapsLink = 'https://www.google.com/maps/search/?api=1&query=Emerald+Trade+
           <a :href="mapsLink" target="_blank" rel="noopener"
             class="inline-flex items-center justify-center gap-2.5 bg-brand-gold text-brand-black px-8 py-4 text-[10px] font-bold tracking-[0.25em] hover:bg-brand-white transition-colors duration-300">
             <Icon icon="lucide:navigation" class="w-4 h-4" />
-            CÓMO LLEGAR
+            {{ L.t('store.directions') }}
           </a>
         </div>
       </div>

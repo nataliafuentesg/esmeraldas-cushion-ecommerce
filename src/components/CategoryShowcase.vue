@@ -3,11 +3,11 @@ import { useLocaleStore } from '@/stores/locale';
 const L = useLocaleStore();
 import { RouterLink } from 'vue-router';
 const categories = [
-    { name: 'Anillos', image: 'categoria-anillos.jpg', path: '/coleccion/anillos' },
-    { name: 'Collares', image: 'categoria-collares.jpg', path: '/coleccion/collares' },
-    { name: 'Aretes', image: 'categoria-aretes.png', path: '/coleccion/aretes' },
-    { name: 'Pulseras', image: 'categoria-pulseras.jpg', path: '/coleccion/pulseras' },
-    { name: 'Dijes', image: 'categoria-dije.jpg', path: '/coleccion/dije' }, // 'dije' en singular para coincidir con BD
+    { name: 'Anillos', nameKey: 'cat.rings', image: 'categoria-anillos.jpg', path: '/coleccion/anillos' },
+    { name: 'Collares', nameKey: 'cat.necklaces', image: 'categoria-collares.jpg', path: '/coleccion/collares' },
+    { name: 'Aretes', nameKey: 'cat.earrings', image: 'categoria-aretes.png', path: '/coleccion/aretes' },
+    { name: 'Pulseras', nameKey: 'cat.bracelets', image: 'categoria-pulseras.jpg', path: '/coleccion/pulseras' },
+    { name: 'Dijes', nameKey: 'cat.charms', image: 'categoria-dije.jpg', path: '/coleccion/dije' }, // 'dije' en singular para coincidir con BD
 ];
 </script>
 
@@ -46,7 +46,7 @@ const categories = [
 
           <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10 z-20">
             <h3 class="text-2xl md:text-3xl font-serif-elegant text-brand-white tracking-wide mb-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-              {{ category.name }}
+              {{ L.t(category.nameKey) }}
             </h3>
             
             <div class="overflow-hidden">

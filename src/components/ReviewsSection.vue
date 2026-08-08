@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { Icon } from '@iconify/vue';
 
 // Reseñas reales de Google (verificadas). Para actualizar, edita este arreglo.
@@ -41,13 +43,13 @@ const initials = (name) => name.split(' ').slice(0, 2).map(n => n[0]).join('').t
 
       <!-- Encabezado -->
       <div class="text-center mb-12">
-        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Lo que dicen nuestros clientes</span>
-        <h2 class="text-3xl md:text-4xl font-serif-elegant text-brand-white tracking-wide mb-4">Experiencias Cushion</h2>
+        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">{{ L.t('reviews.eyebrow') }}</span>
+        <h2 class="text-3xl md:text-4xl font-serif-elegant text-brand-white tracking-wide mb-4">{{ L.t('reviews.title') }}</h2>
         <div class="flex items-center justify-center gap-3">
           <div class="flex gap-0.5">
             <Icon v-for="i in 5" :key="i" icon="material-symbols:star-rounded" class="w-5 h-5 text-brand-gold" />
           </div>
-          <span class="text-brand-white/70 text-sm font-sans-luxury">5.0 · Reseñas verificadas en Google</span>
+          <span class="text-brand-white/70 text-sm font-sans-luxury">{{ L.t('reviews.rating') }}</span>
         </div>
       </div>
 
@@ -73,7 +75,7 @@ const initials = (name) => name.split(' ').slice(0, 2).map(n => n[0]).join('').t
             </div>
             <div>
               <p class="text-brand-white text-xs font-bold tracking-wide">{{ r.name }}</p>
-              <p class="text-brand-white/40 text-[10px] tracking-wide">Cliente verificado</p>
+              <p class="text-brand-white/40 text-[10px] tracking-wide">{{ L.t('reviews.verified') }}</p>
             </div>
           </div>
         </article>
@@ -84,7 +86,7 @@ const initials = (name) => name.split(' ').slice(0, 2).map(n => n[0]).join('').t
         <a :href="googleReviewsUrl" target="_blank" rel="noopener"
           class="inline-flex items-center gap-2.5 border border-brand-white/20 text-brand-white/70 hover:text-brand-gold hover:border-brand-gold/40 px-8 py-3.5 text-[10px] font-bold tracking-[0.25em] transition-colors duration-300">
           <Icon icon="bi:google" class="w-4 h-4" />
-          VER TODAS LAS RESEÑAS EN GOOGLE
+          {{ L.t('reviews.viewAll') }}
         </a>
       </div>
 

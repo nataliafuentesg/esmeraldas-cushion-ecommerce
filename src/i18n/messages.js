@@ -44,6 +44,31 @@ export const messages = {
     'home.hero.cta': 'Explorar Colección',
     'home.hero.scroll': 'Desliza',
 
+    // Nombres de categoría (en el home)
+    'cat.rings': 'Anillos',
+    'cat.necklaces': 'Collares',
+    'cat.earrings': 'Aretes',
+    'cat.bracelets': 'Pulseras',
+    'cat.charms': 'Dijes',
+
+    // Tienda física
+    'store.eyebrow': 'Visítanos',
+    'store.title': 'Nuestra Tienda Física',
+    'store.desc': 'No somos solo una tienda en línea. Te esperamos en nuestro espacio en el corazón joyero de Bogotá, con asesoría personalizada y nuestras piezas para que las veas de cerca.',
+    'store.hoursTitle': 'HORARIOS',
+    'store.hours.weekdays': 'Lunes a Viernes',
+    'store.hours.saturday': 'Sábado',
+    'store.hours.sunday': 'Domingo',
+    'store.closed': 'Cerrado',
+    'store.directions': 'CÓMO LLEGAR',
+
+    // Reseñas
+    'reviews.eyebrow': 'Lo que dicen nuestros clientes',
+    'reviews.title': 'Experiencias Cushion',
+    'reviews.rating': '5.0 · Reseñas verificadas en Google',
+    'reviews.verified': 'Cliente verificado',
+    'reviews.viewAll': 'VER TODAS LAS RESEÑAS EN GOOGLE',
+
     // Tarjeta de producto
     'card.consultPrice': 'Consultar precio',
     'card.madeToOrder': '✦ Se fabrica bajo pedido · 10 días hábiles',
@@ -109,6 +134,28 @@ export const messages = {
     'home.hero.subtitle': 'Fine Jewelry · Colombian Emeralds',
     'home.hero.cta': 'Explore Collection',
     'home.hero.scroll': 'Scroll',
+
+    'cat.rings': 'Rings',
+    'cat.necklaces': 'Necklaces',
+    'cat.earrings': 'Earrings',
+    'cat.bracelets': 'Bracelets',
+    'cat.charms': 'Charms & Pendants',
+
+    'store.eyebrow': 'Visit Us',
+    'store.title': 'Our Physical Store',
+    'store.desc': 'We are more than an online store. Visit us at our space in the heart of Bogotá\'s jewelry district, with personal advice and our pieces for you to see up close.',
+    'store.hoursTitle': 'HOURS',
+    'store.hours.weekdays': 'Monday to Friday',
+    'store.hours.saturday': 'Saturday',
+    'store.hours.sunday': 'Sunday',
+    'store.closed': 'Closed',
+    'store.directions': 'GET DIRECTIONS',
+
+    'reviews.eyebrow': 'What our clients say',
+    'reviews.title': 'The Cushion Experience',
+    'reviews.rating': '5.0 · Verified reviews on Google',
+    'reviews.verified': 'Verified customer',
+    'reviews.viewAll': 'VIEW ALL REVIEWS ON GOOGLE',
 
     'card.consultPrice': 'Request price',
     'card.madeToOrder': '✦ Made to order · 10 business days',
