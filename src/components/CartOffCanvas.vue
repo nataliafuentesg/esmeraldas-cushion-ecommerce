@@ -1,10 +1,12 @@
 <script setup>
 import { computed, watch } from 'vue';
 import { useCartStore } from '@/stores/cart';
+import { useLocaleStore } from '@/stores/locale';
 import { RouterLink } from 'vue-router';
 import { Icon } from '@iconify/vue';
 
 const cartStore = useCartStore();
+const L = useLocaleStore();
 
 const cartItems = computed(() => cartStore.items);
 const cartTotal = computed(() => cartStore.total);
@@ -36,7 +38,7 @@ watch(isOffCanvasOpen, async (isOpen) => {
     :class="{ 'translate-x-0': isOffCanvasOpen, 'translate-x-full': !isOffCanvasOpen }"
   >
     <header class="p-8 border-b border-brand-white/10 flex justify-between items-center sticky top-0 bg-brand-black z-10">
-      <h2 class="text-2xl font-serif-elegant tracking-wide">Selección</h2>
+      <h2 class="text-2xl font-serif-elegant tracking-wide">{{ L.t('cart.title') }}</h2>
       <button @click="closeCart" class="text-brand-white hover:text-brand-gold transition-colors p-2">
         <Icon icon="lucide:x" class="w-6 h-6" />
       </button>
@@ -48,20 +50,18 @@ watch(isOffCanvasOpen, async (isOpen) => {
       <p class="flex items-start gap-2">
         <Icon icon="lucide:alert-triangle" class="w-4 h-4 flex-shrink-0 mt-0.5" />
         <span>
-          <b>{{ removedItems.join(', ') }}</b>
-          {{ removedItems.length === 1 ? ' se agotó' : ' se agotaron' }}
-          y {{ removedItems.length === 1 ? 'fue removida' : 'fueron removidas' }} de tu selección.
+          <b>{{ removedItems.join(', ') }}</b>{{ removedItems.length === 1 ? L.t('cart.removedOne') : L.t('cart.removedMany') }}
         </span>
       </p>
       <button @click="dismissRemovedBanner" class="mt-2 text-amber-500/60 hover:text-amber-400 text-[10px] underline underline-offset-2 block">
-        Entendido
+        {{ L.t('cart.gotIt') }}
       </button>
     </div>
 
     <div class="h-full pb-64 overflow-y-auto custom-scrollbar">
       <div v-if="cartItems.length === 0" class="p-12 text-center pt-32">
         <Icon icon="lucide:gem" class="w-12 h-12 mx-auto mb-6 text-brand-gold/30" />
-        <p class="font-sans-luxury text-brand-white/40 text-[10px] tracking-wide">El joyero está vacío</p>
+        <p class="font-sans-luxury text-brand-white/40 text-[10px] tracking-wide">{{ L.t('cart.empty') }}</p>
       </div>
 
       <div v-else>
@@ -73,7 +73,7 @@ watch(isOffCanvasOpen, async (isOpen) => {
             <div class="flex-grow ml-6">
               <p class="font-serif-elegant text-sm text-brand-white tracking-wider mb-1">{{ item.productName }}</p>
               <p v-if="item.selectedSize" class="text-[10px] text-brand-gold/80 tracking-wide font-sans-luxury mb-2">
-                Talla: {{ item.selectedSize }}
+                {{ L.t('cart.size') }} {{ item.selectedSize }}
               </p>
 
               <div class="flex items-center justify-between">
@@ -95,16 +95,16 @@ watch(isOffCanvasOpen, async (isOpen) => {
 
     <div v-if="cartItems.length > 0" class="absolute bottom-0 w-full p-8 bg-brand-black border-t border-brand-white/10">
       <div class="flex justify-between items-end mb-8">
-        <span class="font-sans-luxury text-[10px] tracking-[0.3em] text-brand-white/40">Total Estimado</span>
+        <span class="font-sans-luxury text-[10px] tracking-[0.3em] text-brand-white/40">{{ L.t('cart.estimatedTotal') }}</span>
         <span class="text-2xl font-serif-elegant text-brand-gold">$ {{ cartTotal.toLocaleString() }}</span>
       </div>
       <div class="grid gap-3">
         <RouterLink to="/finalizar-compra" @click="closeCart"
           class="block w-full text-center py-5 bg-brand-primary text-brand-black font-bold text-[10px] tracking-[0.3em] hover:bg-brand-gold transition-all duration-500">
-          Proceder al Pago
+          {{ L.t('cart.checkout') }}
         </RouterLink>
         <button @click="cartStore.clearCart" class="text-[9px] tracking-wide text-brand-white/30 hover:text-red-400 py-2 transition-colors">
-          Vaciar Selección
+          {{ L.t('cart.clear') }}
         </button>
       </div>
     </div>

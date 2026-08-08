@@ -5,6 +5,8 @@ export default {
 </script>
 
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, computed, onMounted, onUnmounted, watch, onActivated, nextTick } from 'vue';
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useProductsStore } from '@/stores/products';
@@ -234,9 +236,9 @@ onUnmounted(() => {
     
     <header class="container mx-auto px-4 text-center mb-10">
       <h1 class="text-3xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-wide">
-        <span v-if="selectedCategory === 'Todas'">Nuestra Colección</span>
-        <span v-else-if="selectedCategory === 'Piedras Sueltas'">Esmeraldas Sueltas</span>
-        <span v-else>{{ selectedCategory }}</span>
+        <span v-if="selectedCategory === 'Todas'">{{ L.t('col.title') }}</span>
+        <span v-else-if="selectedCategory === 'Piedras Sueltas'">{{ L.t('col.looseTitle') }}</span>
+        <span v-else>{{ L.catLabel(selectedCategory) }}</span>
       </h1>
       <div class="h-[1px] w-20 bg-brand-gold mx-auto mb-6"></div>
     </header>
@@ -274,7 +276,7 @@ onUnmounted(() => {
         
         <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8">
           <div>
-            <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-5 border-b border-brand-white/10 pb-4">Línea de Joyería</h3>
+            <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-5 border-b border-brand-white/10 pb-4">{{ L.t('col.line') }}</h3>
             <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-3 lg:pb-0 hide-scrollbar snap-x px-2 lg:px-0">
               <li v-for="cat in typeFilters" :key="cat" class="shrink-0 snap-center">
                 <button 
@@ -283,14 +285,14 @@ onUnmounted(() => {
                   :class="selectedCategory === cat ? 'text-brand-gold border-brand-gold/50 font-bold bg-brand-gold/5' : 'text-brand-white/50 hover:text-brand-white'"
                 >
                   <span v-if="selectedCategory === cat" class="hidden lg:inline-block w-1.5 h-1.5 bg-brand-gold rounded-full mr-2 shrink-0"></span>
-                  {{ cat }}
+                  {{ L.catLabel(cat) }}
                 </button>
               </li>
             </ul>
           </div>
 
           <div class="px-2 lg:px-0 pt-4 lg:pt-0 border-t border-brand-white/10 lg:border-0">
-            <h3 class="text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-4">Rango de Inversión</h3>
+            <h3 class="text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-4">{{ L.t('col.investment') }}</h3>
             <div class="space-y-3">
               <input 
                 type="range" 
@@ -302,7 +304,7 @@ onUnmounted(() => {
               <div class="flex justify-between items-center text-[10px] tracking-wide text-brand-white/50 font-sans-luxury">
                 <span>$ 0</span>
                 <span class="text-brand-gold font-bold bg-brand-gold/10 px-2 py-0.5 border border-brand-gold/20">
-                  Hasta: $ {{ selectedMaxPrice.toLocaleString() }}
+                  {{ L.t('col.upTo') }} $ {{ selectedMaxPrice.toLocaleString() }}
                 </span>
               </div>
             </div>
@@ -312,23 +314,23 @@ onUnmounted(() => {
         <main class="flex-1">
           <div class="flex flex-row justify-between items-center mb-8 pb-4 border-b border-brand-white/5 px-2 lg:px-0">
             <span class="text-[10px] tracking-wide text-brand-white/40 font-sans-luxury">
-              {{ filteredProducts.filter(p => p.stock > 0).length }} disponibles
+              {{ filteredProducts.filter(p => p.stock > 0).length }} {{ L.t('col.available') }}
               <template v-if="filteredProducts.some(p => p.stock === 0)">
-                · <span class="text-brand-white/25">{{ filteredProducts.filter(p => p.stock === 0).length }} agotadas</span>
+                · <span class="text-brand-white/25">{{ filteredProducts.filter(p => p.stock === 0).length }} {{ L.t('col.soldOut') }}</span>
               </template>
             </span>
             
             <div class="flex items-center gap-2">
-              <label for="sort" class="hidden sm:inline-block text-[10px] tracking-wide text-brand-white/40 font-sans-luxury">Ordenar por:</label>
+              <label for="sort" class="hidden sm:inline-block text-[10px] tracking-wide text-brand-white/40 font-sans-luxury">{{ L.t('col.sortBy') }}</label>
               <select 
                 id="sort"
                 v-model="sortBy"
                 class="bg-brand-black text-brand-white/80 border border-brand-white/10 text-[10px] tracking-wider px-3 py-1.5 focus:border-brand-gold outline-none cursor-pointer font-sans-luxury"
               >
-                <option value="default">Recomendados</option>
-                <option value="newest">Novedades primero</option>
-                <option value="price-asc">Precio: Menor a Mayor</option>
-                <option value="price-desc">Precio: Mayor a Menor</option>
+                <option value="default">{{ L.t('col.sort.default') }}</option>
+                <option value="newest">{{ L.t('col.sort.newest') }}</option>
+                <option value="price-asc">{{ L.t('col.sort.priceAsc') }}</option>
+                <option value="price-desc">{{ L.t('col.sort.priceDesc') }}</option>
               </select>
             </div>
           </div>
@@ -344,7 +346,7 @@ onUnmounted(() => {
                 v-if="lastViewedProductId === product.id"
                 class="absolute -top-3 left-4 z-30 bg-brand-gold text-brand-black text-[7px] font-extrabold tracking-[0.25em] px-2 py-0.5 rounded-none shadow-xl border border-brand-black/20"
               >
-                Última pieza explorada
+                {{ L.t('col.lastViewed') }}
               </div>
 
               <ProductCard :product="product" />
@@ -356,7 +358,7 @@ onUnmounted(() => {
               @click="loadMore"
               class="w-full md:w-auto border border-brand-gold text-brand-gold px-12 py-4 text-[10px] font-bold tracking-wide hover:bg-brand-gold hover:text-brand-black transition-colors duration-300 bg-brand-black/50 backdrop-blur-sm"
             >
-              Explorar más piezas ({{ filteredProducts.length - displayedProducts.length }} restantes)
+              {{ L.t('col.loadMore') }} ({{ filteredProducts.length - displayedProducts.length }} {{ L.t('col.remaining') }})
             </button>
           </div>
         </main>

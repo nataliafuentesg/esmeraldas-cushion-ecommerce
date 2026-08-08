@@ -1,6 +1,8 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 
 const props = defineProps({
   occasions: {
@@ -32,7 +34,7 @@ const handleClick = (occ) => {
 <template>
   <section v-if="occasions.length > 0" class="w-full text-center">
     <h3 class="text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-8 opacity-40">
-      {{ isHome ? 'Explorar Colecciones Especiales' : 'Filtrar por Ocasión Especial' }}
+      {{ isHome ? L.t('occ.homeTitle') : L.t('occ.filterTitle') }}
     </h3>
     
     <div class="flex flex-row flex-nowrap md:flex-wrap justify-start md:justify-center items-center gap-4 md:gap-6 overflow-x-auto pb-4 md:pb-0 hide-scrollbar snap-x px-4 relative z-20">
@@ -95,7 +97,7 @@ const handleClick = (occ) => {
             class="text-[9px] md:text-[10px] font-bold tracking-wide transition-colors duration-300 block max-w-full text-center whitespace-nowrap"
             :class="(!isHome && currentSelection === occ) ? 'text-brand-gold font-extrabold' : 'text-brand-white/70 group-hover:text-brand-white'"
           >
-            {{ occ }}
+            {{ L.occLabel(occ) }}
           </span>
           
           <div 

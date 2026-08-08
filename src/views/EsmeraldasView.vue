@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import api from '@/api/axios';
@@ -27,43 +29,43 @@ const errorMsg = ref('');
 
 // ── Opciones visuales ──────────────────────────────────────────────────────
 const occasions = [
-  { value: 'Compromiso / Matrimonio', icon: 'lucide:heart', label: 'Compromiso' },
-  { value: 'Regalo especial', icon: 'lucide:gift', label: 'Regalo' },
-  { value: 'Inversión en gemas', icon: 'lucide:trending-up', label: 'Inversión' },
-  { value: 'Colección personal', icon: 'lucide:gem', label: 'Colección' },
-  { value: 'Otra ocasión', icon: 'lucide:sparkles', label: 'Otra' },
+  { value: 'Compromiso / Matrimonio', icon: 'lucide:heart', labelKey: 'em.occ.engagement' },
+  { value: 'Regalo especial', icon: 'lucide:gift', labelKey: 'em.occ.gift' },
+  { value: 'Inversión en gemas', icon: 'lucide:trending-up', labelKey: 'em.occ.investment' },
+  { value: 'Colección personal', icon: 'lucide:gem', labelKey: 'em.occ.collection' },
+  { value: 'Otra ocasión', icon: 'lucide:sparkles', labelKey: 'em.occ.other' },
 ];
 
 const jewelryTypes = [
-  { value: 'Anillo', icon: 'lucide:circle', label: 'Anillo' },
-  { value: 'Collar / Dije', icon: 'lucide:link', label: 'Collar' },
-  { value: 'Aretes', icon: 'lucide:droplets', label: 'Aretes' },
-  { value: 'Pulsera', icon: 'lucide:watch', label: 'Pulsera' },
-  { value: 'Libre / Sorpréndeme', icon: 'lucide:wand', label: 'Libre' },
+  { value: 'Anillo', icon: 'lucide:circle', labelKey: 'em.jt.ring' },
+  { value: 'Collar / Dije', icon: 'lucide:link', labelKey: 'em.jt.necklace' },
+  { value: 'Aretes', icon: 'lucide:droplets', labelKey: 'em.jt.earrings' },
+  { value: 'Pulsera', icon: 'lucide:watch', labelKey: 'em.jt.bracelet' },
+  { value: 'Libre / Sorpréndeme', icon: 'lucide:wand', labelKey: 'em.jt.open' },
 ];
 
 const gemstones = [
-  { value: 'Esmeralda sola', label: 'Esmeralda sola', sub: 'Protagonismo total de la piedra' },
-  { value: 'Esmeralda con diamantes', label: 'Con diamantes', sub: 'Contraste clásico de lujo' },
-  { value: 'Esmeralda con otras gemas', label: 'Combinada', sub: 'Zafiros, rubíes u otras' },
-  { value: 'Abierto a sugerencias', label: 'Me guío por ustedes', sub: 'Asesoría experta' },
+  { value: 'Esmeralda sola', labelKey: 'em.gem.alone', subKey: 'em.gem.aloneSub' },
+  { value: 'Esmeralda con diamantes', labelKey: 'em.gem.diamonds', subKey: 'em.gem.diamondsSub' },
+  { value: 'Esmeralda con otras gemas', labelKey: 'em.gem.combined', subKey: 'em.gem.combinedSub' },
+  { value: 'Abierto a sugerencias', labelKey: 'em.gem.open', subKey: 'em.gem.openSub' },
 ];
 
 // Cushion trabaja únicamente en oro de 18k
 const metals = [
-  { value: 'Oro amarillo', label: 'Oro amarillo' },
-  { value: 'Oro blanco', label: 'Oro blanco' },
-  { value: 'Oro rosado', label: 'Oro rosado' },
-  { value: 'Sin preferencia', label: 'Sin preferencia' },
+  { value: 'Oro amarillo', labelKey: 'em.metal.yellow' },
+  { value: 'Oro blanco', labelKey: 'em.metal.white' },
+  { value: 'Oro rosado', labelKey: 'em.metal.rose' },
+  { value: 'Sin preferencia', labelKey: 'em.metal.none' },
 ];
 
 const budgets = [
-  { value: 'Menos de $5.000.000', label: 'Menos de $5M' },
-  { value: '$5.000.000 - $15.000.000', label: '$5M – $15M' },
-  { value: '$15.000.000 - $30.000.000', label: '$15M – $30M' },
-  { value: '$30.000.000 - $60.000.000', label: '$30M – $60M' },
-  { value: 'Más de $60.000.000', label: '+$60M' },
-  { value: 'Abierto a cotización', label: 'Cotizar' },
+  { value: 'Menos de $5.000.000', labelKey: 'em.budget.1' },
+  { value: '$5.000.000 - $15.000.000', labelKey: 'em.budget.2' },
+  { value: '$15.000.000 - $30.000.000', labelKey: 'em.budget.3' },
+  { value: '$30.000.000 - $60.000.000', labelKey: 'em.budget.4' },
+  { value: 'Más de $60.000.000', labelKey: 'em.budget.5' },
+  { value: 'Abierto a cotización', labelKey: 'em.budget.6' },
 ];
 
 // ── Validación básica ──────────────────────────────────────────────────────
@@ -153,25 +155,23 @@ const resetForm = () => {
       </div>
       <div class="relative container mx-auto px-4 text-center">
         <p class="text-brand-gold font-sans-luxury text-xs tracking-wide mb-4">
-          Esmeraldas Colombianas
+          {{ L.t('em.hero.eyebrow') }}
         </p>
         <h1 class="font-serif-elegant text-4xl md:text-6xl text-brand-white mb-6 leading-tight">
-          Tu esmeralda,<br>
-          <span style="color:#4C7F62;">diseñada para ti</span>
+          {{ L.t('em.hero.title1') }}<br>
+          <span style="color:#4C7F62;">{{ L.t('em.hero.title2') }}</span>
         </h1>
         <p class="text-brand-white/70 font-sans-luxury text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-          Colombia es el mayor productor de esmeraldas del mundo.
-          Cada piedra tiene su propia historia — y la tuya está esperando ser escrita.
-          Cuéntanos qué buscas y nuestros expertos te guiarán hacia la pieza perfecta.
+          {{ L.t('em.hero.desc') }}
         </p>
         <div class="flex flex-wrap justify-center gap-8 mt-12 text-center">
           <div v-for="stat in [
-            { n: '+30 años', l: 'de experiencia en gemas' },
-            { n: '100%', l: 'esmeraldas certificadas' },
-            { n: 'Origen', l: 'Boyacá, Colombia' },
+            { nKey: 'em.stat1n', lKey: 'em.stat1l' },
+            { nKey: 'em.stat2n', lKey: 'em.stat2l' },
+            { nKey: 'em.stat3n', lKey: 'em.stat3l' },
           ]" :key="stat.n">
-            <p class="font-serif-elegant text-2xl md:text-3xl text-brand-gold">{{ stat.n }}</p>
-            <p class="font-sans-luxury text-xs text-brand-white/50 mt-1">{{ stat.l }}</p>
+            <p class="font-serif-elegant text-2xl md:text-3xl text-brand-gold">{{ L.t(stat.nKey) }}</p>
+            <p class="font-sans-luxury text-xs text-brand-white/50 mt-1">{{ L.t(stat.lKey) }}</p>
           </div>
         </div>
       </div>
@@ -180,16 +180,14 @@ const resetForm = () => {
     <!-- ── CONFIRMACIÓN (post-envío) ─────────────────────────────────────── -->
     <section v-if="submitted" class="py-24 container mx-auto px-4 max-w-2xl text-center">
       <Icon icon="lucide:check-circle" class="w-16 h-16 mx-auto mb-6" style="color:#4C7F62;" />
-      <h2 class="font-serif-elegant text-3xl text-brand-white mb-4">¡Consulta recibida!</h2>
+      <h2 class="font-serif-elegant text-3xl text-brand-white mb-4">{{ L.t('em.received') }}</h2>
       <p class="text-brand-white/60 font-sans-luxury text-sm leading-relaxed mb-8">
-        Hemos guardado tu solicitud. Si elegiste contacto por formulario, te escribiremos
-        en las próximas <strong class="text-brand-white">24 horas hábiles</strong>.
-        Si elegiste WhatsApp, ya se abrió el chat — ¡solo envía el mensaje!
+        {{ L.t('em.receivedText') }}
       </p>
       <button @click="resetForm"
               class="border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black
                      font-sans-luxury text-xs tracking-wide px-8 py-3 transition-colors duration-300">
-        Enviar otra consulta
+        {{ L.t('em.another') }}
       </button>
     </section>
 
@@ -198,10 +196,10 @@ const resetForm = () => {
 
       <div class="text-center mb-14">
         <h2 class="font-serif-elegant text-3xl md:text-4xl text-brand-white mb-3">
-          Cuéntanos tu visión
+          {{ L.t('em.formTitle') }}
         </h2>
         <p class="text-brand-white/50 font-sans-luxury text-sm">
-          Entre más detalles nos des, mejor podemos acercarte a tu esmeralda ideal.
+          {{ L.t('em.formSub') }}
         </p>
       </div>
 
@@ -215,8 +213,8 @@ const resetForm = () => {
 
         <!-- 1. Ocasión -->
         <div>
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">¿Para qué ocasión?</h3>
-          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">Selecciona la que más se acerque</p>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">{{ L.t('em.q.occasion') }}</h3>
+          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">{{ L.t('em.q.occasionSub') }}</p>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             <button v-for="opt in occasions" :key="opt.value"
                     type="button"
@@ -228,15 +226,15 @@ const resetForm = () => {
                         : 'border-brand-white/10 text-brand-white/50 hover:border-brand-white/30 hover:text-brand-white'
                     ]">
               <Icon :icon="opt.icon" class="w-6 h-6" />
-              <span class="font-sans-luxury text-xs">{{ opt.label }}</span>
+              <span class="font-sans-luxury text-xs">{{ L.t(opt.labelKey) }}</span>
             </button>
           </div>
         </div>
 
         <!-- 2. Tipo de joya -->
         <div>
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">¿Qué tipo de joya?</h3>
-          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">¿Tienes algo en mente?</p>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">{{ L.t('em.q.type') }}</h3>
+          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">{{ L.t('em.q.typeSub') }}</p>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             <button v-for="opt in jewelryTypes" :key="opt.value"
                     type="button"
@@ -248,15 +246,15 @@ const resetForm = () => {
                         : 'border-brand-white/10 text-brand-white/50 hover:border-brand-white/30 hover:text-brand-white'
                     ]">
               <Icon :icon="opt.icon" class="w-6 h-6" />
-              <span class="font-sans-luxury text-xs">{{ opt.label }}</span>
+              <span class="font-sans-luxury text-xs">{{ L.t(opt.labelKey) }}</span>
             </button>
           </div>
         </div>
 
         <!-- 3. Gema -->
         <div>
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">¿Cómo quieres la gema?</h3>
-          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">Opcional, pero nos ayuda mucho</p>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">{{ L.t('em.q.gem') }}</h3>
+          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">{{ L.t('em.q.gemSub') }}</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button v-for="opt in gemstones" :key="opt.value"
                     type="button"
@@ -272,8 +270,8 @@ const resetForm = () => {
                      ? 'border-color:#4C7F62; background:#4C7F62;'
                      : 'border-color:rgba(255,255,255,0.3);'" />
               <div>
-                <p class="font-sans-luxury text-sm text-brand-white">{{ opt.label }}</p>
-                <p class="font-sans-luxury text-xs text-brand-white/40 mt-0.5">{{ opt.sub }}</p>
+                <p class="font-sans-luxury text-sm text-brand-white">{{ L.t(opt.labelKey) }}</p>
+                <p class="font-sans-luxury text-xs text-brand-white/40 mt-0.5">{{ L.t(opt.subKey) }}</p>
               </div>
             </button>
           </div>
@@ -281,8 +279,8 @@ const resetForm = () => {
 
         <!-- 4. Metal -->
         <div>
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">Preferencia de metal</h3>
-          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">Opcional</p>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">{{ L.t('em.q.metal') }}</h3>
+          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">{{ L.t('em.optional') }}</p>
           <div class="flex flex-wrap gap-3">
             <button v-for="opt in metals" :key="opt.value"
                     type="button"
@@ -293,15 +291,15 @@ const resetForm = () => {
                         ? 'border-brand-gold bg-brand-gold/10 text-brand-gold'
                         : 'border-brand-white/10 text-brand-white/50 hover:border-brand-white/30 hover:text-brand-white'
                     ]">
-              {{ opt.label }}
+              {{ L.t(opt.labelKey) }}
             </button>
           </div>
         </div>
 
         <!-- 5. Presupuesto -->
         <div>
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">Presupuesto aproximado</h3>
-          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">Sin compromiso — solo para orientarte mejor</p>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">{{ L.t('em.q.budget') }}</h3>
+          <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">{{ L.t('em.q.budgetSub') }}</p>
           <div class="flex flex-wrap gap-3">
             <button v-for="opt in budgets" :key="opt.value"
                     type="button"
@@ -312,21 +310,21 @@ const resetForm = () => {
                         ? 'border-brand-primary bg-brand-primary/10 text-brand-white'
                         : 'border-brand-white/10 text-brand-white/50 hover:border-brand-white/30 hover:text-brand-white'
                     ]">
-              {{ opt.label }}
+              {{ L.t(opt.labelKey) }}
             </button>
           </div>
         </div>
 
         <!-- 6. Ideas libres -->
         <div>
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">Tu visión en palabras</h3>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-2">{{ L.t('em.q.vision') }}</h3>
           <p class="text-brand-white/40 text-xs font-sans-luxury mb-5">
-            Cuéntanos todo: inspiraciones, referencias, diseñadores que te gusten, colores, etc.
+            {{ L.t('em.visionHint') }}
           </p>
           <textarea
             v-model="form.ideas"
             rows="4"
-            placeholder="Ejemplo: Busco un anillo de compromiso con esmeralda tipo cabochon, inspirado en joyería art déco, algo atemporal..."
+            :placeholder="L.t('em.visionPlaceholder')"
             class="w-full bg-transparent border border-brand-white/10 px-4 py-3 text-brand-white
                    text-sm font-sans-luxury focus:outline-none focus:border-brand-primary
                    transition-colors placeholder:text-brand-white/20 resize-none"
@@ -335,21 +333,21 @@ const resetForm = () => {
 
         <!-- 7. Datos de contacto -->
         <div class="border-t border-brand-white/10 pt-10">
-          <h3 class="font-serif-elegant text-xl text-brand-white mb-6">¿Cómo te contactamos?</h3>
+          <h3 class="font-serif-elegant text-xl text-brand-white mb-6">{{ L.t('em.q.contact') }}</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="text-brand-white/40 text-[10px] font-sans-luxury tracking-wide block mb-2">
-                Nombre completo *
+                {{ L.t('em.nameLabel') }}
               </label>
               <input v-model="form.customerName" type="text" required
-                     placeholder="Tu nombre"
+                     :placeholder="L.t('em.namePlaceholder')"
                      class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3
                             text-brand-white text-sm font-sans-luxury focus:outline-none
                             focus:border-brand-primary transition-colors placeholder:text-brand-white/20" />
             </div>
             <div>
               <label class="text-brand-white/40 text-[10px] font-sans-luxury tracking-wide block mb-2">
-                Correo electrónico *
+                {{ L.t('em.emailLabel') }}
               </label>
               <input v-model="form.customerEmail" type="email" required
                      placeholder="tu@correo.com"
@@ -359,7 +357,7 @@ const resetForm = () => {
             </div>
             <div class="md:col-span-2">
               <label class="text-brand-white/40 text-[10px] font-sans-luxury tracking-wide block mb-2">
-                WhatsApp / Teléfono (opcional)
+                {{ L.t('em.phoneLabel') }}
               </label>
               <input v-model="form.customerPhone" type="tel"
                      placeholder="+57 300 000 0000"
@@ -373,7 +371,7 @@ const resetForm = () => {
         <!-- ── CTAs ──────────────────────────────────────────────────────── -->
         <div class="border-t border-brand-white/10 pt-10">
           <p class="text-brand-white/50 font-sans-luxury text-xs text-center mb-8">
-            Elige cómo quieres que te contactemos
+            {{ L.t('em.chooseContact') }}
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
@@ -386,9 +384,9 @@ const resetForm = () => {
                      hover:border-brand-white bg-transparent text-brand-white
                      transition-all duration-300 disabled:opacity-50">
               <Icon icon="lucide:mail" class="w-8 h-8 text-brand-white/60 group-hover:text-brand-white transition-colors" />
-              <span class="font-serif-elegant text-lg">Enviar consulta</span>
+              <span class="font-serif-elegant text-lg">{{ L.t('em.submit') }}</span>
               <span class="font-sans-luxury text-xs text-brand-white/40 group-hover:text-brand-white/60 text-center">
-                Completa el formulario y nuestro equipo te contacta en 24 horas
+                {{ L.t('em.submitSub') }}
               </span>
             </button>
 
@@ -401,16 +399,16 @@ const resetForm = () => {
                      hover:border-brand-primary bg-brand-primary/5 hover:bg-brand-primary/10
                      text-brand-white transition-all duration-300 disabled:opacity-50">
               <Icon icon="ic:baseline-whatsapp" class="w-8 h-8 text-brand-primary group-hover:text-brand-white transition-colors" />
-              <span class="font-serif-elegant text-lg">Continuar por WhatsApp</span>
+              <span class="font-serif-elegant text-lg">{{ L.t('em.whatsapp') }}</span>
               <span class="font-sans-luxury text-xs text-brand-white/40 group-hover:text-brand-white/60 text-center">
-                Abre el chat con tu info pre-llenada y habla directo con un experto
+                {{ L.t('em.whatsappSub') }}
               </span>
             </button>
 
           </div>
 
           <p class="text-brand-white/20 font-sans-luxury text-[10px] text-center mt-6">
-            Tu información es confidencial y nunca será compartida con terceros.
+            {{ L.t('em.privacy') }}
           </p>
         </div>
 

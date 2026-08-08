@@ -27,10 +27,36 @@ export const useLocaleStore = defineStore('locale', () => {
     return dict[key] ?? messages.es[key] ?? key;
   }
 
+  // Traduce nombres de categoría que vienen de la base en español.
+  // Si no está mapeado, devuelve el original (no rompe nada).
+  const CAT_MAP = {
+    'todas': 'cat.all', 'joyas': 'cat.jewelry', 'anillos': 'cat.rings',
+    'aretes': 'cat.earrings', 'collares': 'cat.necklaces', 'dijes': 'cat.charms',
+    'gargantillas': 'cat.chokers', 'pulseras': 'cat.bracelets', 'sets': 'cat.sets',
+    'piedras sueltas': 'cat.looseStones',
+  };
+  function catLabel(name) {
+    const k = CAT_MAP[(name || '').toLowerCase().trim()];
+    return k ? t(k) : name;
+  }
+
+  const OCC_MAP = {
+    'aniversario': 'occ.anniversary', 'boda': 'occ.wedding', 'bodas': 'occ.wedding',
+    'compromiso': 'occ.engagement', 'quinceaños': 'occ.quinces', 'quinceanos': 'occ.quinces',
+    'quince': 'occ.quinces', 'regalo': 'occ.gift', 'graduación': 'occ.graduation',
+    'graduacion': 'occ.graduation', 'grado': 'occ.graduation', 'día de la madre': 'occ.mothersDay',
+    'dia de la madre': 'occ.mothersDay', 'san valentín': 'occ.valentine', 'san valentin': 'occ.valentine',
+    'cumpleaños': 'occ.birthday', 'cumpleanos': 'occ.birthday',
+  };
+  function occLabel(name) {
+    const k = OCC_MAP[(name || '').toLowerCase().trim()];
+    return k ? t(k) : name;
+  }
+
   // Sincroniza el atributo lang del <html> al iniciar
   document.documentElement.lang = locale.value;
 
-  return { locale, setLocale, t };
+  return { locale, setLocale, t, catLabel, occLabel };
 });
 
 // Azúcar para importar directo el t/locale sin acordarse del store
