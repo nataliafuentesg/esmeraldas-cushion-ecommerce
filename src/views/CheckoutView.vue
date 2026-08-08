@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { useFxStore } from '@/stores/fx';
+import { useLocaleStore } from '@/stores/locale';
 import { Icon } from '@iconify/vue';
 import { getAttribution } from '@/utils/utm';
 import { suggestEmail } from '@/utils/emailSuggest';
@@ -14,6 +15,7 @@ import api from '@/api/axios';
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const fx = useFxStore();
+const L = useLocaleStore();
 const router = useRouter();
 const { trackBeginCheckout } = useAnalytics();
 
@@ -106,7 +108,7 @@ onMounted(async () => {
 
 const submitOrder = async () => {
   if (cartStore.items.length === 0) {
-    alert("Tu carrito está vacío.");
+    alert(L.t('co.emptyCart'));
     router.push('/coleccion/todas');
     return;
   }
@@ -244,7 +246,7 @@ const renderBoldButton = () => {
       <!-- ESTADO 1: Formulario de envío -->
       <div v-if="!boldData" class="flex flex-col lg:flex-row gap-12">
         <div class="flex-1">
-          <h2 class="text-2xl font-serif-elegant text-brand-white mb-8 tracking-wide">Detalles de envío</h2>
+          <h2 class="text-2xl font-serif-elegant text-brand-white mb-8 tracking-wide">{{ L.t('co.shippingDetails') }}</h2>
 
           <p v-if="errorMsg" class="text-red-400 text-xs font-sans-luxury tracking-wider mb-6 bg-red-900/20 p-4 border border-red-900/50">
             {{ errorMsg }}
@@ -252,26 +254,26 @@ const renderBoldButton = () => {
 
           <form id="checkout-form" @submit.prevent="submitOrder" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <input v-model="form.customerName" type="text" placeholder="Nombre completo" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
-              <input v-model="form.phoneNumber" type="tel" placeholder="Teléfono / WhatsApp" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+              <input v-model="form.customerName" type="text" :placeholder="L.t('co.fullName')" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+              <input v-model="form.phoneNumber" type="tel" :placeholder="L.t('co.phone')" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
             </div>
 
             <div>
-              <input v-model="form.customerEmail" @blur="checkEmail" @input="emailSuggestion = ''" type="email" placeholder="Correo electrónico" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
+              <input v-model="form.customerEmail" @blur="checkEmail" @input="emailSuggestion = ''" type="email" :placeholder="L.t('co.email')" required class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
               <p v-if="emailSuggestion" class="text-[11px] text-brand-gold/90 font-sans-luxury mt-2">
-                ¿Quisiste decir
+                {{ L.t('co.didYouMean') }}
                 <button type="button" @click="acceptEmailSuggestion" class="underline underline-offset-2 font-bold hover:text-brand-gold">{{ emailSuggestion }}</button>?
               </p>
             </div>
 
             <div class="border-b border-brand-white/20 py-2">
-              <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">Destino del envío</label>
+              <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">{{ L.t('co.destination') }}</label>
               <select v-model="form.country" class="w-full bg-transparent text-brand-white text-sm font-sans-luxury focus:outline-none focus:text-brand-gold transition-colors cursor-pointer tracking-wide">
-                <option value="Colombia" class="bg-brand-black">Colombia (Envío Nacional)</option>
-                <option value="Estados Unidos" class="bg-brand-black">Estados Unidos (USA)</option>
-                <option value="Canadá" class="bg-brand-black">Canadá</option>
-                <option value="Europa" class="bg-brand-black">Europa (UE)</option>
-                <option value="Otro País" class="bg-brand-black">Otro País Internacional</option>
+                <option value="Colombia" class="bg-brand-black">{{ L.t('co.dest.colombia') }}</option>
+                <option value="Estados Unidos" class="bg-brand-black">{{ L.t('co.dest.usa') }}</option>
+                <option value="Canadá" class="bg-brand-black">{{ L.t('co.dest.canada') }}</option>
+                <option value="Europa" class="bg-brand-black">{{ L.t('co.dest.europe') }}</option>
+                <option value="Otro País" class="bg-brand-black">{{ L.t('co.dest.other') }}</option>
               </select>
             </div>
 
@@ -279,15 +281,15 @@ const renderBoldButton = () => {
             <template v-if="form.country === 'Colombia'">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="border-b border-brand-white/20 py-2">
-                  <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">Departamento</label>
+                  <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">{{ L.t('co.department') }}</label>
                   <select v-model="form.department" @change="onDepartmentChange" required
                     class="w-full bg-transparent text-brand-white text-sm font-sans-luxury focus:outline-none focus:text-brand-gold transition-colors cursor-pointer tracking-wide">
-                    <option value="" disabled class="bg-brand-black">Selecciona…</option>
+                    <option value="" disabled class="bg-brand-black">{{ L.t('co.select') }}</option>
                     <option v-for="dep in DEPARTAMENTOS" :key="dep" :value="dep" class="bg-brand-black">{{ dep }}</option>
                   </select>
                 </div>
                 <div class="border-b border-brand-white/20 py-2">
-                  <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">Ciudad / Municipio</label>
+                  <label class="text-[10px] text-brand-white/50 tracking-wide block mb-1">{{ L.t('co.city') }}</label>
                   <select v-model="form.city" :disabled="!form.department" required
                     class="w-full bg-transparent text-brand-white text-sm font-sans-luxury focus:outline-none focus:text-brand-gold transition-colors cursor-pointer tracking-wide disabled:opacity-40">
                     <option value="" disabled class="bg-brand-black">{{ form.department ? 'Selecciona…' : 'Elige el departamento primero' }}</option>
@@ -296,35 +298,35 @@ const renderBoldButton = () => {
                 </div>
               </div>
 
-              <input v-if="form.city === 'Otra ciudad'" v-model="form.customCity" type="text" placeholder="Escribe tu ciudad / municipio" required
+              <input v-if="form.city === 'Otra ciudad'" v-model="form.customCity" type="text" :placeholder="L.t('co.cityPlaceholder')" required
                 class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
 
-              <input v-model="form.streetAddress" type="text" placeholder="Dirección (calle, número, barrio, apto, indicaciones)" required
+              <input v-model="form.streetAddress" type="text" :placeholder="L.t('co.addressPlaceholder')" required
                 class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
             </template>
 
             <!-- INTERNACIONAL: dirección libre -->
-            <input v-else v-model="form.shippingAddress" type="text" placeholder="Dirección completa (Estado, Ciudad, Código Postal)" required
+            <input v-else v-model="form.shippingAddress" type="text" :placeholder="L.t('co.addressIntlPlaceholder')" required
               class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
 
-            <textarea v-model="form.notes" rows="3" placeholder="Notas adicionales (Opcional)" class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide resize-none"></textarea>
+            <textarea v-model="form.notes" rows="3" :placeholder="L.t('co.notesPlaceholder')" class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide resize-none"></textarea>
 
             <!-- Factura electrónica (opcional) -->
             <div class="mt-8 pt-6 border-t border-brand-white/10">
               <label class="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" v-model="form.wantsInvoice" class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0">
                 <span>
-                  <span class="text-brand-white/85 text-sm font-sans-luxury tracking-wide">Quiero factura electrónica</span>
-                  <span class="block text-brand-white/40 text-[11px] mt-0.5">Opcional.</span>
+                  <span class="text-brand-white/85 text-sm font-sans-luxury tracking-wide">{{ L.t('co.wantInvoice') }}</span>
+                  <span class="block text-brand-white/40 text-[11px] mt-0.5">{{ L.t('co.invoiceOptional') }}</span>
                 </span>
               </label>
 
               <div v-if="form.wantsInvoice" class="mt-5 space-y-4 md:pl-7">
-                <input v-model="form.billingId" type="text" placeholder="Cédula o NIT *" required
+                <input v-model="form.billingId" type="text" :placeholder="L.t('co.billingId')" required
                   class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
-                <input v-model="form.billingEmail" type="email" placeholder="Correo de facturación (si es distinto al de contacto)"
+                <input v-model="form.billingEmail" type="email" :placeholder="L.t('co.billingEmail')"
                   class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
-                <input v-model="form.billingAddress" type="text" placeholder="Dirección de facturación (si es distinta a la de envío)"
+                <input v-model="form.billingAddress" type="text" :placeholder="L.t('co.billingAddress')"
                   class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wide">
               </div>
             </div>
@@ -333,7 +335,7 @@ const renderBoldButton = () => {
 
         <div class="w-full lg:w-1/3">
           <div class="border border-brand-white/10 bg-brand-black/50 p-8 sticky top-24">
-            <h3 class="text-xl font-serif-elegant text-brand-gold mb-6 tracking-wide border-b border-brand-gold/20 pb-4">Resumen</h3>
+            <h3 class="text-xl font-serif-elegant text-brand-gold mb-6 tracking-wide border-b border-brand-gold/20 pb-4">{{ L.t('co.summary') }}</h3>
 
             <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
               <div v-for="item in cartStore.items" :key="item.productId" class="flex justify-between text-sm">
@@ -347,15 +349,15 @@ const renderBoldButton = () => {
 
             <div class="border-t border-brand-white/10 pt-4 space-y-3 mb-8">
               <div class="flex justify-between text-sm">
-                <span class="text-brand-white/60 font-sans-luxury tracking-wide">Subtotal</span>
+                <span class="text-brand-white/60 font-sans-luxury tracking-wide">{{ L.t('co.subtotal') }}</span>
                 <span class="text-brand-white font-sans-luxury tracking-wide">${{ subtotal.toLocaleString() }}</span>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-brand-white/60 font-sans-luxury tracking-wide">{{ form.country === 'Colombia' ? 'Envío Nacional' : 'Envío Internacional' }}</span>
+                <span class="text-brand-white/60 font-sans-luxury tracking-wide">{{ form.country === 'Colombia' ? L.t('co.shippingNational') : L.t('co.shippingIntl') }}</span>
                 <span class="text-brand-white font-sans-luxury tracking-wide">${{ shippingFee.toLocaleString() }}</span>
               </div>
               <div class="flex justify-between text-lg border-t border-brand-white/10 pt-4 mt-4">
-                <span class="text-brand-gold font-serif-elegant tracking-wide">Total</span>
+                <span class="text-brand-gold font-serif-elegant tracking-wide">{{ L.t('co.total') }}</span>
                 <span class="text-brand-gold font-serif-elegant tracking-wide">${{ total.toLocaleString() }} <span class="text-brand-white/40 text-sm">COP</span></span>
               </div>
               <p v-if="fx.formatUsd(total)" class="text-right text-brand-white/40 text-[11px] font-sans-luxury tracking-wide mt-1">
@@ -364,16 +366,16 @@ const renderBoldButton = () => {
             </div>
 
             <button type="submit" form="checkout-form" :disabled="isSubmitting || cartStore.items.length === 0" class="w-full bg-brand-white text-brand-black px-6 py-4 text-xs font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300 disabled:opacity-50">
-              {{ isSubmitting ? 'Procesando...' : 'Continuar al pago' }}
+              {{ isSubmitting ? L.t('co.processing') : L.t('co.continueToPay') }}
             </button>
 
             <p class="text-center text-brand-white/40 text-[10px] font-sans-luxury tracking-wide mt-4 flex items-center justify-center gap-1.5">
               <Icon icon="lucide:shield-check" class="w-3 h-3 text-brand-gold/60" />
-              Reservamos tu pieza y te llevamos al pago seguro con Bold.
+              {{ L.t('co.reserveNote') }}
             </p>
 
             <p v-if="form.country !== 'Colombia'" class="text-center text-brand-white/40 text-[10px] font-sans-luxury tracking-wide mt-4">
-              Aceptamos tarjetas internacionales. El cobro se realiza en pesos colombianos (COP).
+              {{ L.t('co.intlCardsNote') }}
             </p>
           </div>
         </div>
@@ -383,36 +385,36 @@ const renderBoldButton = () => {
       <div v-else-if="boldData" class="max-w-lg mx-auto">
         <div class="border border-brand-gold/30 bg-brand-black/50 p-8 md:p-10 text-center">
           <Icon icon="lucide:shield-check" class="w-12 h-12 text-brand-gold mx-auto mb-4" />
-          <h2 class="text-2xl font-serif-elegant text-brand-white mb-2 tracking-wide">Tu pedido está reservado</h2>
+          <h2 class="text-2xl font-serif-elegant text-brand-white mb-2 tracking-wide">{{ L.t('co.orderReserved') }}</h2>
           <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mb-1">
-            Pedido <span class="text-brand-gold">#{{ boldData.orderNumber }}</span>
+            {{ L.t('co.order') }} <span class="text-brand-gold">#{{ boldData.orderNumber }}</span>
           </p>
           <p class="text-brand-white/60 text-sm font-sans-luxury mb-6">
-            Completa el pago de forma segura para confirmar tu compra.
+            {{ L.t('co.completePayment') }}
           </p>
 
           <!-- Qué va a pasar: transparencia antes de pagar -->
           <div class="text-left bg-brand-black/40 border border-brand-white/10 p-5 mb-8">
-            <p class="text-brand-gold text-[10px] tracking-[0.3em] font-bold mb-3">CÓMO FUNCIONA</p>
+            <p class="text-brand-gold text-[10px] tracking-[0.3em] font-bold mb-3">{{ L.t('co.howItWorks') }}</p>
             <ul class="space-y-2.5 text-brand-white/60 text-xs font-sans-luxury">
               <li class="flex items-start gap-2.5">
                 <Icon icon="lucide:credit-card" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
-                <span>Al pagar serás dirigido a <span class="text-brand-white/80">Bold</span>, nuestra pasarela segura (tarjeta, PSE, Nequi y más).</span>
+                <span>{{ L.t('co.step1') }}</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <Icon icon="lucide:mail-check" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
-                <span>Cuando tu pago se confirme, recibirás un <span class="text-brand-white/80">correo de confirmación</span> automáticamente.</span>
+                <span>{{ L.t('co.step2') }}</span>
               </li>
               <li class="flex items-start gap-2.5">
                 <Icon icon="lucide:gem" class="w-4 h-4 text-brand-gold/70 shrink-0 mt-0.5" />
-                <span>Prepararemos tu pieza y te enviaremos el número de guía para rastrearla.</span>
+                <span>{{ L.t('co.step3') }}</span>
               </li>
             </ul>
           </div>
 
           <div class="border-t border-b border-brand-white/10 py-5 mb-8">
             <div class="flex justify-between items-center">
-              <span class="text-brand-gold font-serif-elegant text-lg tracking-wide">Total a pagar</span>
+              <span class="text-brand-gold font-serif-elegant text-lg tracking-wide">{{ L.t('co.totalToPay') }}</span>
               <span class="text-brand-gold font-serif-elegant text-2xl tracking-wide">${{ boldData.totalAmount.toLocaleString() }} <span class="text-brand-white/40 text-base">COP</span></span>
             </div>
             <p v-if="fx.formatUsd(boldData.totalAmount)" class="text-center text-brand-white/40 text-[11px] font-sans-luxury tracking-wide mt-3">
@@ -425,7 +427,7 @@ const renderBoldButton = () => {
 
           <p class="text-brand-white/30 text-[10px] font-sans-luxury tracking-wide mt-6 flex items-center justify-center gap-1.5">
             <Icon icon="lucide:lock" class="w-3 h-3" />
-            Pago protegido por Bold · Tarjeta, PSE y más
+            {{ L.t('co.securedByBold') }}
           </p>
         </div>
       </div>

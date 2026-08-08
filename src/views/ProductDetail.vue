@@ -13,6 +13,7 @@ import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { useProductsStore } from '@/stores/products';
 import { useFxStore } from '@/stores/fx';
+import { useLocaleStore } from '@/stores/locale';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
 import { getAttribution } from '@/utils/utm';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +28,7 @@ const cartStore = useCartStore();
 const authStore = useAuthStore();
 const productsStore = useProductsStore();
 const fx = useFxStore();
+const L = useLocaleStore();
 const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
 const allProducts = ref([]);
@@ -346,13 +348,13 @@ const sizeGuideLink = computed(() => {
 const sizeConfig = computed(() => {
   const cat = product.value?.category?.toLowerCase() || '';
   if (cat.includes('anillo')) {
-    return { label: 'Talla del anillo', options: ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13'] };
+    return { label: 'pd.sizeRing', options: ['4', '5', '6', '7', '8', '9', '10', '11', '12', '13'] };
   }
   if (cat.includes('collar')) {
-    return { label: 'Largo de la cadena', options: ['40 cm', '42 cm', '45 cm', '50 cm', '55 cm', '60 cm'] };
+    return { label: 'pd.sizeChain', options: ['40 cm', '42 cm', '45 cm', '50 cm', '55 cm', '60 cm'] };
   }
   if (cat.includes('pulsera')) {
-    return { label: 'Talla de la pulsera', options: ['15 cm', '16 cm', '17 cm', '18 cm', '19 cm', '20 cm'] };
+    return { label: 'pd.sizeBracelet', options: ['15 cm', '16 cm', '17 cm', '18 cm', '19 cm', '20 cm'] };
   }
   return null;
 });
@@ -398,7 +400,7 @@ onUnmounted(() => {
           class="group flex items-center gap-2 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.3em] transition-colors duration-300 py-2">
           <Icon icon="lucide:arrow-left"
             class="w-3 h-3 transform group-hover:-translate-x-1 transition-transform duration-300 text-brand-gold/60 group-hover:text-brand-gold" />
-          <span>Volver</span>
+          <span>{{ L.t('pd.back') }}</span>
         </button>
       </div>
 
@@ -409,12 +411,12 @@ onUnmounted(() => {
           <!-- Badge AGOTADO sobre la galería -->
           <div v-if="product.stock === 0"
                class="absolute top-4 left-4 z-20 bg-brand-black/95 backdrop-blur-sm text-brand-white border border-brand-white/30 px-3 py-1.5 text-[9px] font-bold tracking-[0.25em] pointer-events-none">
-            AGOTADO
+            {{ L.t('pd.soldOut') }}
           </div>
           <div
             class="block lg:hidden text-center mt-3 text-[9px] tracking-wide text-brand-white/30 font-sans-luxury">
             <Icon icon="lucide:maximize-2" class="inline-block w-3 h-3 mr-1 text-brand-gold/50" />
-            Toca la joya para ampliar en pantalla completa
+            {{ L.t('pd.tapZoom') }}
           </div>
         </div>
 
@@ -424,7 +426,7 @@ onUnmounted(() => {
             <!-- Pieza nueva destacada -->
             <span v-if="isNew"
               class="inline-flex items-center gap-1.5 bg-brand-primary text-brand-black px-3 py-1 text-[9px] font-bold tracking-[0.15em] shadow-sm">
-              <Icon icon="lucide:sparkles" class="w-3 h-3" /> NUEVA PIEZA
+              <Icon icon="lucide:sparkles" class="w-3 h-3" /> {{ L.t('pd.newPiece') }}
             </span>
             <!-- Metal precioso destacado -->
             <span v-if="product.metalType?.trim()"
@@ -432,11 +434,10 @@ onUnmounted(() => {
               <Icon icon="lucide:gem" class="w-3 h-3" /> {{ product.metalType.toUpperCase() }}
             </span>
             <span v-if="product.featured && product.stock > 0"
-              class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold tracking-wide">Pieza
-              Exclusiva</span>
+              class="bg-brand-gold/10 text-brand-gold border border-brand-gold/30 px-3 py-1 text-[8px] font-bold tracking-wide">{{ L.t('pd.exclusivePiece') }}</span>
             <span v-if="product.stock === 0"
               class="bg-brand-black border border-brand-white/25 text-brand-white px-3 py-1 text-[8px] font-bold tracking-[0.2em]">
-              AGOTADO
+              {{ L.t('pd.soldOut') }}
             </span>
           </div>
 
@@ -451,18 +452,18 @@ onUnmounted(() => {
               $ {{ product.price.toLocaleString() }} <span class="text-brand-white/40 text-lg">COP</span>
             </p>
             <p v-if="fx.formatUsd(product.price)" class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mt-1.5">
-              {{ fx.formatUsd(product.price) }} <span class="text-brand-white/30">· el cobro se realiza en COP</span>
+              {{ fx.formatUsd(product.price) }} <span class="text-brand-white/30">· {{ L.t('pd.chargedInCop') }}</span>
             </p>
           </div>
           <div v-else class="mb-3">
-            <p class="text-2xl md:text-3xl text-brand-gold font-serif-elegant tracking-tight">Consultar precio</p>
-            <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mt-1.5">Pieza bajo pedido · se fabrica en 10 días hábiles</p>
+            <p class="text-2xl md:text-3xl text-brand-gold font-serif-elegant tracking-tight">{{ L.t('card.consultPrice') }}</p>
+            <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mt-1.5">{{ L.t('pd.onOrderNote') }}</p>
           </div>
 
           <!-- Incentivo: envío gratis nacional -->
           <div class="inline-flex items-center gap-2 text-brand-gold text-[11px] tracking-wide font-sans-luxury mb-8">
             <Icon icon="lucide:truck" class="w-4 h-4" />
-            Envío gratis a toda Colombia
+            {{ L.t('pd.freeShipping') }}
           </div>
 
           <div class="border-l-2 border-brand-gold pl-6 mb-8">
@@ -473,7 +474,7 @@ onUnmounted(() => {
 
           <!-- Etiquetas de ocasión (SEO + intención de compra) -->
           <div v-if="product.occasions && product.occasions.length" class="mb-10">
-            <p class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-3">IDEAL PARA</p>
+            <p class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-3">{{ L.t('pd.idealFor') }}</p>
             <div class="flex flex-wrap gap-2">
               <span v-for="occ in product.occasions" :key="occ"
                 class="inline-flex items-center gap-1.5 border border-brand-gold/30 bg-brand-gold/[0.04] text-brand-gold/90 px-3 py-1.5 text-[10px] tracking-wide font-sans-luxury">
@@ -485,27 +486,27 @@ onUnmounted(() => {
 
           <div class="bg-brand-white/[0.03] border border-brand-white/10 p-6 md:p-10 mb-8">
             <h3 class="text-brand-gold text-[10px] tracking-[0.4em] mb-8 border-b border-brand-gold/20 pb-4">
-              Certificado de Joyería
+              {{ L.t('pd.certificate') }}
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
               <div v-if="product.gemstoneType?.trim()" class="flex flex-col">
-                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Gema Principal</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">{{ L.t('pd.gemstone') }}</span>
                 <span class="text-brand-white text-sm font-sans-luxury">{{ product.gemstoneType }}</span>
               </div>
               <div v-if="product.cutType?.trim()" class="flex flex-col">
-                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Talla / Corte</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">{{ L.t('pd.cut') }}</span>
                 <span class="text-brand-white text-sm font-sans-luxury">{{ product.cutType }}</span>
               </div>
               <div v-if="product.caratWeight?.trim()" class="flex flex-col">
-                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Peso Carates (ct)</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">{{ L.t('pd.carat') }}</span>
                 <span class="text-brand-white text-sm font-sans-luxury">{{ product.caratWeight }}</span>
               </div>
               <div v-if="product.totalWeight?.trim()" class="flex flex-col">
-                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">Peso de la Pieza</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-white/40 mb-1">{{ L.t('pd.weight') }}</span>
                 <span class="text-brand-white text-sm font-sans-luxury">{{ product.totalWeight }}</span>
               </div>
               <div v-if="product.metalType?.trim()" class="flex flex-col">
-                <span class="text-[9px] tracking-[0.3em] text-brand-gold/60 mb-1">Metal Precioso</span>
+                <span class="text-[9px] tracking-[0.3em] text-brand-gold/60 mb-1">{{ L.t('pd.metal') }}</span>
                 <span class="text-brand-gold text-sm font-sans-luxury font-bold">{{ product.metalType }}</span>
               </div>
             </div>
@@ -515,30 +516,29 @@ onUnmounted(() => {
           <div class="flex items-start gap-3 border border-brand-gold/25 bg-brand-gold/[0.04] p-4 mb-8">
             <Icon icon="lucide:sparkles" class="w-5 h-5 text-brand-gold mt-0.5 shrink-0" />
             <p class="text-brand-white/70 text-xs font-sans-luxury leading-relaxed">
-              Esta pieza se puede fabricar en el <strong class="text-brand-gold">color de oro de tu preferencia</strong>:
-              amarillo, blanco o rosado. Cuéntanos al momento de tu compra o escríbenos por WhatsApp.
+              {{ L.t('pd.goldNote') }}
             </p>
           </div>
 
           <!-- ── Selector de talla (anillos / collares / pulseras) ── -->
           <div v-if="needsSize && product.stock > 0" class="mb-6">
             <div class="flex items-center justify-between mb-3">
-              <label class="text-brand-white/60 text-[10px] tracking-[0.3em] uppercase">{{ sizeConfig.label }}</label>
+              <label class="text-brand-white/60 text-[10px] tracking-[0.3em] uppercase">{{ L.t(sizeConfig.label) }}</label>
               <RouterLink v-if="sizeGuideLink" :to="sizeGuideLink"
                 class="inline-flex items-center gap-1.5 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.2em] transition-colors group">
                 <Icon icon="lucide:ruler" class="w-3.5 h-3.5 text-brand-gold/60 group-hover:text-brand-gold transition-colors" />
-                Guía de tallas →
+                {{ L.t('pd.sizeGuide') }}
               </RouterLink>
             </div>
             <select v-model="selectedSize" @change="sizeError = false"
               class="w-full bg-brand-white/[0.02] border px-4 py-3.5 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors cursor-pointer"
               :class="sizeError ? 'border-red-500/60' : 'border-brand-white/20'">
-              <option value="" disabled class="bg-brand-black">Selecciona tu talla</option>
+              <option value="" disabled class="bg-brand-black">{{ L.t('pd.selectSize') }}</option>
               <option v-for="s in sizeConfig.options" :key="s" :value="s" class="bg-brand-black">{{ s }}</option>
-              <option value="No estoy seguro/a" class="bg-brand-black">No estoy seguro/a — recibir asesoría</option>
+              <option value="No estoy seguro/a" class="bg-brand-black">{{ L.t('pd.sizeUnsure') }}</option>
             </select>
             <p v-if="sizeError" class="text-red-400/80 text-[11px] font-sans-luxury mt-2">
-              Por favor elige una talla para continuar.
+              {{ L.t('pd.sizeError') }}
             </p>
           </div>
 
@@ -546,7 +546,7 @@ onUnmounted(() => {
           <div v-if="product.stock > 0">
             <button @click="addToCart"
               class="w-full bg-brand-gold hover:bg-brand-gold/90 text-brand-black font-bold tracking-wide text-xs py-4 px-8 flex items-center justify-center gap-3 transition-colors duration-300">
-              <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> Añadir a la bolsa
+              <Icon icon="ph:shopping-bag-light" class="w-5 h-5" /> {{ L.t('pd.addToBag') }}
             </button>
           </div>
 
@@ -555,23 +555,21 @@ onUnmounted(() => {
             <div class="flex items-center gap-2 mb-3">
               <Icon icon="lucide:hammer" class="w-4 h-4 text-brand-gold shrink-0" />
               <p class="text-brand-gold font-sans-luxury text-[11px] font-bold tracking-[0.2em] uppercase">
-                Agotada · Se fabrica bajo pedido
+                {{ L.t('pd.soldOutTitle') }}
               </p>
             </div>
             <p class="text-brand-white/70 font-sans-luxury text-sm leading-relaxed mb-2">
-              Esta pieza no está en inventario, pero <strong class="text-brand-white">la fabricamos especialmente para ti</strong>
-              en aproximadamente <strong class="text-brand-gold">10 días hábiles</strong>, con una esmeralda colombiana exclusiva
-              y en el color de oro que prefieras.
+              {{ L.t('pd.soldOutText') }}
             </p>
             <p class="text-brand-white/40 font-sans-luxury text-xs leading-relaxed mb-5">
-              Escríbenos y coordinamos tu pieza a la medida — sin costo de asesoría.
+              {{ L.t('pd.soldOutSub') }}
             </p>
             <button @click="handleWhatsAppClick"
               class="w-full flex items-center justify-center gap-3 bg-[#25D366]/15 border border-[#25D366]/50
                      text-[#25D366] hover:bg-[#25D366]/25 py-4 text-xs font-sans-luxury tracking-wide
                      transition-all duration-300 group">
               <Icon icon="simple-icons:whatsapp" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
-              Solicitar esta pieza bajo pedido
+              {{ L.t('pd.requestOnOrder') }}
             </button>
           </div>
 
@@ -579,12 +577,12 @@ onUnmounted(() => {
           <button v-if="product.stock > 0" @click="handleWhatsAppClick"
             class="mt-3 w-full flex items-center justify-center gap-3 border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366]/10 py-4 text-xs font-sans-luxury tracking-wide transition-all duration-300 group">
             <Icon icon="simple-icons:whatsapp" class="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
-            Consultar por WhatsApp
+            {{ L.t('pd.consultWhatsApp') }}
           </button>
 
           <!-- Nota de confianza -->
           <p class="mt-4 text-center text-[10px] text-brand-white/30 font-sans-luxury tracking-wide">
-            Respuesta en menos de 24 horas hábiles · Asesoría personalizada sin costo
+            {{ L.t('pd.responseNote') }}
           </p>
         </div>
       </div>
@@ -609,7 +607,7 @@ onUnmounted(() => {
         </div>
         <div
           class="absolute bottom-8 text-[9px] tracking-[0.25em] text-brand-white/40 font-sans-luxury text-center px-4">
-          Pellizca con dos dedos para ampliar detalles • Toca fuera para salir
+          {{ L.t('pd.pinchHint') }}
         </div>
       </div>
     </Transition>
