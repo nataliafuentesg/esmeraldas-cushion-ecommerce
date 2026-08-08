@@ -1,7 +1,8 @@
 <script setup>
-import { defineProps, computed, ref, watch } from 'vue';
+import { defineProps, computed, ref, watch, onMounted } from 'vue';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
 import { useProductsStore } from '@/stores/products';
+import { useFxStore } from '@/stores/fx';
 
 const props = defineProps({
   product: {
@@ -11,6 +12,8 @@ const props = defineProps({
 });
 
 const productsStore = useProductsStore();
+const fx = useFxStore();
+onMounted(() => fx.fetchRate());
 
 const isOutOfStock = computed(() => props.product.stock === 0);
 
@@ -156,9 +159,14 @@ watch(mainImage, () => {
 
       <div class="pt-3 border-t border-brand-white/5 group-hover:border-brand-gold/20 transition-colors duration-500">
         <!-- Con stock: precio. Agotado (bajo pedido): no mostramos precio, invitamos a consultar. -->
-        <p v-if="!isOutOfStock" class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
-          $ {{ product.price.toLocaleString() }}
-        </p>
+        <template v-if="!isOutOfStock">
+          <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
+            $ {{ product.price.toLocaleString() }}
+          </p>
+          <p v-if="fx.formatUsd(product.price)" class="font-sans-luxury text-brand-white/40 text-[10px] tracking-wide mt-1">
+            {{ fx.formatUsd(product.price) }}
+          </p>
+        </template>
         <template v-else>
           <p class="font-sans-luxury text-brand-gold text-sm tracking-wide font-medium">
             Consultar precio

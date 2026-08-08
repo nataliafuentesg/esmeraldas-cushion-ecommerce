@@ -12,6 +12,7 @@ import { RouterLink } from 'vue-router';
 import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { useProductsStore } from '@/stores/products';
+import { useFxStore } from '@/stores/fx';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
 import { getAttribution } from '@/utils/utm';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,6 +26,7 @@ const props = defineProps({
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const productsStore = useProductsStore();
+const fx = useFxStore();
 const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
 const allProducts = ref([]);
@@ -267,6 +269,7 @@ const fetchProduct = async () => {
     product.value = res.data;
     trackViewProduct(res.data); // ← analytics: vista de producto
 
+    fx.fetchRate(); // tasa USD (una sola vez)
     await productsStore.fetchProducts();
     allProducts.value = productsStore.products;
 
@@ -443,9 +446,14 @@ onUnmounted(() => {
           </h1>
 
           <!-- Con stock: precio. Agotado (bajo pedido): ocultamos el precio e invitamos a consultar. -->
-          <p v-if="product.stock !== 0" class="text-2xl md:text-3xl text-brand-white/90 mb-3 font-serif-elegant tracking-tight">
-            $ {{ product.price.toLocaleString() }}
-          </p>
+          <div v-if="product.stock !== 0" class="mb-3">
+            <p class="text-2xl md:text-3xl text-brand-white/90 font-serif-elegant tracking-tight">
+              $ {{ product.price.toLocaleString() }} <span class="text-brand-white/40 text-lg">COP</span>
+            </p>
+            <p v-if="fx.formatUsd(product.price)" class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mt-1.5">
+              {{ fx.formatUsd(product.price) }} <span class="text-brand-white/30">· el cobro se realiza en COP</span>
+            </p>
+          </div>
           <div v-else class="mb-3">
             <p class="text-2xl md:text-3xl text-brand-gold font-serif-elegant tracking-tight">Consultar precio</p>
             <p class="text-brand-white/50 text-xs font-sans-luxury tracking-wide mt-1.5">Pieza bajo pedido · se fabrica en 10 días hábiles</p>

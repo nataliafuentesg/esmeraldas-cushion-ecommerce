@@ -3,6 +3,7 @@ import { ref, onMounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
+import { useFxStore } from '@/stores/fx';
 import { Icon } from '@iconify/vue';
 import { getAttribution } from '@/utils/utm';
 import { suggestEmail } from '@/utils/emailSuggest';
@@ -12,6 +13,7 @@ import api from '@/api/axios';
 
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const fx = useFxStore();
 const router = useRouter();
 const { trackBeginCheckout } = useAnalytics();
 
@@ -78,6 +80,8 @@ const boldData = ref(null);          // datos del botón devueltos por el backen
 const boldContainer = ref(null);     // contenedor donde se inyecta el botón
 
 onMounted(async () => {
+  fx.fetchRate(); // tasa USD de referencia
+
   if (authStore.isAuthenticated) {
     form.value.customerName = `${authStore.user.firstName} ${authStore.user.lastName}`.trim();
     form.value.customerEmail = authStore.user.email;
@@ -241,7 +245,7 @@ const renderBoldButton = () => {
       <div v-if="!boldData" class="flex flex-col lg:flex-row gap-12">
         <div class="flex-1">
           <h2 class="text-2xl font-serif-elegant text-brand-white mb-8 tracking-wide">Detalles de envío</h2>
-          
+
           <p v-if="errorMsg" class="text-red-400 text-xs font-sans-luxury tracking-wider mb-6 bg-red-900/20 p-4 border border-red-900/50">
             {{ errorMsg }}
           </p>
@@ -311,7 +315,7 @@ const renderBoldButton = () => {
                 <input type="checkbox" v-model="form.wantsInvoice" class="mt-0.5 w-4 h-4 accent-brand-gold cursor-pointer shrink-0">
                 <span>
                   <span class="text-brand-white/85 text-sm font-sans-luxury tracking-wide">Quiero factura electrónica</span>
-                  <span class="block text-brand-white/40 text-[11px] mt-0.5">Opcional. Si no la activas, te pedimos los datos al confirmar tu pedido.</span>
+                  <span class="block text-brand-white/40 text-[11px] mt-0.5">Opcional.</span>
                 </span>
               </label>
 
@@ -330,7 +334,7 @@ const renderBoldButton = () => {
         <div class="w-full lg:w-1/3">
           <div class="border border-brand-white/10 bg-brand-black/50 p-8 sticky top-24">
             <h3 class="text-xl font-serif-elegant text-brand-gold mb-6 tracking-wide border-b border-brand-gold/20 pb-4">Resumen</h3>
-            
+
             <div class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
               <div v-for="item in cartStore.items" :key="item.productId" class="flex justify-between text-sm">
                 <span class="text-brand-white/80 font-sans-luxury tracking-wide flex-1 pr-4">
@@ -352,8 +356,11 @@ const renderBoldButton = () => {
               </div>
               <div class="flex justify-between text-lg border-t border-brand-white/10 pt-4 mt-4">
                 <span class="text-brand-gold font-serif-elegant tracking-wide">Total</span>
-                <span class="text-brand-gold font-serif-elegant tracking-wide">${{ total.toLocaleString() }}</span>
+                <span class="text-brand-gold font-serif-elegant tracking-wide">${{ total.toLocaleString() }} <span class="text-brand-white/40 text-sm">COP</span></span>
               </div>
+              <p v-if="fx.formatUsd(total)" class="text-right text-brand-white/40 text-[11px] font-sans-luxury tracking-wide mt-1">
+                {{ fx.formatUsd(total) }} · el cobro se realiza en COP
+              </p>
             </div>
 
             <button type="submit" form="checkout-form" :disabled="isSubmitting || cartStore.items.length === 0" class="w-full bg-brand-white text-brand-black px-6 py-4 text-xs font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300 disabled:opacity-50">
@@ -406,8 +413,11 @@ const renderBoldButton = () => {
           <div class="border-t border-b border-brand-white/10 py-5 mb-8">
             <div class="flex justify-between items-center">
               <span class="text-brand-gold font-serif-elegant text-lg tracking-wide">Total a pagar</span>
-              <span class="text-brand-gold font-serif-elegant text-2xl tracking-wide">${{ boldData.totalAmount.toLocaleString() }}</span>
+              <span class="text-brand-gold font-serif-elegant text-2xl tracking-wide">${{ boldData.totalAmount.toLocaleString() }} <span class="text-brand-white/40 text-base">COP</span></span>
             </div>
+            <p v-if="fx.formatUsd(boldData.totalAmount)" class="text-center text-brand-white/40 text-[11px] font-sans-luxury tracking-wide mt-3">
+              {{ fx.formatUsd(boldData.totalAmount) }} · el cobro se realiza en COP
+            </p>
           </div>
 
           <!-- Bold renderiza el botón dentro de este form -->
