@@ -1,23 +1,25 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { Icon } from '@iconify/vue';
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 
 const supportItems = [
-    { name: 'Rastrea tu Pedido', path: '/rastrear' },
-    { name: 'Garantías y Certificados', path: '/garantias' },
-    { name: 'Política de Envíos', path: '/envios' },
-    { name: 'Guía de Tallas', path: '/guia-de-tallas' },
-    { name: 'Preguntas Frecuentes (FAQ)', path: '/faq' },
-    { name: 'Términos y Condiciones', path: '/terminos' },
-    { name: 'Política de Privacidad', path: '/privacidad' },
+    { key: 'footer.link.track', path: '/rastrear' },
+    { key: 'footer.link.warranty', path: '/garantias' },
+    { key: 'footer.link.shipping', path: '/envios' },
+    { key: 'footer.link.sizeGuide', path: '/guia-de-tallas' },
+    { key: 'footer.link.faq', path: '/faq' },
+    { key: 'footer.link.terms', path: '/terminos' },
+    { key: 'footer.link.privacy', path: '/privacidad' },
 ];
 
 const whatsappLink = 'https://wa.me/573136133822?text=Hola%2C%20me%20gustaría%20personalizar%20una%20joya%20Cushion.';
 
 const commitmentIcons = [
-    { name: 'Certificación GIA', iconName: 'lucide:gem', description: 'Cada esmeralda CUSHION es verificada y viene con un certificado de autenticidad y origen expedido por laboratorios de prestigio.' },
-    { name: 'Envío Asegurado', iconName: 'lucide:truck', description: 'Su joya será enviada de forma discreta, con seguro a todo riesgo y solo requiere firma al recibir, garantizando su tranquilidad.' },
-    { name: 'Soporte de Lujo', iconName: 'lucide:phone-call', description: 'Nuestro equipo de asesores personales está disponible para resolver cualquier duda y guiar su compra.' },
+    { nameKey: 'trust.gia', iconName: 'lucide:gem', descKey: 'trust.gia.desc' },
+    { nameKey: 'trust.insured', iconName: 'lucide:truck', descKey: 'trust.insured.desc' },
+    { nameKey: 'trust.support', iconName: 'lucide:phone-call', descKey: 'trust.support.desc' },
 ];
 
 const socialMedia = [
@@ -33,28 +35,28 @@ const socialMedia = [
 
       <div class="text-center mb-12 border-b border-brand-white/20 pb-10">
           <h3 class="text-2xl md:text-3xl font-serif-elegant mb-4">
-              ¿Diseño Personalizado?
+              {{ L.t('footer.customTitle') }}
           </h3>
           <p class="text-xl font-sans-luxury mb-6 max-w-2xl mx-auto">
-              Escríbenos por WhatsApp y personalizaremos la joya que soñaste con la esmeralda perfecta.
+              {{ L.t('footer.customText') }}
           </p>
 
           <a :href="whatsappLink" target="_blank"
              class="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-brand-black
                     font-bold text-sm tracking-wide hover:bg-brand-gold transition-colors duration-300">
               <Icon icon="lucide:message-square" class="w-5 h-5 mr-3" />
-              Personalizar mi Joya
+              {{ L.t('footer.customCta') }}
           </a>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 pb-16 pt-8">
-        <div v-for="item in commitmentIcons" :key="item.name" class="text-center">
+        <div v-for="item in commitmentIcons" :key="item.nameKey" class="text-center">
             <Icon :icon="item.iconName" class="w-12 h-12 mx-auto mb-4 text-brand-gold" />
             <h3 class="text-lg font-serif-elegant mb-3 tracking-wide">
-                {{ item.name }}
+                {{ L.t(item.nameKey) }}
             </h3>
             <p class="text-sm font-sans-luxury text-brand-white/80 leading-relaxed">
-                {{ item.description }}
+                {{ L.t(item.descKey) }}
             </p>
         </div>
       </div>
@@ -66,10 +68,10 @@ const socialMedia = [
               <img src="@/assets/images/logo-cushion-white.png" alt="Cushion Joyas & Esmeraldas" class="h-10">
           </RouterLink>
           <p class="text-sm font-sans-luxury leading-relaxed mb-6">
-            La belleza eterna de la esmeralda, diseñada con precisión moderna.
+            {{ L.t('footer.tagline') }}
           </p>
 
-          <h4 class="text-lg font-serif-elegant mt-6 mb-4 tracking-wide border-b border-brand-gold pb-1">Síguenos</h4>
+          <h4 class="text-lg font-serif-elegant mt-6 mb-4 tracking-wide border-b border-brand-gold pb-1">{{ L.t('footer.follow') }}</h4>
           <div class="flex space-x-5 text-brand-white">
               <a v-for="social in socialMedia" :key="social.name" :href="social.link" target="_blank"
                  class="hover:text-brand-gold transition-colors duration-200">
@@ -79,7 +81,7 @@ const socialMedia = [
         </div>
 
         <div>
-          <h4 class="text-lg font-serif-elegant mb-4 tracking-wide border-b border-brand-gold pb-1">Ubicación</h4>
+          <h4 class="text-lg font-serif-elegant mb-4 tracking-wide border-b border-brand-gold pb-1">{{ L.t('footer.location') }}</h4>
           <ul class="space-y-3 font-sans-luxury text-sm text-brand-white/80">
             <li class="flex items-start">
               <Icon icon="lucide:map-pin" class="w-4 h-4 mr-2 mt-1 text-brand-gold shrink-0" />
@@ -93,7 +95,7 @@ const socialMedia = [
         </div>
 
         <div>
-          <h4 class="text-lg font-serif-elegant mb-4 tracking-wide border-b border-brand-gold pb-1">Horario</h4>
+          <h4 class="text-lg font-serif-elegant mb-4 tracking-wide border-b border-brand-gold pb-1">{{ L.t('footer.hours') }}</h4>
           <ul class="space-y-2 font-sans-luxury text-sm text-brand-white/80">
             <li class="flex justify-between"><span>Lunes - Viernes:</span> <span>9:00 a.m. - 6:00 p.m.</span></li>
             <li class="flex justify-between"><span>Sábado:</span> <span>9:00 a.m. - 5:00 p.m.</span></li>
@@ -102,11 +104,11 @@ const socialMedia = [
         </div>
 
         <div>
-          <h4 class="text-lg font-serif-elegant mb-4 tracking-wide border-b border-brand-gold pb-1">Enlaces Útiles</h4>
+          <h4 class="text-lg font-serif-elegant mb-4 tracking-wide border-b border-brand-gold pb-1">{{ L.t('footer.links') }}</h4>
           <ul class="space-y-3 font-sans-luxury text-sm">
-            <li v-for="item in supportItems" :key="item.name">
+            <li v-for="item in supportItems" :key="item.path">
               <RouterLink :to="item.path" class="hover:text-brand-gold transition-colors">
-                {{ item.name }}
+                {{ L.t(item.key) }}
               </RouterLink>
             </li>
           </ul>
@@ -116,7 +118,7 @@ const socialMedia = [
 
       <div class="border-t border-brand-white/20 pt-8 pb-8 text-center flex flex-col items-center justify-center">
         <p class="text-xs font-sans-luxury text-brand-white/70 mb-2">
-          © {{ new Date().getFullYear() }} CUSHION Joyas & Esmeraldas. Todos los derechos reservados.
+          © {{ new Date().getFullYear() }} CUSHION Joyas & Esmeraldas. {{ L.t('footer.rights') }}
         </p>
 
         <a href="https://marcapro.agency" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] font-sans-luxury tracking-wide text-brand-white/40 hover:text-brand-gold transition-colors duration-300">

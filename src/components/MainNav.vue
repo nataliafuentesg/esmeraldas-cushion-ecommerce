@@ -3,9 +3,11 @@ import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 //import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart'
+import { useLocaleStore } from '@/stores/locale'
 
 //const authStore = useAuthStore();
 const cartStore = useCartStore()
+const L = useLocaleStore()
 const totalItems = computed(() => cartStore.items.length)
 
 const isMenuOpen = ref(false)
@@ -18,10 +20,10 @@ const toggleCart = () => {
 };
 
 const navItems = [
-  { name: 'HOME', path: '/' },
-  { name: 'ESMERALDAS', path: '/esmeraldas' },
-  { name: 'JOYAS', path: '/coleccion/joyas' },
-  { name: 'CONTACTO', path: '/contacto' },
+  { key: 'nav.home', path: '/' },
+  { key: 'nav.emeralds', path: '/esmeraldas' },
+  { key: 'nav.jewelry', path: '/coleccion/joyas' },
+  { key: 'nav.contact', path: '/contacto' },
 ]
 
 // División simétrica
@@ -49,11 +51,11 @@ const mobileNavItems = navItems;
           <div class="hidden lg:flex space-x-12 xl:space-x-16">
             <RouterLink
               v-for="item in navItemsLeft"
-              :key="item.name"
+              :key="item.path"
               :to="item.path"
-              class="nav-link text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
+              class="nav-link uppercase text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
             >
-              {{ item.name }}
+              {{ L.t(item.key) }}
             </RouterLink>
           </div>
       </div>
@@ -66,11 +68,11 @@ const mobileNavItems = navItems;
           <div class="hidden lg:flex space-x-12 xl:space-x-16">
               <RouterLink
                 v-for="item in navItemsRight"
-                :key="item.name"
+                :key="item.path"
                 :to="item.path"
-                class="nav-link text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
+                class="nav-link uppercase text-brand-white hover:text-brand-gold transition-colors font-sans-luxury text-xs"
               >
-                {{ item.name }}
+                {{ L.t(item.key) }}
               </RouterLink>
           </div>
 
@@ -90,12 +92,12 @@ const mobileNavItems = navItems;
         <nav class="flex flex-col items-center space-y-8">
           <RouterLink
             v-for="item in mobileNavItems"
-            :key="item.name"
+            :key="item.path"
             :to="item.path"
             @click="toggleMenu"
             class="nav-link-mobile text-2xl text-brand-white hover:text-brand-gold font-serif-elegant transition-colors"
           >
-            {{ item.name }}
+            {{ L.t(item.key) }}
           </RouterLink>
         </nav>
         <div class="text-center mt-12 text-[10px] text-gray-500 font-sans-luxury tracking-wide">

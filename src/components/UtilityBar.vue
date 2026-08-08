@@ -3,7 +3,11 @@ import { ref, computed, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import { useLocaleStore } from '@/stores/locale';
+import LanguageToggle from '@/components/LanguageToggle.vue';
 import api from '@/api/axios';
+
+const L = useLocaleStore();
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -96,7 +100,7 @@ const goToProfile = () => {
                         class="flex items-center space-x-2 font-sans-luxury text-xs
                                 hover:text-brand-gold transition-colors tracking-wider">
                     <Icon icon="lucide:search" class="w-4 h-4" />
-                    <span class="hidden sm:block">Búsqueda</span>
+                    <span class="hidden sm:block">{{ L.t('nav.search') }}</span>
                 </button>
 
                 <div class="ml-auto flex items-center gap-5 sm:gap-8">
@@ -104,15 +108,18 @@ const goToProfile = () => {
                             class="flex items-center space-x-2 font-sans-luxury text-xs
                                     hover:text-brand-gold transition-colors tracking-wider">
                         <Icon icon="lucide:package-search" class="w-4 h-4" />
-                        <span class="hidden sm:block">Rastrear pedido</span>
+                        <span class="hidden sm:block">{{ L.t('nav.track') }}</span>
                     </button>
 
                     <button @click="goToProfile"
                             class="flex items-center space-x-2 font-sans-luxury text-xs
                                     hover:text-brand-gold transition-colors tracking-wider">
                         <Icon icon="lucide:user" class="w-4 h-4" />
-                        <span class="hidden sm:block">Mi Cuenta</span>
+                        <span class="hidden sm:block">{{ L.t('nav.account') }}</span>
                     </button>
+
+                    <span class="w-px h-4 bg-brand-white/15"></span>
+                    <LanguageToggle />
                 </div>
             </div>
         </div>
@@ -131,7 +138,7 @@ const goToProfile = () => {
                 <div class="container mx-auto px-4 sm:px-6 lg:px-20">
 
                     <div class="flex justify-between items-center mb-6">
-                        <span class="text-[10px] tracking-[0.4em] text-brand-gold font-bold">Buscador de Piezas</span>
+                        <span class="text-[10px] tracking-[0.4em] text-brand-gold font-bold">{{ L.t('search.title') }}</span>
                         <button @click="toggleSearch" class="text-brand-white/60 hover:text-brand-white transition-colors">
                             <Icon icon="lucide:x" class="w-6 h-6" />
                         </button>
@@ -143,7 +150,7 @@ const goToProfile = () => {
                             v-model="searchQuery"
                             @keydown.enter="handleSearchSubmit"
                             type="text"
-                            placeholder="Escribe el nombre, metal, gema o referencia..."
+                            :placeholder="L.t('search.placeholder')"
                             class="w-full bg-transparent text-brand-white font-serif-elegant text-lg md:text-2xl focus:outline-none placeholder-brand-white/30 pr-10"
                         />
                         <button @click="handleSearchSubmit" class="absolute right-0 text-brand-white/60 hover:text-brand-gold">
@@ -152,7 +159,7 @@ const goToProfile = () => {
                     </div>
 
                     <div v-if="searchQuery.trim().length >= 2" class="mt-6">
-                        <p class="text-[9px] tracking-wide text-brand-white/40 mb-3">Sugerencias en tiempo real</p>
+                        <p class="text-[9px] tracking-wide text-brand-white/40 mb-3">{{ L.t('search.suggestions') }}</p>
 
                         <div v-if="filteredResults.length > 0" class="divide-y divide-brand-white/5 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
                             <div

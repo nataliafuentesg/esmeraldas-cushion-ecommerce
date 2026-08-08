@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { RouterLink } from 'vue-router';
 const categories = [
     { name: 'Anillos', image: 'categoria-anillos.jpg', path: '/coleccion/anillos' },
@@ -15,7 +17,7 @@ const categories = [
       
       <div class="text-center mb-16">
         <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant mb-4 tracking-normal">
-          Explora por <span class="text-brand-gold italic lowercase font-serif">Tipo de Pieza</span>
+          {{ L.t('home.categories.titlePre') }} <span class="text-brand-gold italic lowercase font-serif">{{ L.t('home.categories.titleSpan') }}</span>
         </h2>
         <div class="h-[1px] w-16 bg-brand-gold mx-auto"></div>
       </div>
@@ -49,7 +51,7 @@ const categories = [
             
             <div class="overflow-hidden">
               <span class="block text-brand-gold font-sans-luxury text-[9px] md:text-[10px] tracking-[0.3em] opacity-0 group-hover:opacity-100 transform translate-y-full group-hover:translate-y-0 transition-all duration-500 delay-75">
-                Descubrir Piezas
+                {{ L.t('home.categories.discover') }}
               </span>
             </div>
           </div>

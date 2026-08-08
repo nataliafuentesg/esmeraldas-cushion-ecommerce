@@ -1,20 +1,19 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useLocaleStore } from '@/stores/locale';
 
 defineOptions({ name: 'TopBar' });
 
-const messages = [
-  { icon: '✦', text: 'Envío gratis a nivel nacional' },
-  { icon: '✦', text: 'Esmeraldas 100% colombianas' },
-  { icon: '✦', text: 'Asesoría personalizada sin costo' },
-  { icon: '✦', text: 'Diseño a la medida de tu historia' },
-];
+const L = useLocaleStore();
+
+// Claves de mensaje (el texto se traduce según el idioma activo)
+const keys = ['topbar.shipping', 'topbar.worldwide', 'topbar.emeralds', 'topbar.advice', 'topbar.custom'];
 
 const current = ref(0);
 let timer = null;
 
 const next = () => {
-  current.value = (current.value + 1) % messages.length;
+  current.value = (current.value + 1) % keys.length;
 };
 
 onMounted(() => {
@@ -36,9 +35,9 @@ onUnmounted(() => {
            class="absolute inset-0 flex items-center justify-center gap-2
                   text-[10px] tracking-[0.28em] font-sans-luxury font-light
                   topbar-text whitespace-nowrap">
-          <span class="text-brand-gold opacity-70 text-[8px]">{{ messages[current].icon }}</span>
-          {{ messages[current].text }}
-          <span class="text-brand-gold opacity-70 text-[8px]">{{ messages[current].icon }}</span>
+          <span class="text-brand-gold opacity-70 text-[8px]">✦</span>
+          {{ L.t(keys[current]) }}
+          <span class="text-brand-gold opacity-70 text-[8px]">✦</span>
         </p>
       </Transition>
 

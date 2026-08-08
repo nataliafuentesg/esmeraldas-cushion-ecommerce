@@ -3,6 +3,9 @@ import { defineProps, computed, ref, watch, onMounted } from 'vue';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
 import { useProductsStore } from '@/stores/products';
 import { useFxStore } from '@/stores/fx';
+import { useLocaleStore } from '@/stores/locale';
+
+const L = useLocaleStore();
 
 const props = defineProps({
   product: {
@@ -111,9 +114,9 @@ watch(mainImage, () => {
       <!-- Badge BAJO PEDIDO (agotado pero se fabrica) -->
       <span
         v-if="isOutOfStock"
-        class="absolute top-4 left-4 bg-brand-gold text-brand-black px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10 shadow-lg"
+        class="absolute top-4 left-4 uppercase bg-brand-gold text-brand-black px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10 shadow-lg"
       >
-        BAJO PEDIDO
+        {{ L.t('card.onOrder') }}
       </span>
 
       <!-- Badge Exclusivo (solo si hay stock) -->
@@ -121,7 +124,7 @@ watch(mainImage, () => {
         v-else-if="product.featured"
         class="absolute top-4 left-4 bg-brand-black/80 backdrop-blur-md text-brand-gold border border-brand-gold/30 px-2.5 py-1 text-[8px] font-bold tracking-wide z-10"
       >
-        Exclusivo
+        {{ L.t('card.exclusive') }}
       </span>
 
       <!-- Marca de metal (Oro 18K) -->
@@ -136,7 +139,7 @@ watch(mainImage, () => {
       <!-- Overlay hover -->
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10 bg-brand-black/20">
         <span class="font-sans-luxury text-brand-white/80 text-[9px] tracking-[0.3em] translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-          Ver pieza
+          {{ L.t('card.viewPiece') }}
         </span>
       </div>
     </div>
@@ -145,9 +148,9 @@ watch(mainImage, () => {
 
       <div>
         <!-- Etiqueta "NUEVO" propia (esmeralda), separada del tipo de pieza -->
-        <p v-if="isNew" class="flex items-center justify-center gap-1.5 text-[8px] tracking-[0.4em] font-bold text-brand-primary mb-1.5">
+        <p v-if="isNew" class="flex items-center justify-center gap-1.5 text-[8px] tracking-[0.4em] font-bold text-brand-primary mb-1.5 uppercase">
           <span class="inline-block w-1 h-1 rounded-full bg-brand-primary"></span>
-          NUEVO
+          {{ L.t('card.new') }}
         </p>
         <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
           {{ product.category }}
@@ -169,10 +172,10 @@ watch(mainImage, () => {
         </template>
         <template v-else>
           <p class="font-sans-luxury text-brand-gold text-sm tracking-wide font-medium">
-            Consultar precio
+            {{ L.t('card.consultPrice') }}
           </p>
           <p class="font-sans-luxury text-brand-gold/70 text-[9px] tracking-[0.15em] mt-1.5">
-            ✦ Se fabrica bajo pedido · 10 días hábiles
+            {{ L.t('card.madeToOrder') }}
           </p>
         </template>
       </div>

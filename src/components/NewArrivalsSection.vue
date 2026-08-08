@@ -5,10 +5,12 @@ import { useProductsStore } from '@/stores/products';
 import ProductCard from './ProductCard.vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Pagination, Autoplay } from 'swiper/modules';
+import { useLocaleStore } from '@/stores/locale';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
 
+const L = useLocaleStore();
 const productsStore = useProductsStore();
 
 // Recién llegados = los últimos agregados. Ordenamos por ID descendente
@@ -43,13 +45,13 @@ const swiperBreakpoints = {
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
 
       <header class="mb-14 text-center">
-        <p class="text-brand-gold text-[10px] tracking-[0.5em] font-bold mb-3">✦ Novedades</p>
+        <p class="text-brand-gold text-[10px] tracking-[0.5em] font-bold mb-3">{{ L.t('home.new.eyebrow') }}</p>
         <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant tracking-[0.2em]">
-          Nuevas Piezas
+          {{ L.t('home.new.title') }}
         </h2>
         <div class="h-[1px] w-16 bg-brand-gold mx-auto mt-5"></div>
         <p class="text-brand-white/50 font-sans-luxury text-sm mt-4 max-w-md mx-auto">
-          Las piezas más recientes de nuestra colección.
+          {{ L.t('home.new.subtitle') }}
         </p>
       </header>
 
@@ -87,7 +89,7 @@ const swiperBreakpoints = {
       <div class="text-center mt-8">
         <RouterLink to="/coleccion"
           class="inline-block px-12 py-4 border border-brand-gold/30 text-brand-gold text-[10px] font-bold tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black hover:border-brand-gold transition-all duration-500">
-          Ver Toda la Colección
+          {{ L.t('home.new.viewAll') }}
         </RouterLink>
       </div>
     </div>

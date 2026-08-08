@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 defineOptions({ name: 'HeroSection' });
 
 const heroImagePcUrl     = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902048/2U5A4981_cyohne.jpg";
@@ -56,7 +58,7 @@ const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1
       <!-- Tagline: pequeño, mucho tracking, semitransparente -->
       <p class="text-[10px] sm:text-xs text-brand-white/70 font-sans-luxury
                 tracking-[0.55em] uppercase mb-12">
-        Alta Joyería &nbsp;·&nbsp; Esmeraldas Colombianas
+        {{ L.t('home.hero.subtitle') }}
       </p>
 
       <!-- CTA: borde limpio → dorado en hover, sin relleno oscuro -->
@@ -67,7 +69,7 @@ const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1
                text-[9px] font-bold font-sans-luxury tracking-[0.45em] uppercase
                hover:border-brand-gold hover:text-brand-gold
                transition-all duration-700 hero-cta">
-        Explorar Colección
+        {{ L.t('home.hero.cta') }}
       </RouterLink>
     </div>
 
@@ -75,7 +77,7 @@ const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10
                 flex flex-col items-center gap-3 scroll-indicator">
       <span class="text-brand-white/30 text-[7px] tracking-[0.45em] font-sans-luxury uppercase">
-        Desliza
+        {{ L.t('home.hero.scroll') }}
       </span>
       <div class="w-px h-8 bg-gradient-to-b from-brand-white/30 to-transparent scroll-line"></div>
     </div>
