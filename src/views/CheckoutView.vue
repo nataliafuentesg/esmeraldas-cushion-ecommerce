@@ -19,6 +19,12 @@ const L = useLocaleStore();
 const router = useRouter();
 const { trackBeginCheckout } = useAnalytics();
 
+// Lee una cookie por nombre (para _fbp / _fbc de Meta). null si no existe.
+const getCookie = (name) => {
+  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? m.pop() : null;
+};
+
 const subtotal = computed(() => {
   return cartStore.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 });
@@ -163,6 +169,9 @@ const submitOrder = async () => {
       billingId: form.value.wantsInvoice ? form.value.billingId.trim() : null,
       billingEmail: form.value.wantsInvoice ? (form.value.billingEmail.trim() || form.value.customerEmail) : null,
       billingAddress: form.value.wantsInvoice ? (form.value.billingAddress.trim() || fullAddress) : null,
+      // Cookies de Meta para que la compra se atribuya al anuncio (Conversions API)
+      fbp: getCookie('_fbp'),
+      fbc: getCookie('_fbc'),
       // Atribución de campaña — para saber qué anuncio trajo esta venta
       utmSource: attribution.utm_source || null,
       utmMedium: attribution.utm_medium || null,
