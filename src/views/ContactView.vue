@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref } from 'vue';
 import api from '@/api/axios';
 
@@ -33,42 +35,42 @@ const submitContact = async () => {
       
       <div class="text-center mb-16">
         <h1 class="text-4xl md:text-5xl font-serif-elegant text-brand-white mb-4 tracking-wide">
-          Contacto
+          {{ L.t('ct.title') }}
         </h1>
         <p class="text-brand-white/60 font-sans-luxury text-xs tracking-wide">
-          Estamos aquí para asesorarte en la búsqueda de tu joya perfecta.
+          {{ L.t('ct.sub') }}
         </p>
       </div>
 
       <div v-if="isSent" class="border border-brand-gold p-12 text-center bg-brand-gold/5">
-        <h2 class="text-2xl font-serif-elegant text-brand-gold mb-4 tracking-wider">Mensaje Recibido</h2>
+        <h2 class="text-2xl font-serif-elegant text-brand-gold mb-4 tracking-wider">{{ L.t('ct.received') }}</h2>
         <p class="text-brand-white/80 font-sans-luxury text-sm tracking-wide">
-          Un asesor de Cushion se pondrá en contacto contigo en breve.
+          {{ L.t('ct.receivedText') }}
         </p>
         <button @click="isSent = false" class="mt-8 text-xs text-brand-white hover:text-brand-gold tracking-wide underline underline-offset-4">
-          Enviar otro mensaje
+          {{ L.t('ct.another') }}
         </button>
       </div>
 
       <form v-else @submit.prevent="submitContact" class="space-y-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <input v-model="form.name" type="text" placeholder="Nombre Completo" required
+          <input v-model="form.name" type="text" :placeholder="L.t('ct.name')" required
                  class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wider">
           
-          <input v-model="form.phone" type="tel" placeholder="Teléfono / WhatsApp" required
+          <input v-model="form.phone" type="tel" :placeholder="L.t('ct.phone')" required
                  class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wider">
         </div>
 
-        <input v-model="form.email" type="email" placeholder="Correo Electrónico" required
+        <input v-model="form.email" type="email" :placeholder="L.t('ct.email')" required
                class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wider">
 
-        <textarea v-model="form.message" rows="4" placeholder="¿En qué podemos ayudarte?" required
+        <textarea v-model="form.message" rows="4" :placeholder="L.t('ct.message')" required
                   class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wider resize-none"></textarea>
 
         <div class="text-center pt-4">
           <button type="submit" :disabled="isSubmitting"
                   class="bg-brand-white text-brand-black px-12 py-4 text-xs font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300 disabled:opacity-50">
-            {{ isSubmitting ? 'Enviando...' : 'Enviar Mensaje' }}
+            {{ isSubmitting ? L.t('ct.sending') : L.t('ct.send') }}
           </button>
         </div>
       </form>

@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import { Icon } from '@iconify/vue';
@@ -15,10 +17,10 @@ const showPayment = ref(false);
 
 // Pasos del pedido en orden
 const steps = [
-  { key: 'PENDIENTE_PAGO', label: 'Orden recibida', icon: 'lucide:receipt' },
-  { key: 'PAGADO',         label: 'Pago confirmado', icon: 'lucide:credit-card' },
-  { key: 'ENVIADO',        label: 'En camino',       icon: 'lucide:truck' },
-  { key: 'ENTREGADO',      label: 'Entregado',       icon: 'lucide:package-check' },
+  { key: 'PENDIENTE_PAGO', labelKey: 'tk.step.received', icon: 'lucide:receipt' },
+  { key: 'PAGADO',         labelKey: 'tk.step.paid', icon: 'lucide:credit-card' },
+  { key: 'ENVIADO',        labelKey: 'tk.step.shipped', icon: 'lucide:truck' },
+  { key: 'ENTREGADO',      labelKey: 'tk.step.delivered', icon: 'lucide:package-check' },
 ];
 
 const currentStepIndex = (status) => {
@@ -91,11 +93,11 @@ const renderBoldButton = () => {
     <div class="container mx-auto px-4 sm:px-6 lg:px-20 max-w-3xl">
 
       <header class="text-center mb-12">
-        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Seguimiento</span>
-        <h1 class="text-3xl md:text-4xl font-serif-elegant tracking-wide mb-4">Rastrea tu Pedido</h1>
+        <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">{{ L.t('tk.eyebrow') }}</span>
+        <h1 class="text-3xl md:text-4xl font-serif-elegant tracking-wide mb-4">{{ L.t('tk.title') }}</h1>
         <div class="h-[1px] w-20 bg-brand-gold mx-auto mb-5"></div>
         <p class="text-brand-white/50 font-sans-luxury text-sm max-w-md mx-auto">
-          Ingresa tu número de pedido y el correo o teléfono con que lo realizaste.
+          {{ L.t('tk.sub') }}
         </p>
       </header>
 
@@ -103,20 +105,20 @@ const renderBoldButton = () => {
       <div class="bg-brand-white/[0.02] border border-brand-white/10 p-6 md:p-8 mb-8">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="text-[10px] text-brand-white/50 tracking-wide block mb-2">Número de pedido</label>
+            <label class="text-[10px] text-brand-white/50 tracking-wide block mb-2">{{ L.t('tk.orderNumber') }}</label>
             <input v-model="orderNumber" type="text" placeholder="CUSH-XXXXXXXX" @keydown.enter="search"
               class="w-full bg-transparent border-b border-brand-white/20 py-2 text-brand-white text-sm focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/25 uppercase">
           </div>
           <div>
-            <label class="text-[10px] text-brand-white/50 tracking-wide block mb-2">Correo o teléfono</label>
-            <input v-model="contact" type="text" placeholder="tu@correo.com o 300..." @keydown.enter="search"
+            <label class="text-[10px] text-brand-white/50 tracking-wide block mb-2">{{ L.t('tk.contact') }}</label>
+            <input v-model="contact" type="text" :placeholder="L.t('tk.contactPlaceholder')" @keydown.enter="search"
               class="w-full bg-transparent border-b border-brand-white/20 py-2 text-brand-white text-sm focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/25">
           </div>
         </div>
         <p v-if="errorMsg" class="text-red-400/80 text-xs font-sans-luxury mb-4">{{ errorMsg }}</p>
         <button @click="search" :disabled="loading"
           class="w-full sm:w-auto bg-brand-gold text-brand-black px-10 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-white transition-colors disabled:opacity-50">
-          {{ loading ? 'BUSCANDO…' : 'RASTREAR' }}
+          {{ loading ? L.t('tk.searching') : L.t('tk.track') }}
         </button>
       </div>
 
@@ -124,11 +126,11 @@ const renderBoldButton = () => {
       <div v-if="order" class="border border-brand-gold/20 bg-brand-black/50 p-6 md:p-10 fade-in">
         <div class="flex flex-wrap justify-between items-baseline gap-2 mb-8 border-b border-brand-white/10 pb-5">
           <div>
-            <p class="text-[10px] text-brand-white/40 tracking-wide">Pedido</p>
+            <p class="text-[10px] text-brand-white/40 tracking-wide">{{ L.t('tk.order') }}</p>
             <p class="text-xl font-serif-elegant text-brand-white tracking-wide">#{{ order.orderNumber }}</p>
           </div>
           <div class="text-right">
-            <p class="text-[10px] text-brand-white/40 tracking-wide">Total</p>
+            <p class="text-[10px] text-brand-white/40 tracking-wide">{{ L.t('co.total') }}</p>
             <p class="text-lg font-serif-elegant text-brand-gold">${{ order.totalAmount.toLocaleString() }}</p>
           </div>
         </div>
@@ -146,7 +148,7 @@ const renderBoldButton = () => {
               </div>
               <p class="text-[9px] tracking-wide mt-2 text-center"
                 :class="idx <= currentStepIndex(order.status) ? 'text-brand-gold' : 'text-brand-white/30'">
-                {{ step.label }}
+                {{ L.t(step.labelKey) }}
               </p>
             </div>
           </div>
@@ -155,52 +157,52 @@ const renderBoldButton = () => {
         <!-- Estado rechazado -->
         <div v-else class="bg-red-900/20 border border-red-900/40 p-4 mb-8 text-center">
           <p class="text-red-300/80 text-sm font-sans-luxury">
-            {{ order.status === 'PAGO_RECHAZADO' ? 'El pago de este pedido fue rechazado o cancelado.' : 'Este pedido fue cancelado.' }}
+            {{ order.status === 'PAGO_RECHAZADO' ? L.t('tk.rejected') : L.t('tk.canceled') }}
           </p>
         </div>
 
         <!-- Completar pago (orden pendiente) -->
         <div v-if="order.status === 'PENDIENTE_PAGO'" class="bg-brand-gold/[0.06] border border-brand-gold/30 p-6 mb-8 text-center">
           <Icon icon="lucide:alert-circle" class="w-8 h-8 text-brand-gold mx-auto mb-3" />
-          <h4 class="text-brand-white font-serif-elegant text-lg mb-2">Tu pago está pendiente</h4>
+          <h4 class="text-brand-white font-serif-elegant text-lg mb-2">{{ L.t('tk.pendingTitle') }}</h4>
           <p class="text-brand-white/50 text-xs font-sans-luxury mb-6 max-w-sm mx-auto">
-            Tu pedido está reservado. Completa el pago para confirmar tu compra antes de que venza la reserva.
+            {{ L.t('tk.pendingText') }}
           </p>
 
           <button v-if="!showPayment" @click="payPending"
             class="bg-brand-gold text-brand-black px-10 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-white transition-colors">
-            COMPLETAR PAGO
+            {{ L.t('tk.completePayment') }}
           </button>
 
           <!-- Bold renderiza el botón aquí -->
           <form v-show="showPayment" ref="boldContainer" class="flex justify-center"></form>
 
           <p v-if="showPayment" class="text-brand-white/30 text-[10px] font-sans-luxury tracking-wide mt-4 flex items-center justify-center gap-1.5">
-            <Icon icon="lucide:lock" class="w-3 h-3" /> Pago protegido por Bold
+            <Icon icon="lucide:lock" class="w-3 h-3" /> {{ L.t('tk.boldSecure') }}
           </p>
         </div>
 
         <!-- Reserva vencida -->
         <div v-if="order.status === 'EXPIRADO'" class="bg-brand-white/[0.03] border border-brand-white/10 p-5 mb-8 text-center">
           <p class="text-brand-white/60 text-sm font-sans-luxury mb-4">
-            La reserva de este pedido venció y la(s) pieza(s) volvieron a estar disponibles.
+            {{ L.t('tk.expiredText') }}
           </p>
           <RouterLink to="/coleccion"
             class="inline-block border border-brand-gold text-brand-gold px-8 py-2.5 text-[10px] font-bold tracking-[0.2em] hover:bg-brand-gold hover:text-brand-black transition-colors">
-            VOLVER A LA COLECCIÓN
+            {{ L.t('tk.backToCollection') }}
           </RouterLink>
         </div>
 
         <!-- Datos de envío (si ya fue enviado) -->
         <div v-if="order.trackingNumber" class="bg-brand-white/[0.03] border border-brand-white/10 p-5 mb-6">
-          <h4 class="text-brand-gold text-[10px] tracking-[0.3em] mb-3">INFORMACIÓN DE ENVÍO</h4>
+          <h4 class="text-brand-gold text-[10px] tracking-[0.3em] mb-3">{{ L.t('tk.shippingInfo') }}</h4>
           <div class="grid grid-cols-2 gap-3 text-sm">
             <div>
-              <p class="text-[10px] text-brand-white/40">Transportadora</p>
+              <p class="text-[10px] text-brand-white/40">{{ L.t('tk.carrier') }}</p>
               <p class="text-brand-white">{{ order.shippingCarrier || '—' }}</p>
             </div>
             <div>
-              <p class="text-[10px] text-brand-white/40">Número de guía</p>
+              <p class="text-[10px] text-brand-white/40">{{ L.t('tk.trackingNumber') }}</p>
               <p class="text-brand-white tracking-wide">{{ order.trackingNumber }}</p>
             </div>
           </div>
@@ -208,19 +210,19 @@ const renderBoldButton = () => {
 
         <!-- Artículos -->
         <div v-if="order.items && order.items.length">
-          <h4 class="text-brand-white/60 text-[10px] tracking-[0.3em] mb-3 border-b border-brand-white/10 pb-2">ARTÍCULOS</h4>
+          <h4 class="text-brand-white/60 text-[10px] tracking-[0.3em] mb-3 border-b border-brand-white/10 pb-2">{{ L.t('tk.items') }}</h4>
           <div v-for="(it, i) in order.items" :key="i" class="flex justify-between text-sm py-2">
             <span class="text-brand-white/80">
               <span class="text-brand-gold">{{ it.quantity }}x</span> {{ it.name }}
-              <span v-if="it.size" class="block text-[10px] text-brand-gold/70">Talla: {{ it.size }}</span>
+              <span v-if="it.size" class="block text-[10px] text-brand-gold/70">{{ L.t('cart.size') }} {{ it.size }}</span>
             </span>
             <span class="text-brand-white/70">${{ (it.price || 0).toLocaleString() }}</span>
           </div>
         </div>
 
         <p class="text-center text-brand-white/30 text-[10px] mt-8 font-sans-luxury">
-          ¿Dudas con tu pedido?
-          <a href="https://wa.me/573136133822" target="_blank" class="text-brand-gold hover:underline">Escríbenos por WhatsApp</a>
+          {{ L.t('tk.doubts') }}
+          <a href="https://wa.me/573136133822" target="_blank" class="text-brand-gold hover:underline">{{ L.t('tk.whatsappUs') }}</a>
         </p>
       </div>
     </div>

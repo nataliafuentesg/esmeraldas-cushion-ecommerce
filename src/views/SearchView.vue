@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
@@ -81,9 +83,9 @@ onMounted(() => {
         <div class="container mx-auto px-4 sm:px-6 lg:px-20">
             
             <div class="max-w-3xl mx-auto text-center mb-16">
-                <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">Galería de Exploración</span>
+                <span class="text-brand-gold text-[10px] tracking-[0.6em] font-bold block mb-3">{{ L.t('sv.eyebrow') }}</span>
                 <h1 class="text-3xl md:text-4xl font-serif-elegant text-brand-white tracking-wide mb-8">
-                    Resultados de Búsqueda
+                    {{ L.t('sv.title') }}
                 </h1>
                 
                 <div class="relative flex items-center border border-brand-white/10 bg-brand-white/[0.02] focus-within:border-brand-gold transition-colors px-4 py-3 max-w-xl mx-auto">
@@ -91,7 +93,7 @@ onMounted(() => {
                         v-model="localSearchQuery"
                         @keydown.enter="triggerLocalSearch"
                         type="text"
-                        placeholder="Buscar otra pieza o colección..."
+                        :placeholder="L.t('sv.placeholder')"
                         class="w-full bg-transparent text-brand-white font-sans-luxury text-sm focus:outline-none placeholder-brand-white/20 pr-10"
                     />
                     <button @click="triggerLocalSearch" class="absolute right-4 text-brand-white/40 hover:text-brand-gold transition-colors">
@@ -100,7 +102,7 @@ onMounted(() => {
                 </div>
                 
                 <p v-if="route.query.q" class="text-xs text-brand-white/40 mt-4 italic font-sans-luxury">
-                    Mostrando piezas vinculadas con: <span class="text-brand-gold">"{{ route.query.q }}"</span>
+                    {{ L.t('sv.showing') }} <span class="text-brand-gold">"{{ route.query.q }}"</span>
                 </p>
             </div>
 
@@ -127,15 +129,15 @@ onMounted(() => {
 
                 <div v-else class="text-center py-24 border border-brand-white/5 bg-brand-white/[0.01] max-w-xl mx-auto p-8">
                     <Icon icon="lucide:package-open" class="text-brand-gold/40 w-12 h-12 mx-auto mb-4" />
-                    <h3 class="text-brand-white text-lg font-serif-elegant mb-2">No se hallaron coincidencias</h3>
+                    <h3 class="text-brand-white text-lg font-serif-elegant mb-2">{{ L.t('sv.noResults') }}</h3>
                     <p class="text-brand-white/40 text-xs font-sans-luxury leading-relaxed mb-6">
-                        No encontramos piezas registradas con esos términos. Intenta buscando palabras clave individuales como "Anillo", "OB", "Cluster" o "Topos".
+                        {{ L.t('sv.noResultsText') }}
                     </p>
                     <button 
                         @click="localSearchQuery = ''; router.push('/coleccion')"
                         class="border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-black text-[10px] font-bold tracking-wide px-6 py-3 transition-colors"
                     >
-                        Ver Catálogo Completo
+                        {{ L.t('sv.viewCatalog') }}
                     </button>
                 </div>
             </div>

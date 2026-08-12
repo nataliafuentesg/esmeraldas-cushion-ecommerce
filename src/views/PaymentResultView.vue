@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
@@ -82,50 +84,48 @@ onUnmounted(stopPolling);
       <!-- Verificando -->
       <div v-if="state === 'checking'" class="border border-brand-white/10 bg-brand-black/50 p-10">
         <Icon icon="line-md:loading-twotone-loop" class="w-14 h-14 text-brand-gold mx-auto mb-6" />
-        <h1 class="text-2xl font-serif-elegant text-brand-white mb-2 tracking-wide">Confirmando tu pago…</h1>
-        <p class="text-brand-white/50 text-sm font-sans-luxury">Esto toma solo unos segundos.</p>
+        <h1 class="text-2xl font-serif-elegant text-brand-white mb-2 tracking-wide">{{ L.t('pr.checking.title') }}</h1>
+        <p class="text-brand-white/50 text-sm font-sans-luxury">{{ L.t('pr.checking.sub') }}</p>
       </div>
 
       <!-- Pagado -->
       <div v-else-if="state === 'paid'" class="border border-brand-gold/30 bg-brand-black/50 p-10">
         <Icon icon="lucide:check-circle" class="w-16 h-16 text-brand-gold mx-auto mb-6" />
-        <h1 class="text-3xl font-serif-elegant text-brand-white mb-3 tracking-wide">¡Gracias por tu compra!</h1>
+        <h1 class="text-3xl font-serif-elegant text-brand-white mb-3 tracking-wide">{{ L.t('pr.paid.title') }}</h1>
         <p class="text-brand-white/60 text-sm font-sans-luxury leading-relaxed mb-2">
-          Tu pago fue confirmado y tu pedido
-          <span class="text-brand-gold">#{{ orderNumber }}</span> está en proceso.
+          {{ L.t('pr.paid.text1a') }}
+          <span class="text-brand-gold">#{{ orderNumber }}</span> {{ L.t('pr.paid.text1b') }}
         </p>
         <p class="text-brand-white/50 text-xs font-sans-luxury leading-relaxed mb-8">
-          Te enviamos la confirmación a tu correo. Muy pronto coordinaremos el envío de tu pieza.
+          {{ L.t('pr.paid.text2') }}
         </p>
         <button @click="router.push('/')" class="border border-brand-gold text-brand-gold px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-colors">
-          Seguir explorando
+          {{ L.t('pr.paid.cta') }}
         </button>
       </div>
 
       <!-- Pendiente -->
       <div v-else-if="state === 'pending'" class="border border-brand-white/10 bg-brand-black/50 p-10">
         <Icon icon="lucide:clock" class="w-14 h-14 text-brand-gold/70 mx-auto mb-6" />
-        <h1 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">Tu pago se está procesando</h1>
+        <h1 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">{{ L.t('pr.pending.title') }}</h1>
         <p class="text-brand-white/60 text-sm font-sans-luxury leading-relaxed mb-8">
-          Estamos esperando la confirmación del banco. Si ya pagaste, recibirás un correo en cuanto se confirme.
-          No es necesario que pagues de nuevo.
+          {{ L.t('pr.pending.text') }}
         </p>
         <button @click="router.push('/')" class="border border-brand-gold text-brand-gold px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-colors">
-          Volver al inicio
+          {{ L.t('pr.pending.cta') }}
         </button>
       </div>
 
       <!-- Rechazado -->
       <div v-else-if="state === 'rejected'" class="border border-red-900/40 bg-brand-black/50 p-10">
         <Icon icon="lucide:x-circle" class="w-14 h-14 text-red-400/80 mx-auto mb-6" />
-        <h1 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">El pago no se completó</h1>
+        <h1 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">{{ L.t('pr.rejected.title') }}</h1>
         <p class="text-brand-white/60 text-sm font-sans-luxury leading-relaxed mb-8">
-          Tu pago fue rechazado o cancelado. Tus piezas siguen en el carrito — puedes intentarlo de nuevo
-          o escribirnos por WhatsApp si necesitas ayuda.
+          {{ L.t('pr.rejected.text') }}
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <button @click="router.push('/finalizar-compra')" class="border border-brand-gold text-brand-gold px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-brand-gold hover:text-brand-black transition-colors">
-            Intentar de nuevo
+            {{ L.t('pr.rejected.retry') }}
           </button>
           <a href="https://wa.me/573136133822" target="_blank" class="border border-[#25D366]/40 text-[#25D366] px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-[#25D366]/10 transition-colors inline-flex items-center justify-center gap-2">
             <Icon icon="simple-icons:whatsapp" class="w-3.5 h-3.5" /> WhatsApp
@@ -136,13 +136,13 @@ onUnmounted(stopPolling);
       <!-- Error -->
       <div v-else class="border border-brand-white/10 bg-brand-black/50 p-10">
         <Icon icon="lucide:alert-triangle" class="w-14 h-14 text-brand-gold/70 mx-auto mb-6" />
-        <h1 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">No pudimos verificar el pago</h1>
+        <h1 class="text-2xl font-serif-elegant text-brand-white mb-3 tracking-wide">{{ L.t('pr.error.title') }}</h1>
         <p class="text-brand-white/60 text-sm font-sans-luxury leading-relaxed mb-8">
-          Si realizaste el pago, no te preocupes — quedará registrado. Escríbenos por WhatsApp con tu número de
-          pedido <span class="text-brand-gold" v-if="orderNumber">#{{ orderNumber }}</span> y lo verificamos.
+          {{ L.t('pr.error.text1') }}
+          <span class="text-brand-gold" v-if="orderNumber">#{{ orderNumber }}</span> {{ L.t('pr.error.text2') }}
         </p>
         <a href="https://wa.me/573136133822" target="_blank" class="border border-[#25D366]/40 text-[#25D366] px-8 py-3 text-[10px] font-bold tracking-[0.3em] hover:bg-[#25D366]/10 transition-colors inline-flex items-center justify-center gap-2">
-          <Icon icon="simple-icons:whatsapp" class="w-3.5 h-3.5" /> Contactar soporte
+          <Icon icon="simple-icons:whatsapp" class="w-3.5 h-3.5" /> {{ L.t('pr.error.cta') }}
         </a>
       </div>
 
