@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
@@ -17,49 +19,49 @@ const WA_NUMBER = '573136133822';
 // Mapa de estados: label en español + clases Tailwind
 const STATUS_MAP = {
   PENDIENTE_PAGO: {
-    label: 'Pendiente de Pago',
+    labelKey: 'st.pending',
     icon: 'lucide:clock',
     classes: 'bg-yellow-900/30 text-yellow-400 border border-yellow-500/30',
     step: 0,
   },
   PAGADO: {
-    label: 'Pago Confirmado',
+    labelKey: 'st.paid',
     icon: 'lucide:check-circle',
     classes: 'bg-blue-900/30 text-blue-400 border border-blue-500/30',
     step: 1,
   },
   ENVIADO: {
-    label: 'En Camino',
+    labelKey: 'st.shipped',
     icon: 'lucide:package',
     classes: 'bg-purple-900/30 text-purple-400 border border-purple-500/30',
     step: 2,
   },
   ENTREGADO: {
-    label: 'Entregado',
+    labelKey: 'st.delivered',
     icon: 'lucide:gem',
     classes: 'bg-green-900/30 text-green-400 border border-green-500/30',
     step: 3,
   },
   CANCELADO: {
-    label: 'Cancelado',
+    labelKey: 'st.canceled',
     icon: 'lucide:x-circle',
     classes: 'bg-red-900/30 text-red-400 border border-red-500/30',
     step: -1,
   },
   EXPIRADO: {
-    label: 'Reserva vencida',
+    labelKey: 'st.expired',
     icon: 'lucide:clock-alert',
     classes: 'bg-brand-white/10 text-brand-white/40 border border-brand-white/20',
     step: -1,
   },
   PAGO_RECHAZADO: {
-    label: 'Pago rechazado',
+    labelKey: 'st.rejected',
     icon: 'lucide:x-circle',
     classes: 'bg-red-900/30 text-red-400 border border-red-500/30',
     step: -1,
   },
   PAGO_SIN_STOCK: {
-    label: 'En revisión',
+    labelKey: 'st.review',
     icon: 'lucide:alert-triangle',
     classes: 'bg-orange-900/30 text-orange-400 border border-orange-500/30',
     step: -1,
@@ -67,13 +69,14 @@ const STATUS_MAP = {
 };
 
 const TIMELINE_STEPS = [
-  { key: 'PENDIENTE_PAGO', label: 'Pago pendiente', icon: 'lucide:clock' },
-  { key: 'PAGADO',         label: 'Pago confirmado', icon: 'lucide:check-circle' },
-  { key: 'ENVIADO',        label: 'En camino',        icon: 'lucide:package' },
-  { key: 'ENTREGADO',      label: 'Entregado',        icon: 'lucide:gem' },
+  { key: 'PENDIENTE_PAGO', labelKey: 'pf.tl.pending', icon: 'lucide:clock' },
+  { key: 'PAGADO',         labelKey: 'pf.tl.paid', icon: 'lucide:check-circle' },
+  { key: 'ENVIADO',        labelKey: 'pf.tl.shipped', icon: 'lucide:package' },
+  { key: 'ENTREGADO',      labelKey: 'pf.tl.delivered', icon: 'lucide:gem' },
 ];
 
 const getStatus = (status) => STATUS_MAP[status] || { label: status, icon: 'lucide:circle', classes: 'bg-brand-white/10 text-brand-white/60 border border-brand-white/20', step: 0 };
+const statusLabel = (status) => { const st = getStatus(status); return st.labelKey ? L.t(st.labelKey) : (st.label || status); };
 
 const toggleOrder = (id) => {
   if (expandedOrders.value.has(id)) {
@@ -126,7 +129,7 @@ const handleLogout = () => {
       <!-- Encabezado -->
       <div class="flex flex-col md:flex-row justify-between items-end border-b border-brand-white/10 pb-6 mb-12">
         <div>
-          <p class="text-brand-gold font-sans-luxury text-[10px] tracking-[0.4em] mb-2">MI CUENTA</p>
+          <p class="text-brand-gold font-sans-luxury text-[10px] tracking-[0.4em] mb-2">{{ L.t('pf.myAccount') }}</p>
           <h1 class="text-4xl md:text-5xl font-serif-elegant text-brand-white tracking-wide">
             {{ authStore.user?.firstName }} {{ authStore.user?.lastName }}
           </h1>
@@ -137,20 +140,20 @@ const handleLogout = () => {
         <button @click="handleLogout"
           class="mt-6 md:mt-0 text-brand-white/40 hover:text-brand-white text-[10px] tracking-wide underline underline-offset-4 transition-colors flex items-center gap-2 group">
           <Icon icon="lucide:log-out" class="w-3 h-3 group-hover:text-brand-gold transition-colors" />
-          Cerrar Sesión
+          {{ L.t('pf.logout') }}
         </button>
       </div>
 
       <!-- Historial -->
       <section>
         <h2 class="text-xl font-serif-elegant text-brand-white tracking-wider mb-8">
-          Historial de Pedidos
+          {{ L.t('pf.orderHistory') }}
         </h2>
 
         <!-- Loading -->
         <div v-if="loading" class="flex items-center gap-3 text-brand-white/40 font-sans-luxury text-xs tracking-wide">
           <Icon icon="line-md:loading-twotone-loop" class="w-5 h-5 text-brand-gold animate-spin" />
-          Buscando tus piezas...
+          {{ L.t('pf.loading') }}
         </div>
 
         <!-- Sin órdenes -->
@@ -158,11 +161,11 @@ const handleLogout = () => {
           class="text-center py-20 border border-brand-white/5 bg-brand-white/[0.02]">
           <Icon icon="lucide:gem" class="w-12 h-12 mx-auto mb-6 text-brand-gold/20" />
           <p class="text-brand-white/50 font-sans-luxury text-sm tracking-wide mb-8">
-            Aún no has realizado ninguna compra.
+            {{ L.t('pf.noOrders') }}
           </p>
           <RouterLink to="/coleccion/todas"
             class="bg-brand-white text-brand-black px-8 py-3 text-[10px] font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300">
-            Explorar Colección
+            {{ L.t('pf.explore') }}
           </RouterLink>
         </div>
 
@@ -179,7 +182,7 @@ const handleLogout = () => {
                 <!-- Número + fecha -->
                 <div>
                   <p class="text-brand-gold text-xs font-bold tracking-[0.2em] mb-1">
-                    Pedido #{{ order.orderNumber }}
+                    {{ L.t('pf.orderNum') }} #{{ order.orderNumber }}
                   </p>
                   <p class="text-brand-white/40 text-[10px] tracking-wide font-sans-luxury">
                     {{ new Date(order.createdAt).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' }) }}
@@ -195,7 +198,7 @@ const handleLogout = () => {
                   <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold tracking-wide"
                     :class="getStatus(order.status).classes">
                     <Icon :icon="getStatus(order.status).icon" class="w-3 h-3" />
-                    {{ getStatus(order.status).label }}
+                    {{ statusLabel(order.status) }}
                   </span>
                 </div>
               </div>
@@ -212,7 +215,7 @@ const handleLogout = () => {
                     </div>
                     <p class="text-[8px] tracking-wide mt-1 text-center max-w-[60px] leading-tight font-sans-luxury"
                       :class="getStatus(order.status).step >= idx ? 'text-brand-gold' : 'text-brand-white/20'">
-                      {{ step.label }}
+                      {{ L.t(step.labelKey) }}
                     </p>
                   </div>
                   <div v-if="idx < TIMELINE_STEPS.length - 1"
@@ -259,7 +262,7 @@ const handleLogout = () => {
                   </div>
                 </div>
                 <div class="flex justify-between items-center mt-4 pt-3 border-t border-brand-white/10">
-                  <span class="text-brand-white/40 font-sans-luxury text-[10px] tracking-wide">Total del pedido</span>
+                  <span class="text-brand-white/40 font-sans-luxury text-[10px] tracking-wide">{{ L.t('pf.orderTotal') }}</span>
                   <span class="text-brand-gold font-serif-elegant tracking-wide">
                     ${{ order.totalAmount.toLocaleString() }} COP
                   </span>
@@ -268,33 +271,33 @@ const handleLogout = () => {
                 <!-- Detalle de pago -->
                 <div class="mt-5 pt-4 border-t border-brand-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <p class="text-brand-gold/80 text-[9px] tracking-[0.3em] mb-2">PAGO</p>
+                    <p class="text-brand-gold/80 text-[9px] tracking-[0.3em] mb-2">{{ L.t('pf.payment') }}</p>
                     <div class="space-y-1.5 text-[11px] font-sans-luxury">
                       <div class="flex justify-between">
-                        <span class="text-brand-white/40">Estado</span>
-                        <span class="text-brand-white/80">{{ getStatus(order.status).label }}</span>
+                        <span class="text-brand-white/40">{{ L.t('pf.pmStatus') }}</span>
+                        <span class="text-brand-white/80">{{ statusLabel(order.status) }}</span>
                       </div>
                       <div v-if="order.paymentId && order.paymentId !== 'MANUAL_ADMIN'" class="flex justify-between gap-3">
-                        <span class="text-brand-white/40">Referencia</span>
+                        <span class="text-brand-white/40">{{ L.t('pf.reference') }}</span>
                         <span class="text-brand-white/80 truncate" :title="order.paymentId">{{ order.paymentId }}</span>
                       </div>
                       <div class="flex justify-between">
-                        <span class="text-brand-white/40">Método</span>
-                        <span class="text-brand-white/80">Bold · Tarjeta/PSE</span>
+                        <span class="text-brand-white/40">{{ L.t('pf.method') }}</span>
+                        <span class="text-brand-white/80">{{ L.t('pf.methodValue') }}</span>
                       </div>
                     </div>
                   </div>
 
                   <!-- Detalle de envío (si ya fue despachado) -->
                   <div v-if="order.trackingNumber">
-                    <p class="text-brand-gold/80 text-[9px] tracking-[0.3em] mb-2">ENVÍO</p>
+                    <p class="text-brand-gold/80 text-[9px] tracking-[0.3em] mb-2">{{ L.t('pf.shipping') }}</p>
                     <div class="space-y-1.5 text-[11px] font-sans-luxury">
                       <div class="flex justify-between gap-3">
-                        <span class="text-brand-white/40">Transportadora</span>
+                        <span class="text-brand-white/40">{{ L.t('tk.carrier') }}</span>
                         <span class="text-brand-white/80">{{ order.shippingCarrier || '—' }}</span>
                       </div>
                       <div class="flex justify-between gap-3">
-                        <span class="text-brand-white/40">Guía</span>
+                        <span class="text-brand-white/40">{{ L.t('pf.guide') }}</span>
                         <span class="text-brand-white/80 truncate" :title="order.trackingNumber">{{ order.trackingNumber }}</span>
                       </div>
                     </div>

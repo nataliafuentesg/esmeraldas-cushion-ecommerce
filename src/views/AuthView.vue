@@ -1,4 +1,6 @@
 <script setup>
+import { useLocaleStore } from '@/stores/locale';
+const L = useLocaleStore();
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
@@ -91,7 +93,7 @@ const handleSubmit = async () => {
   try {
     if (isForgotPassword.value) {
       await authStore.forgotPassword(cleanEmail);
-      successMsg.value = 'Enlace de recuperación enviado. Revisa tu bandeja de entrada.';
+      successMsg.value = L.t('au.recoverySent');
     } 
     else if (isLogin.value) {
       await authStore.login(cleanEmail, form.value.password);
@@ -103,7 +105,7 @@ const handleSubmit = async () => {
       router.push('/perfil');
     }
   } catch (error) {
-    errorMsg.value = error.response?.data?.message || 'Error en la autenticación. Revisa tus datos.';
+    errorMsg.value = error.response?.data?.message || L.t('au.authError');
   } finally {
     loading.value = false;
   }
@@ -116,8 +118,8 @@ const handleSubmit = async () => {
       
       <header class="mb-10 text-center">
         <h1 class="text-3xl font-serif-elegant text-brand-white tracking-wide">
-          <span v-if="isForgotPassword">Recuperar</span>
-          <span v-else>{{ isLogin ? 'Ingresar' : 'Registro' }}</span>
+          <span v-if="isForgotPassword">{{ L.t('au.recover') }}</span>
+          <span v-else>{{ isLogin ? L.t('au.login') : L.t('au.register') }}</span>
         </h1>
         <div class="h-[1px] w-12 bg-brand-gold mx-auto mt-4"></div>
       </header>
@@ -137,19 +139,19 @@ const handleSubmit = async () => {
         
         <template v-if="!isLogin && !isForgotPassword">
           <div class="grid grid-cols-2 gap-6">
-            <input v-model="form.firstName" type="text" placeholder="Nombre" required class="input-luxury">
-            <input v-model="form.lastName" type="text" placeholder="Apellido" required class="input-luxury">
+            <input v-model="form.firstName" type="text" :placeholder="L.t('au.firstName')" required class="input-luxury">
+            <input v-model="form.lastName" type="text" :placeholder="L.t('au.lastName')" required class="input-luxury">
           </div>
-          <input v-model="form.phone" type="tel" placeholder="WhatsApp" required class="input-luxury">
+          <input v-model="form.phone" type="tel" :placeholder="L.t('au.whatsapp')" required class="input-luxury">
         </template>
 
-        <input v-model="form.email" type="email" placeholder="Email" required class="input-luxury lowercase">
+        <input v-model="form.email" type="email" :placeholder="L.t('au.email')" required class="input-luxury lowercase">
 
         <div v-if="!isForgotPassword" class="space-y-2">
           <div class="relative flex items-center">
             <input :type="showPassword ? 'text' : 'password'" 
                    v-model="form.password" 
-                   placeholder="Contraseña" required 
+                   :placeholder="L.t('au.password')" required 
                    class="input-luxury pr-12">
             <button type="button" @click="showPassword = !showPassword" class="eye-btn">
               <Icon :icon="showPassword ? 'lucide:eye-off' : 'lucide:eye'" class="w-4 h-4" />
@@ -158,7 +160,7 @@ const handleSubmit = async () => {
 
           <div v-if="isLogin" class="flex justify-end">
             <button type="button" @click="setMode('forgot')" class="forgot-link">
-              ¿Olvidaste tu contraseña?
+              {{ L.t('au.forgot') }}
             </button>
           </div>
         </div>
@@ -167,7 +169,7 @@ const handleSubmit = async () => {
           <div class="relative flex items-center">
             <input :type="showConfirmPassword ? 'text' : 'password'" 
                    v-model="form.confirmPassword" 
-                   placeholder="Confirmar Contraseña" required 
+                   :placeholder="L.t('au.confirmPassword')" required 
                    :class="{'border-red-500/70': !passwordsMatch && form.confirmPassword}"
                    class="input-luxury pr-12">
             <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="eye-btn">
@@ -177,9 +179,9 @@ const handleSubmit = async () => {
         </div>
 
         <button type="submit" :disabled="loading || !isFormValid" class="btn-luxury">
-          <span v-if="loading" class="animate-pulse">Procesando...</span>
+          <span v-if="loading" class="animate-pulse">{{ L.t('au.processing') }}</span>
           <span v-else>
-            {{ isForgotPassword ? 'Enviar Enlace' : (isLogin ? 'Entrar' : 'Crear Cuenta') }}
+            {{ isForgotPassword ? L.t('au.sendLink') : (isLogin ? L.t('au.enter') : L.t('au.createAccount')) }}
           </span>
         </button>
 
@@ -187,7 +189,7 @@ const handleSubmit = async () => {
 
       <footer class="mt-10 text-center border-t border-brand-white/10 pt-8">
         <button @click="setMode(isForgotPassword || !isLogin ? 'login' : 'register')" class="text-link">
-          {{ isForgotPassword || !isLogin ? 'Volver al Inicio de Sesión' : '¿Deseas una cuenta? Únete a Cushion' }}
+          {{ isForgotPassword || !isLogin ? L.t('au.backToLogin') : L.t('au.wantAccount') }}
         </button>
       </footer>
 
@@ -199,9 +201,9 @@ const handleSubmit = async () => {
         
         <Icon icon="lucide:shield-alert" class="w-5 h-5 shrink-0 text-brand-gold animate-pulse" />
         <div>
-          <h4 class="font-serif-elegant tracking-wider text-xs mb-0.5">Sesión Finalizada</h4>
+          <h4 class="font-serif-elegant tracking-wider text-xs mb-0.5">{{ L.t('au.sessionEnded') }}</h4>
           <p class="font-sans-luxury text-[10px] text-brand-white/70 tracking-wide leading-relaxed">
-            Por su seguridad, su sesión ha expirado. Por favor, ingrese nuevamente.
+            {{ L.t('au.sessionEndedText') }}
           </p>
         </div>
       </div>
