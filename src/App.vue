@@ -4,6 +4,7 @@ import { RouterView, useRoute } from 'vue-router';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/FooterApp.vue';
 import CartOffCanvas from '@/components/CartOffCanvas.vue';
+import MobileWhatsAppDock from '@/components/MobileWhatsAppDock.vue';
 import { useCartStore } from '@/stores/cart';
 import { useHead } from '@unhead/vue';
 
@@ -57,7 +58,7 @@ onMounted(() => {
 
     <Header v-if="!isAdminRoute" />
 
-    <main class="flex-grow relative">
+    <main class="flex-grow relative" :class="{ 'pb-16 md:pb-0': !isAdminRoute }">
       <RouterView v-slot="{ Component }">
         <transition name="fade-page">
           <KeepAlive :include="['CollectionView']">
@@ -69,6 +70,9 @@ onMounted(() => {
 
     <Footer v-if="!isAdminRoute" />
     <CartOffCanvas v-if="!isAdminRoute" />
+
+    <!-- Dock móvil de WhatsApp (contextual: pieza en detalle, info general en el resto) -->
+    <MobileWhatsAppDock v-if="!isAdminRoute" />
 
   </div>
 </template>

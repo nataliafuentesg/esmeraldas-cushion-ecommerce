@@ -305,6 +305,10 @@ export const messages = {
     'rp.mismatch': 'Las contraseñas no coinciden.', 'rp.updated': 'Contraseña actualizada. Redirigiendo...',
     'rp.invalidLink': 'El enlace ha expirado o es inválido.',
 
+    // Dock móvil de WhatsApp
+    'dock.askAboutPiece': 'Consultar esta pieza',
+    'dock.askInfo': 'Pedir información',
+
     // Tarjeta de producto
     'card.consultPrice': 'Consultar precio',
     'card.madeToOrder': '✦ Se fabrica bajo pedido · 10 días hábiles',
@@ -649,6 +653,9 @@ export const messages = {
     'rp.updating': 'Updating...', 'rp.change': 'Change Password',
     'rp.mismatch': 'Passwords do not match.', 'rp.updated': 'Password updated. Redirecting...',
     'rp.invalidLink': 'The link has expired or is invalid.',
+
+    'dock.askAboutPiece': 'Ask about this piece',
+    'dock.askInfo': 'Ask for info',
 
     'card.consultPrice': 'Request price',
     'card.madeToOrder': '✦ Made to order · 10 business days',
