@@ -5,6 +5,7 @@ import Header from '@/components/Header.vue';
 import Footer from '@/components/FooterApp.vue';
 import CartOffCanvas from '@/components/CartOffCanvas.vue';
 import MobileWhatsAppDock from '@/components/MobileWhatsAppDock.vue';
+import ConciergeWidget from '@/components/ConciergeWidget.vue';
 import { useCartStore } from '@/stores/cart';
 import { useHead } from '@unhead/vue';
 import { useWhatsAppTracking } from '@/composables/useWhatsAppTracking';
@@ -77,6 +78,8 @@ onMounted(() => {
 
     <!-- Dock móvil de WhatsApp (contextual: pieza en detalle, info general en el resto) -->
     <MobileWhatsAppDock v-if="!isAdminRoute" />
+    <!-- Widget concierge (escritorio): FAQ, ubicación, buscar pieza, WhatsApp -->
+    <ConciergeWidget v-if="!isAdminRoute" />
 
   </div>
 </template>

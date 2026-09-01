@@ -309,6 +309,21 @@ export const messages = {
     'dock.askAboutPiece': 'Consultar esta pieza',
     'dock.askInfo': 'Pedir información',
 
+    // Widget concierge (escritorio)
+    'cc.title': 'Asesoría Cushion',
+    'cc.subtitle': '¿En qué te ayudamos?',
+    'cc.location': 'Ubicación y horarios',
+    'cc.custom': 'Diseñar una joya a mi medida',
+    'cc.searchOpt': 'Buscar una pieza',
+    'cc.whatsapp': 'Hablar por WhatsApp',
+    'cc.searchPlaceholder': 'Ej: anillo esmeralda, aretes…',
+    'cc.hoursTitle': 'Horarios',
+    'cc.hours': 'Lun–Vie 9:00–18:00 · Sáb 9:00–17:00 · Dom cerrado',
+    'cc.address': 'Emerald Trade Center · Av. Jiménez 5-43, Local 216 · Bogotá',
+    'cc.directions': 'Cómo llegar',
+    'cc.back': 'Volver',
+    'cc.go': 'Buscar',
+
     // Tarjeta de producto
     'card.consultPrice': 'Consultar precio',
     'card.madeToOrder': '✦ Se fabrica bajo pedido · 10 días hábiles',
@@ -656,6 +671,20 @@ export const messages = {
 
     'dock.askAboutPiece': 'Ask about this piece',
     'dock.askInfo': 'Ask for info',
+
+    'cc.title': 'Cushion Concierge',
+    'cc.subtitle': 'How can we help?',
+    'cc.location': 'Location & hours',
+    'cc.custom': 'Design a custom jewel',
+    'cc.searchOpt': 'Find a piece',
+    'cc.whatsapp': 'Chat on WhatsApp',
+    'cc.searchPlaceholder': 'e.g. emerald ring, earrings…',
+    'cc.hoursTitle': 'Hours',
+    'cc.hours': 'Mon–Fri 9am–6pm · Sat 9am–5pm · Sun closed',
+    'cc.address': 'Emerald Trade Center · Av. Jiménez 5-43, Local 216 · Bogotá',
+    'cc.directions': 'Get directions',
+    'cc.back': 'Back',
+    'cc.go': 'Search',
 
     'card.consultPrice': 'Request price',
     'card.madeToOrder': '✦ Made to order · 10 business days',

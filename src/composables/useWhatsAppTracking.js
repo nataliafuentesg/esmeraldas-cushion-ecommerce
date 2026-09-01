@@ -52,6 +52,9 @@ export function useWhatsAppTracking() {
       utmSource:    attribution.utm_source || null,
       utmMedium:    attribution.utm_medium || null,
       utmCampaign:  attribution.utm_campaign || null,
+      utmContent:   attribution.utm_content || null,   // anuncio
+      utmTerm:      attribution.utm_term || null,       // grupo de anuncios
+      placement:    attribution.utm_placement || null,  // ubicación
     }).catch(() => {});
   };
 

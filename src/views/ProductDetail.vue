@@ -319,6 +319,9 @@ const handleWhatsAppClick = () => {
     utmSource:    attribution.utm_source || null,
     utmMedium:    attribution.utm_medium || null,
     utmCampaign:  attribution.utm_campaign || null,
+    utmContent:   attribution.utm_content || null,
+    utmTerm:      attribution.utm_term || null,
+    placement:    attribution.utm_placement || null,
   }).catch(() => {}); // silencioso — no interrumpir flujo
 
   // 3. Abrir WhatsApp — incluye el link del producto para que el equipo sepa de cuál pieza se trata

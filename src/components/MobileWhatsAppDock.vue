@@ -45,18 +45,22 @@ const label = computed(() =>
 </script>
 
 <template>
-  <!-- Dock solo en móvil (md:hidden). Fijo abajo, verde WhatsApp. -->
+  <!-- Dock solo en móvil (md:hidden). Fijo abajo, en verde esmeralda de la marca. -->
   <a
     :href="waLink"
     target="_blank"
     rel="noopener"
-    class="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-center gap-2.5
-           bg-[#25D366] text-white py-3.5 px-4 text-sm font-bold tracking-wide
-           shadow-[0_-4px_20px_rgba(0,0,0,0.28)] active:brightness-95 transition-[filter]"
-    style="padding-bottom: calc(0.875rem + env(safe-area-inset-bottom));"
+    class="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-center gap-3
+           bg-brand-primary text-white py-4 px-4 text-[11px] font-bold uppercase tracking-[0.25em]
+           border-t border-brand-gold/50 shadow-[0_-6px_24px_rgba(0,0,0,0.35)]
+           active:brightness-95 transition-[filter]"
+    style="padding-bottom: calc(1rem + env(safe-area-inset-bottom));"
     aria-label="WhatsApp"
   >
-    <Icon icon="simple-icons:whatsapp" class="w-5 h-5" />
+    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white/15 shrink-0">
+      <Icon icon="simple-icons:whatsapp" class="w-3.5 h-3.5" />
+    </span>
+    <span class="text-brand-gold">✦</span>
     {{ label }}
   </a>
 </template>

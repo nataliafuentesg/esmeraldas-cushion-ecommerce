@@ -10,7 +10,8 @@
 const STORAGE_KEY = 'cushion_attribution';
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 días
 
-const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+// utm_content = anuncio · utm_term = grupo de anuncios · utm_placement = ubicación
+const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_placement'];
 
 /**
  * Se llama una vez al cargar la app. Si la URL trae parámetros de campaña,

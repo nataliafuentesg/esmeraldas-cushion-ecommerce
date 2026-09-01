@@ -28,7 +28,7 @@ const fmtDateTime = (d) => d
 
 // Origen legible: fuente · medio · campaña (lo que exista)
 const originText = (i) => {
-  const parts = [i.utmSource, i.utmMedium, i.utmCampaign].filter(Boolean);
+  const parts = [i.utmSource, i.utmCampaign, i.utmTerm, i.utmContent, i.placement].filter(Boolean);
   return parts.length ? parts.join(' · ') : 'Directo / orgánico';
 };
 
@@ -61,14 +61,14 @@ const filtered = computed(() => {
 
 // ── Descargar Excel (CSV UTF-8 con BOM para tildes) ──────────────────────
 const downloadExcel = () => {
-  const headers = ['Fecha', 'Pieza', 'Slug', 'Canal', 'Correo', 'Fuente', 'Medio', 'Campaña'];
+  const headers = ['Fecha', 'Pieza', 'Slug', 'Canal', 'Correo', 'Fuente', 'Medio', 'Campaña', 'Grupo de anuncios', 'Anuncio', 'Ubicación'];
   const esc = (v) => {
     const s = (v ?? '').toString().replace(/"/g, '""');
     return /[",\n;]/.test(s) ? `"${s}"` : s;
   };
   const rows = filtered.value.map(i => [
     fmtDateTime(i.createdAt), i.productName, i.productSlug, i.channel || 'whatsapp',
-    i.clientEmail, i.utmSource, i.utmMedium, i.utmCampaign,
+    i.clientEmail, i.utmSource, i.utmMedium, i.utmCampaign, i.utmTerm, i.utmContent, i.placement,
   ].map(esc).join(','));
 
   const csv = '﻿' + [headers.join(','), ...rows].join('\r\n');
