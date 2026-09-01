@@ -1,15 +1,31 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useLocaleStore } from '@/stores/locale';
+import { useAnalytics } from '@/composables/useAnalytics';
 
 const router = useRouter();
 const L = useLocaleStore();
+const { trackCustomizeClick } = useAnalytics();
 
 const open = ref(false);
 const view = ref('menu'); // 'menu' | 'location'
 const q = ref('');
+
+// Saludo emergente al entrar (una vez por sesión)
+const showGreeting = ref(false);
+onMounted(() => {
+  let greeted = false;
+  try { greeted = sessionStorage.getItem('cc_greeted') === '1'; } catch (e) { /* noop */ }
+  if (greeted) return;
+  setTimeout(() => { if (!open.value) showGreeting.value = true; }, 2800);
+});
+const dismissGreeting = () => {
+  showGreeting.value = false;
+  try { sessionStorage.setItem('cc_greeted', '1'); } catch (e) { /* noop */ }
+};
+const openFromGreeting = () => { dismissGreeting(); open.value = true; };
 
 const WA = '573136133822';
 const MAPS = 'https://www.google.com/maps/search/?api=1&query=Emerald+Trade+Center+Avenida+Jimenez+Bogota';
@@ -17,11 +33,20 @@ const MAPS = 'https://www.google.com/maps/search/?api=1&query=Emerald+Trade+Cent
 const waGeneral = computed(() =>
   `https://wa.me/${WA}?text=${encodeURIComponent('Hola Cushion 💚 quiero más información sobre sus joyas y esmeraldas.')}`
 );
-const waCustom = computed(() =>
-  `https://wa.me/${WA}?text=${encodeURIComponent('Hola Cushion 💚 quiero diseñar una joya a mi medida. ¿Me asesoran?')}`
-);
 
-const toggle = () => { open.value = !open.value; if (!open.value) view.value = 'menu'; };
+// "Diseñar a la medida" → página de personalización (/esmeraldas), medido
+const goCustomize = () => {
+  trackCustomizeClick('widget');
+  open.value = false;
+  view.value = 'menu';
+  router.push('/esmeraldas');
+};
+
+const toggle = () => {
+  open.value = !open.value;
+  if (!open.value) view.value = 'menu';
+  if (open.value) dismissGreeting();
+};
 
 const doSearch = () => {
   const term = q.value.trim();
@@ -59,9 +84,10 @@ const doSearch = () => {
             <Icon icon="lucide:chevron-right" class="w-3.5 h-3.5 text-brand-white/20 ml-auto" />
           </button>
 
-          <a :href="waCustom" target="_blank" rel="noopener" class="cc-item">
+          <button @click="goCustomize" class="cc-item">
             <Icon icon="lucide:sparkles" class="cc-ico" /> {{ L.t('cc.custom') }}
-          </a>
+            <Icon icon="lucide:chevron-right" class="w-3.5 h-3.5 text-brand-white/20 ml-auto" />
+          </button>
 
           <!-- Buscar pieza -->
           <div class="px-3 pt-2 pb-1">
@@ -105,12 +131,28 @@ const doSearch = () => {
       </div>
     </transition>
 
+    <!-- Saludo emergente -->
+    <transition name="cc-pop">
+      <div v-if="showGreeting && !open"
+        @click="openFromGreeting"
+        class="fixed bottom-24 right-6 z-[60] w-64 bg-brand-black border border-brand-gold/30 shadow-2xl p-4 pr-8 cursor-pointer">
+        <button @click.stop="dismissGreeting" aria-label="Cerrar"
+          class="absolute top-2 right-2 text-brand-white/30 hover:text-brand-gold transition-colors">
+          <Icon icon="lucide:x" class="w-3.5 h-3.5" />
+        </button>
+        <p class="text-brand-white/85 text-xs font-sans-luxury leading-relaxed">{{ L.t('cc.greeting') }}</p>
+      </div>
+    </transition>
+
     <!-- Botón flotante -->
     <button @click="toggle" aria-label="Asesoría"
       class="fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full bg-brand-primary text-white
              flex items-center justify-center shadow-2xl border border-brand-gold/40
              hover:scale-105 active:scale-95 transition-transform">
       <Icon :icon="open ? 'lucide:x' : 'lucide:message-circle'" class="w-6 h-6" />
+      <!-- Notificación (mientras hay saludo sin abrir) -->
+      <span v-if="showGreeting && !open"
+        class="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-brand-gold text-brand-black text-[9px] font-bold flex items-center justify-center border-2 border-brand-black">1</span>
     </button>
   </div>
 </template>

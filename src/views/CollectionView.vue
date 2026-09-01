@@ -370,7 +370,7 @@ onUnmounted(() => {
       <button 
         v-if="showBackToTop" 
         @click="scrollToTop" 
-        class="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 bg-brand-black/90 border border-brand-gold text-brand-gold p-4 md:p-3 shadow-2xl backdrop-blur-sm hover:bg-brand-gold hover:text-brand-black transition-all duration-300"
+        class="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50 bg-brand-black/90 border border-brand-gold text-brand-gold p-4 md:p-3 shadow-2xl backdrop-blur-sm hover:bg-brand-gold hover:text-brand-black transition-all duration-300"
         aria-label="Volver al tope superior"
       >
         <Icon icon="lucide:arrow-up" class="w-5 h-5" />

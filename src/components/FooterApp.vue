@@ -2,7 +2,9 @@
 import { RouterLink } from 'vue-router'
 import { Icon } from '@iconify/vue';
 import { useLocaleStore } from '@/stores/locale';
+import { useAnalytics } from '@/composables/useAnalytics';
 const L = useLocaleStore();
+const { trackCustomizeClick } = useAnalytics();
 
 const supportItems = [
     { key: 'footer.link.track', path: '/rastrear' },
@@ -41,12 +43,12 @@ const socialMedia = [
               {{ L.t('footer.customText') }}
           </p>
 
-          <a :href="whatsappLink" target="_blank"
+          <RouterLink to="/esmeraldas" @click="trackCustomizeClick('footer')"
              class="inline-flex items-center justify-center px-8 py-3 bg-brand-primary text-brand-black
                     font-bold text-sm tracking-wide hover:bg-brand-gold transition-colors duration-300">
-              <Icon icon="lucide:message-square" class="w-5 h-5 mr-3" />
+              <Icon icon="lucide:sparkles" class="w-5 h-5 mr-3" />
               {{ L.t('footer.customCta') }}
-          </a>
+          </RouterLink>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 pb-16 pt-8">

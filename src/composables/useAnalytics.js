@@ -187,6 +187,15 @@ export function useAnalytics() {
     fbqTrack('Search', { search_string: term });
   };
 
+  // Clic en "Personalizar / Diseñar a la medida" (intención, va a /esmeraldas)
+  const trackCustomizeClick = (source = '') => {
+    push({ event: 'click_customize', customize_source: source });
+    // Meta Pixel — evento personalizado (para audiencias / optimización)
+    if (typeof window.fbq === 'function') {
+      window.fbq('trackCustom', 'ClickPersonalizar', { source });
+    }
+  };
+
   // ─────────────────────────────────────────
   // HELPERS
   // ─────────────────────────────────────────
@@ -210,5 +219,6 @@ export function useAnalytics() {
     trackWhatsAppClick,
     trackEmeraldForm,
     trackSearch,
+    trackCustomizeClick,
   };
 }

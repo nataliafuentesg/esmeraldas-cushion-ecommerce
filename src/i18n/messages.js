@@ -323,6 +323,7 @@ export const messages = {
     'cc.directions': 'Cómo llegar',
     'cc.back': 'Volver',
     'cc.go': 'Buscar',
+    'cc.greeting': '¡Hola! 💚 ¿Buscas tu esmeralda perfecta? Estoy para ayudarte.',
 
     // Tarjeta de producto
     'card.consultPrice': 'Consultar precio',
@@ -685,6 +686,7 @@ export const messages = {
     'cc.directions': 'Get directions',
     'cc.back': 'Back',
     'cc.go': 'Search',
+    'cc.greeting': "Hi! 💚 Looking for your perfect emerald? I'm here to help.",
 
     'card.consultPrice': 'Request price',
     'card.madeToOrder': '✦ Made to order · 10 business days',
