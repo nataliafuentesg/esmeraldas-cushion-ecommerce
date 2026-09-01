@@ -19,7 +19,12 @@
  *  - whatsapp_click     → clic en WhatsApp          → fbq Contact (dedup)
  *  - generate_lead      → formulario esmeralda      → fbq Lead (dedup)
  *  - search             → búsqueda realizada        → fbq Search
+ *
+ * Además, cada evento se registra en NUESTRO backend (logEvent → /api/events)
+ * para tener analítica propia, independiente de GA/Meta.
  */
+import { logEvent } from '@/utils/eventlog';
+
 export function useAnalytics() {
 
   /** Push base al dataLayer — nunca falla si GTM no está cargado */
@@ -48,6 +53,7 @@ export function useAnalytics() {
   // ─────────────────────────────────────────
 
   const trackViewProduct = (product) => {
+    logEvent('view_product', { label: product?.name });
     push({ ecommerce: null }); // limpiar ecommerce previo
     push({
       event: 'view_item',
@@ -69,6 +75,7 @@ export function useAnalytics() {
   };
 
   const trackAddToCart = (product, quantity = 1) => {
+    logEvent('add_to_cart', { label: product?.name });
     push({ ecommerce: null });
     push({
       event: 'add_to_cart',
@@ -89,6 +96,7 @@ export function useAnalytics() {
   };
 
   const trackBeginCheckout = (items, total) => {
+    logEvent('begin_checkout');
     push({ ecommerce: null });
     push({
       event: 'begin_checkout',
@@ -114,6 +122,7 @@ export function useAnalytics() {
    *                              deduplicar contra el Purchase del backend (CAPI).
    */
   const trackPurchase = ({ orderNumber, total, items = [] }) => {
+    logEvent('purchase', { label: orderNumber });
     push({ ecommerce: null });
     push({
       event: 'purchase',
@@ -145,6 +154,7 @@ export function useAnalytics() {
    * @param {string} [eventId]  ID compartido con el backend para deduplicar el Contact.
    */
   const trackWhatsAppClick = (product, eventId = null) => {
+    logEvent('whatsapp_click', { label: product?.name });
     push({
       event: 'whatsapp_click',
       product_name: product?.name || '',
@@ -168,6 +178,7 @@ export function useAnalytics() {
    * @param {string} [eventId]   ID compartido con el backend para deduplicar el Lead.
    */
   const trackEmeraldForm = (method, eventId = null) => {
+    logEvent('generate_lead', { source: 'esmeraldas_form', label: method });
     push({
       event: 'generate_lead',
       lead_source: 'esmeraldas_form',
@@ -182,6 +193,7 @@ export function useAnalytics() {
 
   /** Búsqueda realizada */
   const trackSearch = (term) => {
+    logEvent('search', { label: term });
     push({ event: 'search', search_term: term });
     // Meta Pixel — Search (solo navegador)
     fbqTrack('Search', { search_string: term });
@@ -189,6 +201,7 @@ export function useAnalytics() {
 
   // Clic en "Personalizar / Diseñar a la medida" (intención, va a /esmeraldas)
   const trackCustomizeClick = (source = '') => {
+    logEvent('customize_click', { source });
     push({ event: 'click_customize', customize_source: source });
     // Meta Pixel — evento personalizado (para audiencias / optimización)
     if (typeof window.fbq === 'function') {

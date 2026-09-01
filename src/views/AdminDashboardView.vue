@@ -6,6 +6,7 @@ import { Icon } from '@iconify/vue';
 
 // Importamos los componentes modulares
 const AdminOverview = defineAsyncComponent(() => import('@/components/admin/AdminOverview.vue'));
+const AdminEvents = defineAsyncComponent(() => import('@/components/admin/AdminEvents.vue'));
 const AdminOrders = defineAsyncComponent(() => import('@/components/admin/AdminOrders.vue'));
 const AdminProducts = defineAsyncComponent(() => import('@/components/admin/AdminProducts.vue'));
 const AdminMessages = defineAsyncComponent(() => import('@/components/admin/AdminMessages.vue'));
@@ -59,6 +60,9 @@ const selectTab = (tab) => {
         <button @click="selectTab('resumen')" :class="activeTab === 'resumen' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
           <Icon icon="lucide:layout-dashboard" class="w-5 h-5 md:w-4 md:h-4" /><span>Resumen</span>
         </button>
+        <button @click="selectTab('analitica')" :class="activeTab === 'analitica' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
+          <Icon icon="lucide:activity" class="w-5 h-5 md:w-4 md:h-4" /><span>Analítica</span>
+        </button>
         <button @click="selectTab('pedidos')" :class="activeTab === 'pedidos' ? 'text-brand-gold bg-brand-white/5 border-l-2 md:border-l-0 md:border-r-2 border-brand-gold' : 'text-brand-white/70 hover:bg-brand-white/5'" class="w-full text-left px-4 py-4 md:py-3 text-xs tracking-wide flex items-center space-x-3 transition-colors">
           <Icon icon="lucide:shopping-bag" class="w-5 h-5 md:w-4 md:h-4" /><span>Pedidos</span>
         </button>
@@ -93,6 +97,7 @@ const selectTab = (tab) => {
       <transition name="fade" mode="out-in">
         <component :is="
           activeTab === 'resumen'     ? AdminOverview :
+          activeTab === 'analitica'   ? AdminEvents :
           activeTab === 'pedidos'     ? AdminOrders :
           activeTab === 'productos'   ? AdminProducts :
           activeTab === 'mensajes'    ? AdminMessages :

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { useLocaleStore } from '@/stores/locale';
 import { useAnalytics } from '@/composables/useAnalytics';
+import { logEvent } from '@/utils/eventlog';
 
 const router = useRouter();
 const L = useLocaleStore();
@@ -25,7 +26,7 @@ const dismissGreeting = () => {
   showGreeting.value = false;
   try { sessionStorage.setItem('cc_greeted', '1'); } catch (e) { /* noop */ }
 };
-const openFromGreeting = () => { dismissGreeting(); open.value = true; };
+const openFromGreeting = () => { dismissGreeting(); open.value = true; logEvent('widget_open', { source: 'greeting' }); };
 
 const WA = '573136133822';
 const MAPS = 'https://www.google.com/maps/search/?api=1&query=Emerald+Trade+Center+Avenida+Jimenez+Bogota';
@@ -45,7 +46,7 @@ const goCustomize = () => {
 const toggle = () => {
   open.value = !open.value;
   if (!open.value) view.value = 'menu';
-  if (open.value) dismissGreeting();
+  if (open.value) { dismissGreeting(); logEvent('widget_open', { source: 'button' }); }
 };
 
 const doSearch = () => {
