@@ -7,10 +7,14 @@ import CartOffCanvas from '@/components/CartOffCanvas.vue';
 import MobileWhatsAppDock from '@/components/MobileWhatsAppDock.vue';
 import { useCartStore } from '@/stores/cart';
 import { useHead } from '@unhead/vue';
+import { useWhatsAppTracking } from '@/composables/useWhatsAppTracking';
 
 const route = useRoute();
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 const cartStore = useCartStore();
+
+// Mide toda interacción de WhatsApp del sitio (cualquier enlace wa.me)
+useWhatsAppTracking();
 
 // OG tags base — se aplican a todas las páginas como fallback.
 // ProductDetail.vue las sobrescribe con datos del producto específico.
