@@ -5,7 +5,7 @@ import { useProductsStore } from '@/stores/products';
 import { useAuthStore } from '@/stores/auth';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { getAttribution } from '@/utils/utm';
-import api from '@/api/axios';
+import { beacon } from '@/utils/beacon';
 
 /**
  * Mide CUALQUIER interacción de WhatsApp del sitio, venga de donde venga.
@@ -41,9 +41,9 @@ export function useWhatsAppTracking() {
     // 1. dataLayer + Meta Pixel Contact
     try { trackWhatsAppClick(product || undefined, eventId); } catch (e) { /* noop */ }
 
-    // 2. Backend (fire & forget)
+    // 2. Backend — beacon (sobrevive a la navegación a WhatsApp)
     const attribution = getAttribution() || {};
-    api.post('/product-inquiries', {
+    beacon('/product-inquiries', {
       productSlug:  product?.slug || null,
       productName:  product?.name || 'Consulta general',
       channel:      'WHATSAPP',
@@ -55,7 +55,7 @@ export function useWhatsAppTracking() {
       utmContent:   attribution.utm_content || null,   // anuncio
       utmTerm:      attribution.utm_term || null,       // grupo de anuncios
       placement:    attribution.utm_placement || null,  // ubicación
-    }).catch(() => {});
+    });
   };
 
   const handler = (e) => {

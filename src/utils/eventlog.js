@@ -1,4 +1,4 @@
-import api from '@/api/axios';
+import { beacon } from '@/utils/beacon';
 import { getAttribution } from '@/utils/utm';
 
 /**
@@ -24,7 +24,7 @@ function clientId() {
 export function logEvent(type, data = {}) {
   try {
     const a = getAttribution() || {};
-    api.post('/events', {
+    beacon('/events', {
       type,
       source:      data.source || null,
       label:       data.label || null,
@@ -36,7 +36,7 @@ export function logEvent(type, data = {}) {
       utmContent:  a.utm_content || null,
       utmTerm:     a.utm_term || null,
       placement:   a.utm_placement || null,
-    }).catch(() => {});
+    });
   } catch {
     /* noop */
   }
