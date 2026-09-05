@@ -191,6 +191,23 @@ export function useAnalytics() {
     }, eventId);
   };
 
+  /**
+   * Envío del formulario de contacto general.
+   * Cuenta como Lead en Meta y en la analítica propia.
+   */
+  const trackContactForm = (eventId = null) => {
+    logEvent('generate_lead', { source: 'contact_form' });
+    push({
+      event: 'generate_lead',
+      lead_source: 'contact_form',
+    });
+    // Meta Pixel — Lead (solo navegador; el backend no envía Lead para contacto)
+    fbqTrack('Lead', {
+      content_name: 'Formulario de contacto',
+      content_category: 'contact',
+    }, eventId);
+  };
+
   /** Búsqueda realizada */
   const trackSearch = (term) => {
     logEvent('search', { label: term });
@@ -231,6 +248,7 @@ export function useAnalytics() {
     trackPurchase,
     trackWhatsAppClick,
     trackEmeraldForm,
+    trackContactForm,
     trackSearch,
     trackCustomizeClick,
   };

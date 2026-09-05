@@ -3,6 +3,9 @@ import { useLocaleStore } from '@/stores/locale';
 const L = useLocaleStore();
 import { ref } from 'vue';
 import api from '@/api/axios';
+import { useAnalytics } from '@/composables/useAnalytics';
+
+const { trackContactForm } = useAnalytics();
 
 const form = ref({
   name: '',
@@ -18,6 +21,7 @@ const submitContact = async () => {
   isSubmitting.value = true;
   try {
     await api.post('/contact', form.value);
+    trackContactForm(); // mide como Lead (Meta + analítica propia)
     isSent.value = true;
     form.value = { name: '', email: '', phone: '', message: '' }; // Limpiar
   } catch (error) {
