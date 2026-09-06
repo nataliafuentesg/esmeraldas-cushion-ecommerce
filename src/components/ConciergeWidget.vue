@@ -102,7 +102,7 @@ const doSearch = () => {
             </div>
           </div>
 
-          <a :href="waGeneral" target="_blank" rel="noopener"
+          <a :href="waGeneral" target="_blank" rel="noopener" data-wa-source="widget"
             class="mt-1 flex items-center justify-center gap-2 bg-brand-primary text-white text-[11px] font-bold uppercase tracking-[0.2em] py-3 hover:brightness-95 transition">
             <Icon icon="simple-icons:whatsapp" class="w-4 h-4" /> {{ L.t('cc.whatsapp') }}
           </a>

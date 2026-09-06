@@ -16,6 +16,7 @@ import { useFxStore } from '@/stores/fx';
 import { useLocaleStore } from '@/stores/locale';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
 import { getAttribution } from '@/utils/utm';
+import { beacon } from '@/utils/beacon';
 import { v4 as uuidv4 } from 'uuid';
 
 const router = useRouter();
@@ -305,15 +306,16 @@ const handleWhatsAppClick = () => {
   const eventId = 'contact_' + uuidv4();
 
   // 1. Analytics (dataLayer + Meta Pixel Contact con el event_id)
-  trackWhatsAppClick(product.value, eventId);
+  trackWhatsAppClick(product.value, eventId, 'pieza');
 
-  // 2. Registrar en backend (fire & forget — no bloquea la UX)
+  // 2. Registrar en backend con beacon (sobrevive a la navegación a WhatsApp)
   // Usa la atribución persistida (la URL ya no trae los UTM tras navegar)
   const attribution = getAttribution() || {};
-  api.post('/product-inquiries', {
+  beacon('/product-inquiries', {
     productSlug:  product.value.slug,
     productName:  product.value.name,
     channel:      'WHATSAPP',
+    source:       'pieza',
     clientEmail:  authStore.user?.email || null,
     eventId:      eventId,
     utmSource:    attribution.utm_source || null,
@@ -322,7 +324,7 @@ const handleWhatsAppClick = () => {
     utmContent:   attribution.utm_content || null,
     utmTerm:      attribution.utm_term || null,
     placement:    attribution.utm_placement || null,
-  }).catch(() => {}); // silencioso — no interrumpir flujo
+  });
 
   // 3. Abrir WhatsApp — incluye el link del producto para que el equipo sepa de cuál pieza se trata
   const isOutOfStock = product.value.stock === 0;

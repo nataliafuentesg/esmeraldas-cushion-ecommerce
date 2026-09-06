@@ -50,6 +50,7 @@ const label = computed(() =>
     :href="waLink"
     target="_blank"
     rel="noopener"
+    data-wa-source="dock"
     class="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-center gap-3
            bg-brand-primary text-white py-4 px-4 text-[11px] font-bold uppercase tracking-[0.25em]
            border-t border-brand-gold/50 shadow-[0_-6px_24px_rgba(0,0,0,0.35)]

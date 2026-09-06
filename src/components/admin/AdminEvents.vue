@@ -159,6 +159,24 @@ const download = async () => {
           <p v-else class="text-brand-white/30 text-xs mt-5">Sin consultas de WhatsApp con pieza asociada.</p>
         </section>
 
+        <!-- WHATSAPP POR BOTÓN / ORIGEN -->
+        <section class="panel">
+          <h2 class="panel-title">WhatsApp: desde qué botón</h2>
+          <p class="panel-hint">De dónde tocan WhatsApp: la pieza, el dock del celular, el chat… Este total debería parecerse a los "Contactos" de Meta.</p>
+          <div v-if="data.whatsappBySource?.length" class="space-y-3 mt-5">
+            <div v-for="r in data.whatsappBySource" :key="r.key">
+              <div class="flex justify-between items-baseline mb-1 gap-3">
+                <span class="text-xs text-brand-white/80 truncate capitalize">{{ r.key }}</span>
+                <span class="text-[11px] text-brand-white/50 shrink-0">{{ money(r.count) }}</span>
+              </div>
+              <div class="h-1.5 bg-brand-white/5 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500/60 rounded-full" :style="{ width: pct(data.whatsappBySource, r.count) + '%' }"></div>
+              </div>
+            </div>
+          </div>
+          <p v-else class="text-brand-white/30 text-xs mt-5">Aún sin clics de WhatsApp en este periodo.</p>
+        </section>
+
         <!-- QUÉ BUSCAN -->
         <section class="panel">
           <h2 class="panel-title">Qué buscan en el sitio</h2>

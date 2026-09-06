@@ -153,10 +153,11 @@ export function useAnalytics() {
    * @param {object} product
    * @param {string} [eventId]  ID compartido con el backend para deduplicar el Contact.
    */
-  const trackWhatsAppClick = (product, eventId = null) => {
-    logEvent('whatsapp_click', { label: product?.name });
+  const trackWhatsAppClick = (product, eventId = null, source = null) => {
+    logEvent('whatsapp_click', { label: product?.name, source });
     push({
       event: 'whatsapp_click',
+      wa_source:    source || '',
       product_name: product?.name || '',
       product_id:   product?.id   || '',
       product_slug: product?.slug || '',

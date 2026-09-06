@@ -29,7 +29,7 @@ export function useWhatsAppTracking() {
   const authStore = useAuthStore();
   const { trackWhatsAppClick } = useAnalytics();
 
-  const measure = () => {
+  const measure = (source = null) => {
     const eventId = 'contact_' + uuidv4(); // mismo id en Pixel y CAPI (dedup)
 
     // Contexto: en el detalle de una pieza, adjuntamos la pieza
@@ -38,8 +38,11 @@ export function useWhatsAppTracking() {
       product = productsStore.products.find((p) => p.slug === route.params.slug) || null;
     }
 
+    // Origen del botón (dock, footer, widget…). Si no viene, deducimos algo útil.
+    const btnSource = source || (product ? 'pieza' : null);
+
     // 1. dataLayer + Meta Pixel Contact
-    try { trackWhatsAppClick(product || undefined, eventId); } catch (e) { /* noop */ }
+    try { trackWhatsAppClick(product || undefined, eventId, btnSource); } catch (e) { /* noop */ }
 
     // 2. Backend — beacon (sobrevive a la navegación a WhatsApp)
     const attribution = getAttribution() || {};
@@ -47,6 +50,7 @@ export function useWhatsAppTracking() {
       productSlug:  product?.slug || null,
       productName:  product?.name || 'Consulta general',
       channel:      'WHATSAPP',
+      source:       btnSource || null,
       clientEmail:  authStore.user?.email || null,
       eventId:      eventId,
       utmSource:    attribution.utm_source || null,
@@ -62,7 +66,7 @@ export function useWhatsAppTracking() {
     // No medir clics de WhatsApp dentro del admin (contacto interno a clientes)
     if ((route.path || '').startsWith('/admin')) return;
     const a = e.target?.closest?.('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
-    if (a) measure();
+    if (a) measure(a.getAttribute('data-wa-source'));
   };
 
   onMounted(() => document.addEventListener('click', handler, true));
