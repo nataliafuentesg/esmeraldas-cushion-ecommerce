@@ -29,15 +29,16 @@ export function useWhatsAppTracking() {
   const authStore = useAuthStore();
   const { trackWhatsAppClick } = useAnalytics();
 
-  // Guardián anti doble-tap: evita contar dos veces el mismo botón si tocan
-  // muy rápido (< 1.5 s). Toques reales separados sí se cuentan.
+  // Guardián anti doble-tap: evita contar dos veces el mismo botón si se dispara
+  // dos veces seguidas (< 2.5 s) — típico del navegador interno de Facebook/IG.
+  // Toques reales separados sí se cuentan.
   let lastFireAt = 0;
   let lastSource = '';
 
   const measure = (source = null) => {
     const now = Date.now();
     const src = source || '';
-    if (now - lastFireAt < 1500 && src === lastSource) return;
+    if (now - lastFireAt < 2500 && src === lastSource) return;
     lastFireAt = now;
     lastSource = src;
 
