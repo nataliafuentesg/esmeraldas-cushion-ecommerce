@@ -123,7 +123,7 @@ const socialMedia = [
           © {{ new Date().getFullYear() }} CUSHION Joyas & Esmeraldas. {{ L.t('footer.rights') }}
         </p>
 
-        <a href="https://marcapro.agency" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] font-sans-luxury tracking-wide text-brand-white/40 hover:text-brand-gold transition-colors duration-300">
+        <a href="https://marcapro.co" target="_blank" class="inline-flex items-center gap-1.5 text-[10px] font-sans-luxury tracking-wide text-brand-white/40 hover:text-brand-gold transition-colors duration-300">
           Desarrollado por MarcaPro
           <Icon icon="lucide:external-link" class="w-3 h-3 opacity-70" />
         </a>

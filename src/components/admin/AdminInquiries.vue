@@ -22,6 +22,10 @@ onMounted(async () => {
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const sourceOf = (i) => (i.utmSource || '').trim().toLowerCase() || 'directo / orgánico';
+
+// Botón desde donde tocaron WhatsApp
+const BUTTON_LABEL = { pieza: 'Pieza', dock: 'Dock móvil', widget: 'Chat / widget' };
+const buttonLabel = (i) => BUTTON_LABEL[i.source] || (i.source ? i.source : 'Enlace en página');
 const fmtDateTime = (d) => d
   ? new Date(d).toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   : '—';
@@ -61,13 +65,13 @@ const filtered = computed(() => {
 
 // ── Descargar Excel (CSV UTF-8 con BOM para tildes) ──────────────────────
 const downloadExcel = () => {
-  const headers = ['Fecha', 'Pieza', 'Slug', 'Canal', 'Correo', 'Fuente', 'Medio', 'Campaña', 'Grupo de anuncios', 'Anuncio', 'Ubicación'];
+  const headers = ['Fecha', 'Pieza', 'Botón', 'Slug', 'Canal', 'Correo', 'Fuente', 'Medio', 'Campaña', 'Grupo de anuncios', 'Anuncio', 'Ubicación'];
   const esc = (v) => {
     const s = (v ?? '').toString().replace(/"/g, '""');
     return /[",\n;]/.test(s) ? `"${s}"` : s;
   };
   const rows = filtered.value.map(i => [
-    fmtDateTime(i.createdAt), i.productName, i.productSlug, i.channel || 'whatsapp',
+    fmtDateTime(i.createdAt), i.productName, buttonLabel(i), i.productSlug, i.channel || 'whatsapp',
     i.clientEmail, i.utmSource, i.utmMedium, i.utmCampaign, i.utmTerm, i.utmContent, i.placement,
   ].map(esc).join(','));
 
@@ -136,6 +140,7 @@ const downloadExcel = () => {
             <tr class="bg-brand-white/[0.03] text-[10px] uppercase tracking-wide text-brand-white/40">
               <th class="px-4 py-3 font-medium">Fecha</th>
               <th class="px-4 py-3 font-medium">Pieza</th>
+              <th class="px-4 py-3 font-medium">Botón</th>
               <th class="px-4 py-3 font-medium">Canal</th>
               <th class="px-4 py-3 font-medium">Correo</th>
               <th class="px-4 py-3 font-medium">Origen</th>
@@ -145,6 +150,11 @@ const downloadExcel = () => {
             <tr v-for="i in filtered" :key="i.id" class="text-xs hover:bg-brand-white/[0.02] transition-colors">
               <td class="px-4 py-3 text-brand-white/50 whitespace-nowrap">{{ fmtDateTime(i.createdAt) }}</td>
               <td class="px-4 py-3 text-brand-white/85">{{ i.productName || '—' }}</td>
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center text-[11px] text-brand-white/70 border border-brand-white/10 px-2 py-0.5 rounded-full">
+                  {{ buttonLabel(i) }}
+                </span>
+              </td>
               <td class="px-4 py-3">
                 <span class="inline-flex items-center gap-1 text-emerald-400/90">
                   <Icon icon="lucide:message-circle" class="w-3 h-3" /> {{ i.channel || 'whatsapp' }}
