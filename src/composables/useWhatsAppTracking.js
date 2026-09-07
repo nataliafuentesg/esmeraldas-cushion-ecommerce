@@ -29,7 +29,18 @@ export function useWhatsAppTracking() {
   const authStore = useAuthStore();
   const { trackWhatsAppClick } = useAnalytics();
 
+  // Guardián anti doble-tap: evita contar dos veces el mismo botón si tocan
+  // muy rápido (< 1.5 s). Toques reales separados sí se cuentan.
+  let lastFireAt = 0;
+  let lastSource = '';
+
   const measure = (source = null) => {
+    const now = Date.now();
+    const src = source || '';
+    if (now - lastFireAt < 1500 && src === lastSource) return;
+    lastFireAt = now;
+    lastSource = src;
+
     const eventId = 'contact_' + uuidv4(); // mismo id en Pixel y CAPI (dedup)
 
     // Contexto: en el detalle de una pieza, adjuntamos la pieza
