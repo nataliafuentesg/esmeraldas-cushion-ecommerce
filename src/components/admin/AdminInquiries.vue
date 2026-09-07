@@ -27,7 +27,7 @@ const sourceOf = (i) => (i.utmSource || '').trim().toLowerCase() || 'directo / o
 const BUTTON_LABEL = { pieza: 'Pieza', dock: 'Dock móvil', widget: 'Chat / widget' };
 const buttonLabel = (i) => BUTTON_LABEL[i.source] || (i.source ? i.source : 'Enlace en página');
 const fmtDateTime = (d) => d
-  ? new Date(d).toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  ? new Date(d).toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })
   : '—';
 
 // Origen legible: fuente · medio · campaña (lo que exista)
