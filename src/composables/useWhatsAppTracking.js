@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { v4 as uuidv4 } from 'uuid';
 import { useProductsStore } from '@/stores/products';
@@ -35,9 +35,18 @@ export function useWhatsAppTracking() {
   let lastFireAt = 0;
   let lastSource = '';
 
+  // Guardián anti mis-tap: un toque en los primeros 2 s de entrar a una página
+  // es casi siempre accidental (típico de Audience Network / tráfico basura que
+  // aterriza y toca sin querer el dock). No lo contamos como Contact.
+  const DWELL_MS = 2000;
+  let pageEnteredAt = Date.now();
+  watch(() => route.fullPath, () => { pageEnteredAt = Date.now(); });
+
   const measure = (source = null) => {
     const now = Date.now();
     const src = source || '';
+    // Mis-tap al aterrizar → ignorar (deja abrir WhatsApp, pero no cuenta)
+    if (now - pageEnteredAt < DWELL_MS) return;
     if (now - lastFireAt < 2500 && src === lastSource) return;
     lastFireAt = now;
     lastSource = src;
