@@ -318,6 +318,7 @@ const handleWhatsAppClick = () => {
     productName:  product.value.name,
     channel:      'WHATSAPP',
     source:       'pieza',
+    value:        product.value.price || 0,
     fbp:          fb.fbp,
     fbc:          fb.fbc,
     clientEmail:  authStore.user?.email || null,

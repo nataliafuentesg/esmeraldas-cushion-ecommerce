@@ -74,6 +74,7 @@ export function useWhatsAppTracking() {
       productName:  product?.name || 'Consulta general',
       channel:      'WHATSAPP',
       source:       btnSource || null,
+      value:        product?.price || 0,
       fbp:          fb.fbp,
       fbc:          fb.fbc,
       clientEmail:  authStore.user?.email || null,
