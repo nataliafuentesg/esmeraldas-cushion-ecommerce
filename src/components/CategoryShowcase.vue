@@ -15,7 +15,7 @@ const categories = [
   <section class="bg-brand-black py-24 border-t border-brand-white/5">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       
-      <div class="text-center mb-16">
+      <div class="text-center mb-16" v-reveal>
         <h2 class="text-3xl md:text-5xl text-brand-white font-serif-elegant mb-4 tracking-normal">
           {{ L.t('home.categories.titlePre') }} <span class="text-brand-gold italic lowercase font-serif">{{ L.t('home.categories.titleSpan') }}</span>
         </h2>
@@ -24,9 +24,10 @@ const categories = [
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6">
         
-        <RouterLink 
-          v-for="(category, index) in categories" 
+        <RouterLink
+          v-for="(category, index) in categories"
           :key="category.name"
+          v-reveal="{ delay: index * 110 }"
           :to="category.path"
           class="relative overflow-hidden group block"
           :class="{

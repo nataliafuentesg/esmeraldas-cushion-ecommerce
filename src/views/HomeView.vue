@@ -68,11 +68,11 @@ useHead({
 
     <CategoryShowcase />
 
-    <NewArrivalsSection />
+    <NewArrivalsSection v-reveal />
 
-    <ReviewsSection />
+    <ReviewsSection v-reveal="{ variant: 'zoom' }" />
 
-    <StoreSection />
+    <StoreSection v-reveal />
   </main>
 </template>
 

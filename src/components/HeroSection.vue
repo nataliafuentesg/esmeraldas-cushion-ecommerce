@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useLocaleStore } from '@/stores/locale';
 const L = useLocaleStore();
 defineOptions({ name: 'HeroSection' });
@@ -7,26 +7,52 @@ defineOptions({ name: 'HeroSection' });
 const heroImagePcUrl     = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902048/2U5A4981_cyohne.jpg";
 const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902043/2U5A4648_rr9snu.jpg";
 
-// Elige la imagen según el tamaño (para el fondo parallax)
-const isDesktop = ref(true);
-let mq = null;
-const onMq = (e) => { isDesktop.value = e.matches; };
-onMounted(() => {
-  mq = window.matchMedia('(min-width: 768px)');
-  isDesktop.value = mq.matches;
-  mq.addEventListener('change', onMq);
-});
-onUnmounted(() => { if (mq) mq.removeEventListener('change', onMq); });
+// Parallax con JS: mueve la imagen más lento que el scroll (sin agrandarla).
+const section = ref(null);
+const media = ref(null);
+let raf = null;
 
-const heroBg = computed(() => isDesktop.value ? heroImagePcUrl : heroImageMobileUrl);
+const onScroll = () => {
+  if (raf) return;
+  raf = requestAnimationFrame(() => {
+    raf = null;
+    const sec = section.value;
+    const m = media.value;
+    if (!sec || !m) return;
+    const rect = sec.getBoundingClientRect();
+    // solo calcula si la sección está cerca del viewport
+    if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
+    const offset = Math.max(-110, Math.min(110, -rect.top * 0.12));
+    m.style.transform = `translate3d(0, ${offset}px, 0)`;
+  });
+};
+
+onMounted(() => {
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return; // respeta accesibilidad
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+onUnmounted(() => window.removeEventListener('scroll', onScroll));
 </script>
 
 <template>
-  <section class="min-h-screen bg-brand-black flex items-center justify-center relative overflow-hidden">
+  <section ref="section" class="min-h-screen bg-brand-black flex items-center justify-center relative overflow-hidden">
 
-    <!-- ── IMAGEN DE FONDO (parallax: fija en escritorio) ────────────────── -->
+    <!-- ── IMAGEN DE FONDO (parallax con JS, sin agrandar) ───────────────── -->
     <div class="absolute inset-0 z-0">
-      <div class="w-full h-full hero-bg" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
+      <div ref="media" class="hero-media">
+        <picture class="block w-full h-full">
+          <source :srcset="heroImagePcUrl" media="(min-width: 768px)" />
+          <img
+            :src="heroImageMobileUrl"
+            alt="Alta Joyería Cushion"
+            fetchpriority="high"
+            decoding="async"
+            class="w-full h-full object-cover hero-image"
+          />
+        </picture>
+      </div>
 
       <!-- Gradiente suave: oscurece solo tope y pie, respeta el centro -->
       <div class="absolute inset-0
@@ -93,16 +119,25 @@ const heroBg = computed(() => isDesktop.value ? heroImagePcUrl : heroImageMobile
 <style scoped>
 @reference "../assets/main.css";
 
-/* ── Fondo parallax: estático en escritorio, se revela al hacer scroll ── */
-.hero-bg {
-  background-size: cover;
-  background-position: center center;
-  background-attachment: scroll;
+/* Capa que se desplaza para el parallax (un poco más alta para no dejar bordes) */
+.hero-media {
+  position: absolute;
+  top: -15%;
+  left: 0;
+  right: 0;
+  height: 130%;
+  will-change: transform;
 }
 
-/* 'fixed' solo en escritorio (en móvil se comporta mal) */
-@media (min-width: 768px) and (hover: hover) {
-  .hero-bg { background-attachment: fixed; }
+/* ── Ken Burns: zoom muy lento para no marear ── */
+.hero-image {
+  animation: slow-zoom 24s ease-in-out infinite alternate;
+  object-position: center center;
+}
+
+@keyframes slow-zoom {
+  0%   { transform: scale(1);    }
+  100% { transform: scale(1.08); }
 }
 
 /* ── Aparición del contenido: fade + rise suave ── */
