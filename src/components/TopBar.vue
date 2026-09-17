@@ -1,15 +1,18 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { Icon } from '@iconify/vue';
 import { useLocaleStore } from '@/stores/locale';
 
 defineOptions({ name: 'TopBar' });
 
 const L = useLocaleStore();
 
-// Claves de mensaje (el texto se traduce según el idioma activo)
-const keys = ['topbar.shipping', 'topbar.worldwide', 'topbar.emeralds', 'topbar.advice', 'topbar.custom'];
+// Claves de mensaje (el texto se traduce según el idioma activo).
+// Amor y Amistad va primero para que sea lo primero que vean.
+const keys = ['topbar.love', 'topbar.shipping', 'topbar.worldwide', 'topbar.emeralds', 'topbar.advice', 'topbar.custom'];
 
 const current = ref(0);
+const isLove = computed(() => keys[current.value] === 'topbar.love');
 let timer = null;
 
 const next = () => {
@@ -28,16 +31,18 @@ onUnmounted(() => {
 <template>
   <div class="bg-brand-primary border-b border-brand-black/10 topbar-wrap">
 
-    <div class="relative h-7 flex items-center justify-center overflow-hidden px-4">
+    <div class="relative h-8 flex items-center justify-center overflow-hidden px-4">
 
       <Transition name="slide-up" mode="out-in">
         <p :key="current"
-           class="absolute inset-0 flex items-center justify-center gap-2
-                  text-[10px] tracking-[0.28em] font-sans-luxury font-light
+           class="absolute inset-0 flex items-center justify-center gap-2.5
+                  text-[11px] tracking-[0.18em] font-sans-luxury font-medium
                   topbar-text whitespace-nowrap">
-          <span class="text-brand-gold opacity-70 text-[8px]">✦</span>
+          <Icon v-if="isLove" icon="lucide:heart" class="w-3 h-3 text-brand-gold" />
+          <span v-else class="text-brand-gold opacity-70 text-[8px]">✦</span>
           {{ L.t(keys[current]) }}
-          <span class="text-brand-gold opacity-70 text-[8px]">✦</span>
+          <Icon v-if="isLove" icon="lucide:heart" class="w-3 h-3 text-brand-gold" />
+          <span v-else class="text-brand-gold opacity-70 text-[8px]">✦</span>
         </p>
       </Transition>
 

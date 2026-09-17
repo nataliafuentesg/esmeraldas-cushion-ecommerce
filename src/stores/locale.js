@@ -47,6 +47,7 @@ export const useLocaleStore = defineStore('locale', () => {
     'graduacion': 'occ.graduation', 'grado': 'occ.graduation', 'día de la madre': 'occ.mothersDay',
     'dia de la madre': 'occ.mothersDay', 'san valentín': 'occ.valentine', 'san valentin': 'occ.valentine',
     'cumpleaños': 'occ.birthday', 'cumpleanos': 'occ.birthday',
+    'amor y amistad': 'occ.love', 'amor': 'occ.love',
   };
   function occLabel(name) {
     const k = OCC_MAP[(name || '').toLowerCase().trim()];

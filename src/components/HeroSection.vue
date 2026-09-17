@@ -1,27 +1,32 @@
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useLocaleStore } from '@/stores/locale';
 const L = useLocaleStore();
 defineOptions({ name: 'HeroSection' });
 
 const heroImagePcUrl     = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902048/2U5A4981_cyohne.jpg";
 const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1774902043/2U5A4648_rr9snu.jpg";
+
+// Elige la imagen según el tamaño (para el fondo parallax)
+const isDesktop = ref(true);
+let mq = null;
+const onMq = (e) => { isDesktop.value = e.matches; };
+onMounted(() => {
+  mq = window.matchMedia('(min-width: 768px)');
+  isDesktop.value = mq.matches;
+  mq.addEventListener('change', onMq);
+});
+onUnmounted(() => { if (mq) mq.removeEventListener('change', onMq); });
+
+const heroBg = computed(() => isDesktop.value ? heroImagePcUrl : heroImageMobileUrl);
 </script>
 
 <template>
   <section class="min-h-screen bg-brand-black flex items-center justify-center relative overflow-hidden">
 
-    <!-- ── IMAGEN DE FONDO ───────────────────────────────────────────────── -->
+    <!-- ── IMAGEN DE FONDO (parallax: fija en escritorio) ────────────────── -->
     <div class="absolute inset-0 z-0">
-      <picture class="block w-full h-full">
-        <source :srcset="heroImagePcUrl" media="(min-width: 768px)" />
-        <img
-          :src="heroImageMobileUrl"
-          alt="Alta Joyería Cushion"
-          fetchpriority="high"
-          decoding="async"
-          class="w-full h-full object-cover hero-image"
-        />
-      </picture>
+      <div class="w-full h-full hero-bg" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
       <!-- Gradiente suave: oscurece solo tope y pie, respeta el centro -->
       <div class="absolute inset-0
@@ -88,15 +93,16 @@ const heroImageMobileUrl = "https://res.cloudinary.com/dfmvlqtfb/image/upload/v1
 <style scoped>
 @reference "../assets/main.css";
 
-/* ── Ken Burns: zoom muy lento para no marear ── */
-.hero-image {
-  animation: slow-zoom 24s ease-in-out infinite alternate;
-  object-position: center center;
+/* ── Fondo parallax: estático en escritorio, se revela al hacer scroll ── */
+.hero-bg {
+  background-size: cover;
+  background-position: center center;
+  background-attachment: scroll;
 }
 
-@keyframes slow-zoom {
-  0%   { transform: scale(1);    }
-  100% { transform: scale(1.08); }
+/* 'fixed' solo en escritorio (en móvil se comporta mal) */
+@media (min-width: 768px) and (hover: hover) {
+  .hero-bg { background-attachment: fixed; }
 }
 
 /* ── Aparición del contenido: fade + rise suave ── */

@@ -8,6 +8,7 @@
 export const messages = {
   es: {
     // Barra superior (rota)
+    'topbar.love': 'Amor y Amistad · encuentra el regalo perfecto',
     'topbar.shipping': 'Envío gratis a nivel nacional',
     'topbar.worldwide': 'Envíos asegurados a todo el mundo',
     'topbar.emeralds': 'Esmeraldas 100% colombianas',
@@ -67,6 +68,12 @@ export const messages = {
     'occ.birthday': 'Cumpleaños',
     'occ.homeTitle': 'Explorar Colecciones Especiales',
     'occ.filterTitle': 'Filtrar por Ocasión Especial',
+    'occ.love': 'Amor y Amistad',
+    'aa.eyebrow': '19 de septiembre · Amor y Amistad',
+    'aa.title': 'Regala esmeraldas este Amor y Amistad',
+    'aa.subtitle': 'La esmeralda, símbolo del amor eterno. El regalo que se recuerda para siempre.',
+    'aa.cta': 'Ver la selección',
+    'aa.whatsapp': 'Asesórate por WhatsApp',
 
     // Página de colección
     'col.title': 'Nuestra Colección',
@@ -392,6 +399,7 @@ export const messages = {
   },
 
   en: {
+    'topbar.love': 'Love & Friendship · find the perfect gift',
     'topbar.shipping': 'Free shipping across Colombia',
     'topbar.worldwide': 'Insured worldwide shipping',
     'topbar.emeralds': '100% Colombian emeralds',
@@ -445,6 +453,12 @@ export const messages = {
     'occ.birthday': 'Birthday',
     'occ.homeTitle': 'Explore Special Collections',
     'occ.filterTitle': 'Filter by Special Occasion',
+    'occ.love': 'Love & Friendship',
+    'aa.eyebrow': 'September 19 · Love & Friendship',
+    'aa.title': 'Give emeralds this Love & Friendship',
+    'aa.subtitle': 'The emerald, a symbol of eternal love. The gift remembered forever.',
+    'aa.cta': 'See the selection',
+    'aa.whatsapp': 'Get advice on WhatsApp',
 
     'col.title': 'Our Collection',
     'col.looseTitle': 'Loose Emeralds',

@@ -374,7 +374,7 @@ const deleteProduct = async (id, name) => {
             <div>
               <h4 class="text-brand-white tracking-[0.3em] text-[10px] border-b border-brand-white/10 pb-2 mb-6 opacity-60">Ocasión / Colección</h4>
               <div class="flex flex-wrap gap-4">
-                <label v-for="occ in ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Regalo']" :key="occ" class="flex items-center space-x-2 cursor-pointer group">
+                <label v-for="occ in ['Compromiso', 'Bodas', 'Quinceaños', 'Aniversario', 'Regalo', 'Amor y Amistad']" :key="occ" class="flex items-center space-x-2 cursor-pointer group">
                   <input type="checkbox" :value="occ" v-model="currentProduct.occasions" class="checkbox-admin">
                   <span class="text-[10px] text-brand-white/70 group-hover:text-brand-gold transition-colors">{{ occ }}</span>
                 </label>
