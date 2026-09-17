@@ -5,6 +5,7 @@ import { useProductsStore } from '@/stores/products';
 import { useAuthStore } from '@/stores/auth';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { getAttribution } from '@/utils/utm';
+import { getFbCookies } from '@/utils/fbcookies';
 import { beacon } from '@/utils/beacon';
 
 /**
@@ -67,11 +68,14 @@ export function useWhatsAppTracking() {
 
     // 2. Backend — beacon (sobrevive a la navegación a WhatsApp)
     const attribution = getAttribution() || {};
+    const fb = getFbCookies();
     beacon('/product-inquiries', {
       productSlug:  product?.slug || null,
       productName:  product?.name || 'Consulta general',
       channel:      'WHATSAPP',
       source:       btnSource || null,
+      fbp:          fb.fbp,
+      fbc:          fb.fbc,
       clientEmail:  authStore.user?.email || null,
       eventId:      eventId,
       utmSource:    attribution.utm_source || null,

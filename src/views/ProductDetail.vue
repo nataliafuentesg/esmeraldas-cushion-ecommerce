@@ -16,6 +16,7 @@ import { useFxStore } from '@/stores/fx';
 import { useLocaleStore } from '@/stores/locale';
 import { cloudinaryOptimize } from '@/utils/cloudinary';
 import { getAttribution } from '@/utils/utm';
+import { getFbCookies } from '@/utils/fbcookies';
 import { beacon } from '@/utils/beacon';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -311,11 +312,14 @@ const handleWhatsAppClick = () => {
   // 2. Registrar en backend con beacon (sobrevive a la navegación a WhatsApp)
   // Usa la atribución persistida (la URL ya no trae los UTM tras navegar)
   const attribution = getAttribution() || {};
+  const fb = getFbCookies();
   beacon('/product-inquiries', {
     productSlug:  product.value.slug,
     productName:  product.value.name,
     channel:      'WHATSAPP',
     source:       'pieza',
+    fbp:          fb.fbp,
+    fbc:          fb.fbc,
     clientEmail:  authStore.user?.email || null,
     eventId:      eventId,
     utmSource:    attribution.utm_source || null,
