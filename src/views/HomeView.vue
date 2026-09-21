@@ -1,7 +1,6 @@
 <script setup>
 import { useHead } from '@unhead/vue';
 import HeroSection from '@/components/HeroSection.vue'
-import AmorAmistadSection from '@/components/AmorAmistadSection.vue';
 import CategoryShowcase from '@/components/CategoryShowcase.vue';
 import NewArrivalsSection from '@/components/NewArrivalsSection.vue';
 import ReviewsSection from '@/components/ReviewsSection.vue';
@@ -62,8 +61,6 @@ useHead({
 
 <template>
   <main class="bg-brand-black min-h-screen">
-    <AmorAmistadSection />
-
     <HeroSection />
 
     <CategoryShowcase />

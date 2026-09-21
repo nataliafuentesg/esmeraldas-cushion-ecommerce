@@ -9,7 +9,7 @@ const L = useLocaleStore();
 
 // Claves de mensaje (el texto se traduce según el idioma activo).
 // Amor y Amistad va primero para que sea lo primero que vean.
-const keys = ['topbar.love', 'topbar.shipping', 'topbar.worldwide', 'topbar.emeralds', 'topbar.advice', 'topbar.custom'];
+const keys = ['topbar.shipping', 'topbar.worldwide', 'topbar.emeralds', 'topbar.advice', 'topbar.custom'];
 
 const current = ref(0);
 const isLove = computed(() => keys[current.value] === 'topbar.love');
