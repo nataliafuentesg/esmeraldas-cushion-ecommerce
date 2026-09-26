@@ -262,7 +262,7 @@ onUnmounted(() => {
           </div>
         </aside>
         <main class="flex-1">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12">
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-8 md:gap-y-12">
             <div v-for="i in 6" :key="i" class="space-y-4 animate-pulse">
               <div class="aspect-square bg-brand-white/[0.03] border border-brand-white/5 w-full"></div>
               <div class="h-3 bg-brand-white/20 w-3/4 mx-auto"></div>
@@ -335,7 +335,7 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6 gap-y-12 md:gap-y-16">
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-3 md:gap-x-6 gap-y-8 md:gap-y-16">
             <div 
               v-for="product in displayedProducts" 
               :key="product.id"
