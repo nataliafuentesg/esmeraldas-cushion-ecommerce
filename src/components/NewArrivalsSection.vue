@@ -80,7 +80,7 @@ const swiperBreakpoints = {
       >
         <swiper-slide v-for="product in newArrivals" :key="product.id" class="py-4 h-auto !flex !items-stretch">
           <!-- Sin borde/fondo propio: la ProductCard ya los trae (y su borde verde si es nueva) -->
-          <div class="w-full flex flex-col">
+          <div class="w-full flex flex-col h-full">
             <ProductCard :product="product" class="h-full" />
           </div>
         </swiper-slide>
@@ -103,6 +103,10 @@ const swiperBreakpoints = {
  * 8 piezas. Los dejamos dorados y con el activo alargado tipo cápsula (más
  * sofisticado que un simple círculo).
  */
+/* Todos los slides a la misma altura (la ProductCard llena con flex) */
+.na-swiper :deep(.swiper-wrapper) { align-items: stretch; }
+.na-swiper :deep(.swiper-slide) { height: auto; }
+
 .na-swiper :deep(.swiper-pagination) {
   position: relative;
   bottom: auto !important;

@@ -81,6 +81,10 @@ const swiperBreakpoints = {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Todos los slides a la misma altura */
+.rel-swiper :deep(.swiper-wrapper) { align-items: stretch; }
+.rel-swiper :deep(.swiper-slide) { height: auto; }
+
 /* En relacionadas las fichas van "sueltas": sin caja (fondo/sombra/borde),
    la foto respira y se ve más ligero y distinto a la tienda/home. */
 .rel-swiper :deep(.product-card) {
