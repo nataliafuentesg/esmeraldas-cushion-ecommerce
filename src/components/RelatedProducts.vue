@@ -81,6 +81,17 @@ const swiperBreakpoints = {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* En relacionadas las fichas van "sueltas": sin caja (fondo/sombra/borde),
+   la foto respira y se ve más ligero y distinto a la tienda/home. */
+.rel-swiper :deep(.product-card) {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+.rel-swiper :deep(.product-card:hover) {
+  box-shadow: none !important;
+}
+
 /* Barra de progreso dorada (distinta a los puntos del home) */
 .rel-swiper :deep(.swiper-pagination-progressbar) {
   position: relative;
