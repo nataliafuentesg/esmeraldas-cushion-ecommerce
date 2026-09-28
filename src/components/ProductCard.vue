@@ -63,7 +63,7 @@ watch(mainImage, () => {
 <template>
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
-    class="product-card group block w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
+    class="product-card group block w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden rounded-xl"
   >
     <!-- Shimmer de lujo en hover -->
     <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
