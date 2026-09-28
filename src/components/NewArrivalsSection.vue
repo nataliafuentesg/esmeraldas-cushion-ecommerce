@@ -33,10 +33,10 @@ onMounted(async () => {
 
 const modules = [Pagination, Autoplay];
 const swiperBreakpoints = {
-  320:  { slidesPerView: 1.1, spaceBetween: 20 },
-  768:  { slidesPerView: 2.2, spaceBetween: 30 },
-  1024: { slidesPerView: 3.2, spaceBetween: 40 },
-  1440: { slidesPerView: 4,   spaceBetween: 40 },
+  320:  { slidesPerView: 2.15, spaceBetween: 12 },
+  640:  { slidesPerView: 3.2,  spaceBetween: 18 },
+  1024: { slidesPerView: 4.2,  spaceBetween: 24 },
+  1440: { slidesPerView: 5,    spaceBetween: 28 },
 };
 </script>
 

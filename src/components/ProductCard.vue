@@ -63,7 +63,7 @@ watch(mainImage, () => {
 <template>
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
-    class="product-card group block w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden rounded-xl"
+    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden rounded-xl"
   >
     <!-- Shimmer de lujo en hover -->
     <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
@@ -111,10 +111,10 @@ watch(mainImage, () => {
         class="w-full h-full object-cover absolute top-0 left-0 opacity-0 transition-all duration-700 ease-out group-hover:opacity-100 group-hover:scale-[1.06]"
       />
 
-      <!-- Badge BAJO PEDIDO (agotado pero se fabrica) -->
+      <!-- Badge BAJO PEDIDO: abajo a la izquierda, para no chocar con "Oro 18K" (arriba) -->
       <span
         v-if="isOutOfStock"
-        class="absolute top-4 left-4 uppercase bg-brand-gold text-brand-black px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10 shadow-lg"
+        class="absolute bottom-4 left-4 uppercase bg-brand-gold text-brand-black px-3 py-1.5 text-[9px] font-bold tracking-[0.2em] z-10 shadow-lg"
       >
         {{ L.t('card.onOrder') }}
       </span>
@@ -140,14 +140,17 @@ watch(mainImage, () => {
       <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-brand-black/10 z-[5] pointer-events-none"></div>
     </div>
 
-    <!-- Info LIMPIA debajo de la foto: la joya respira, el precio se distingue -->
-    <div class="p-3 md:p-4 text-center">
-      <p class="text-[8px] md:text-[9px] text-brand-gold tracking-[0.3em] font-bold uppercase mb-1.5 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
-        {{ product.category }}
-      </p>
-      <h3 class="font-serif-elegant text-brand-white text-[13px] md:text-base tracking-wide leading-snug line-clamp-2 min-h-[2.1rem] md:min-h-[2.6rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
-        {{ product.name }}
-      </h3>
+    <!-- Info LIMPIA debajo de la foto: flex-col para que el precio quede abajo
+         y todas las fichas queden a la MISMA altura. -->
+    <div class="p-3 md:p-4 text-center flex-1 flex flex-col justify-between">
+      <div>
+        <p class="text-[8px] md:text-[9px] text-brand-gold tracking-[0.3em] font-bold uppercase mb-1.5 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+          {{ product.category }}
+        </p>
+        <h3 class="font-serif-elegant text-brand-white text-[13px] md:text-base tracking-wide leading-snug line-clamp-2 min-h-[2.1rem] md:min-h-[2.6rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
+          {{ product.name }}
+        </h3>
+      </div>
       <div class="mt-2 pt-2.5 border-t border-brand-white/10 group-hover:border-brand-gold/25 transition-colors duration-500">
         <template v-if="!isOutOfStock">
           <p class="font-sans-luxury text-brand-gold text-sm md:text-base tracking-[0.05em] font-semibold">
