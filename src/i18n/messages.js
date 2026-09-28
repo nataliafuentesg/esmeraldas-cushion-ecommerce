@@ -17,7 +17,7 @@ export const messages = {
 
     // Navegación
     'nav.home': 'Home',
-    'nav.emeralds': 'Esmeraldas',
+    'nav.emeralds': 'Personalizar',
     'nav.jewelry': 'Joyas',
     'nav.contact': 'Contacto',
     'nav.search': 'Búsqueda',
@@ -407,7 +407,7 @@ export const messages = {
     'topbar.custom': 'Custom designs, made for your story',
 
     'nav.home': 'Home',
-    'nav.emeralds': 'Emeralds',
+    'nav.emeralds': 'Customize',
     'nav.jewelry': 'Jewelry',
     'nav.contact': 'Contact',
     'nav.search': 'Search',

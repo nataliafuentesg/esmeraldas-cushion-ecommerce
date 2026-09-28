@@ -7,7 +7,7 @@ import UtilityBar from '@/components/UtilityBar.vue'
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-brand-black shadow-xl">
+  <header class="sticky top-0 z-50 shadow-lg">
     
     <TopBar />
     

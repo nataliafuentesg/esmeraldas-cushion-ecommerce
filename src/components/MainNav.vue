@@ -35,7 +35,7 @@ const mobileNavItems = navItems;
 </script>
 
 <template>
-  <nav class="bg-brand-black border-b border-brand-white/5 sticky top-0 z-[60]">
+  <nav class="bg-brand-black/72 backdrop-blur-xl border-b border-brand-white/5 sticky top-0 z-[60]">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center relative">
 
       <div class="flex items-center justify-start lg:pl-10 xl:pl-20 flex-1">

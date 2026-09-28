@@ -63,7 +63,7 @@ onMounted(() => {
 
     <Header v-if="!isAdminRoute" />
 
-    <main class="flex-grow relative" :class="{ 'pb-16 md:pb-0': !isAdminRoute }">
+    <main class="flex-grow relative">
       <RouterView v-slot="{ Component }">
         <transition name="fade-page">
           <KeepAlive :include="['CollectionView']">

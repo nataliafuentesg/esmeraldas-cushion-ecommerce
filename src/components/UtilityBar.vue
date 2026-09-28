@@ -92,7 +92,7 @@ const goToProfile = () => {
 </script>
 
 <template>
-    <div class="bg-brand-black/70 border-t border-brand-white/10 text-brand-white py-2 relative z-40">
+    <div class="bg-brand-black/70 backdrop-blur-xl border-t border-brand-white/10 text-brand-white py-2 relative z-40">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center text-sm">
 
             <div class="flex items-center w-full lg:pr-10 xl:pr-20 lg:pl-10 xl:pl-20">

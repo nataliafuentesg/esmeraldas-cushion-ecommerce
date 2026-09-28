@@ -11,7 +11,6 @@ import { ref, computed, onMounted, onUnmounted, watch, onActivated, nextTick } f
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useProductsStore } from '@/stores/products';
 import ProductCard from '@/components/ProductCard.vue';
-import OccasionBadges from '@/components/OccasionBadges.vue';
 import { Icon } from '@iconify/vue';
 
 const route = useRoute();
@@ -103,7 +102,7 @@ const clearCollectionSession = () => {
 const typeFilters = computed(() => {
   const cats = products.value.map(p => p.category).filter(Boolean);
   const uniqueCats = [...new Set(cats)].sort();
-  return ['Todas', 'Joyas', ...uniqueCats.filter(c => c !== 'Piedras Sueltas'), 'Piedras Sueltas'];
+  return ['Todas', 'Joyas', ...uniqueCats.filter(c => c !== 'Piedras Sueltas')];
 });
 
 const occasionFilters = computed(() => {
@@ -211,7 +210,17 @@ const filteredProducts = computed(() => {
 
 const displayedProducts = computed(() => filteredProducts.value.slice(0, displayLimit.value));
 const loadMore = () => { displayLimit.value += 12; };
-const handleScroll = () => { showBackToTop.value = window.scrollY > 300; };
+// Progreso de scroll (0–100) para el anillo del botón "volver arriba"
+const scrollProgress = ref(0);
+const RING_CIRC = 2 * Math.PI * 21; // circunferencia del anillo (radio 21)
+const ringOffset = computed(() => RING_CIRC * (1 - scrollProgress.value / 100));
+
+const handleScroll = () => {
+  const y = window.scrollY;
+  showBackToTop.value = y > 300;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  scrollProgress.value = max > 0 ? Math.min(100, (y / max) * 100) : 0;
+};
 const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
 watch(() => route.params.category, () => {
@@ -245,15 +254,6 @@ onUnmounted(() => {
 
     <div class="container mx-auto px-4 lg:px-8">
       
-      <div class="mb-12 border-b border-brand-white/10 pb-8">
-        <OccasionBadges 
-          :occasions="occasionFilters" 
-          :is-home="false" 
-          :current-selection="selectedCategory"
-          @select-category="setCategory" 
-        />
-      </div>
-
       <div v-if="loading" class="flex flex-col lg:flex-row gap-8 xl:gap-16 dynamic-skeleton-view">
         <aside class="w-full lg:w-56 space-y-6 opacity-30 animate-pulse">
           <div class="h-4 bg-brand-white/20 w-32"></div>
@@ -367,13 +367,25 @@ onUnmounted(() => {
     </div>
 
     <Transition name="fade-toast">
-      <button 
-        v-if="showBackToTop" 
-        @click="scrollToTop" 
-        class="fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50 bg-brand-black/90 border border-brand-gold text-brand-gold p-4 md:p-3 shadow-2xl backdrop-blur-sm hover:bg-brand-gold hover:text-brand-black transition-all duration-300"
-        aria-label="Volver al tope superior"
+      <button
+        v-if="showBackToTop"
+        @click="scrollToTop"
+        class="group fixed bottom-6 left-6 md:bottom-8 md:left-8 z-50"
+        aria-label="Volver arriba"
       >
-        <Icon icon="lucide:arrow-up" class="w-5 h-5" />
+        <span class="relative flex items-center justify-center w-14 h-14 rounded-full
+                     bg-brand-black/85 backdrop-blur-md border border-brand-gold/25
+                     shadow-2xl transition-transform duration-300 group-hover:scale-105 active:scale-95">
+          <!-- Anillo de progreso: se llena de dorado a medida que bajas -->
+          <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="21" fill="none" stroke-width="2.5" class="text-brand-gold/15" stroke="currentColor" />
+            <circle cx="24" cy="24" r="21" fill="none" stroke-width="2.5" stroke-linecap="round"
+                    class="text-brand-gold" stroke="currentColor"
+                    :stroke-dasharray="RING_CIRC" :stroke-dashoffset="ringOffset"
+                    style="transition: stroke-dashoffset 0.15s linear;" />
+          </svg>
+          <Icon icon="lucide:arrow-up" class="relative w-5 h-5 text-brand-gold group-hover:text-brand-primary transition-colors duration-300" />
+        </span>
       </button>
     </Transition>
 

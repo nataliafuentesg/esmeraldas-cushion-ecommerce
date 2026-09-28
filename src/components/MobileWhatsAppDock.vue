@@ -45,23 +45,33 @@ const label = computed(() =>
 </script>
 
 <template>
-  <!-- Dock solo en móvil (md:hidden). Fijo abajo, en verde esmeralda de la marca. -->
+  <!-- Botón flotante de WhatsApp (solo móvil), vidrio esmeralda con pulso sutil. -->
   <a
     :href="waLink"
     target="_blank"
     rel="noopener"
     data-wa-source="dock"
-    class="md:hidden fixed bottom-0 inset-x-0 z-40 flex items-center justify-center gap-3
-           bg-brand-primary text-white py-4 px-4 text-[11px] font-bold uppercase tracking-[0.25em]
-           border-t border-brand-gold/50 shadow-[0_-6px_24px_rgba(0,0,0,0.35)]
-           active:brightness-95 transition-[filter]"
-    style="padding-bottom: calc(1rem + env(safe-area-inset-bottom));"
-    aria-label="WhatsApp"
+    class="md:hidden fixed right-5 z-40 active:scale-95 transition-transform"
+    style="bottom: calc(1.1rem + env(safe-area-inset-bottom));"
+    :aria-label="label"
+    :title="label"
   >
-    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white/15 shrink-0">
-      <Icon icon="simple-icons:whatsapp" class="w-3.5 h-3.5" />
+    <span class="relative flex items-center justify-center w-14 h-14 rounded-full
+                 bg-brand-primary/85 backdrop-blur-md text-white
+                 border border-white/25 ring-1 ring-brand-gold/40
+                 shadow-[0_12px_30px_-6px_rgba(0,0,0,0.45)]">
+      <span class="pointer-events-none absolute inset-0 rounded-full bg-brand-primary/40 dock-pulse"></span>
+      <Icon icon="simple-icons:whatsapp" class="relative w-6 h-6" />
     </span>
-    <span class="text-brand-gold">✦</span>
-    {{ label }}
   </a>
 </template>
+
+<style scoped>
+@keyframes dockPulse {
+  0%   { transform: scale(1);   opacity: .55; }
+  70%  { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+.dock-pulse { animation: dockPulse 2.8s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .dock-pulse { animation: none; } }
+</style>

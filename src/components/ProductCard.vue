@@ -63,12 +63,12 @@ watch(mainImage, () => {
 <template>
   <RouterLink
     :to="{ name: 'product-detail', params: { slug: product.slug } }"
-    class="product-card group flex flex-col h-full w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
+    class="product-card group block w-full bg-brand-black/40 border border-brand-white/5 text-brand-white relative overflow-hidden"
   >
     <!-- Shimmer de lujo en hover -->
     <div class="card-shimmer absolute inset-0 z-10 pointer-events-none"></div>
 
-    <div class="aspect-square overflow-hidden relative bg-brand-white/[0.02] border-b border-brand-white/5">
+    <div class="aspect-[3/4] overflow-hidden relative bg-brand-white/[0.02] border-b border-brand-white/5">
 
       <!-- Acento de esquina para piezas nuevas: marca al vistazo sin encajonar -->
       <span v-if="isNew" class="new-corner" aria-hidden="true"></span>
@@ -136,50 +136,31 @@ watch(mainImage, () => {
         {{ metalBadge }}
       </span>
 
-      <!-- Overlay hover -->
-      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end justify-center pb-4 z-10 bg-brand-black/20">
-        <span class="font-sans-luxury text-brand-white/80 text-[9px] tracking-[0.3em] translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-          {{ L.t('card.viewPiece') }}
-        </span>
-      </div>
+      <!-- Overlay hover sutil (solo un leve oscurecido al pasar) -->
+      <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-brand-black/10 z-[5] pointer-events-none"></div>
     </div>
 
-    <div class="p-5 md:p-6 text-center flex-1 flex flex-col justify-between gap-4">
-
-      <div>
-        <!-- Etiqueta "NUEVO" propia (esmeralda), separada del tipo de pieza -->
-        <p v-if="isNew" class="flex items-center justify-center gap-1.5 text-[8px] tracking-[0.4em] font-bold text-brand-primary mb-1.5 uppercase">
-          <span class="inline-block w-1 h-1 rounded-full bg-brand-primary"></span>
-          {{ L.t('card.new') }}
-        </p>
-        <p class="text-[9px] text-brand-gold tracking-[0.3em] mb-2 font-bold opacity-80 transition-opacity duration-300 group-hover:opacity-100">
-          {{ product.category }}
-        </p>
-        <h3 class="font-serif-elegant text-base md:text-lg tracking-wide line-clamp-2 min-h-[3rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
-          {{ product.name }}
-        </h3>
-      </div>
-
-      <div class="pt-3 border-t border-brand-white/5 group-hover:border-brand-gold/20 transition-colors duration-500">
-        <!-- Con stock: precio. Agotado (bajo pedido): no mostramos precio, invitamos a consultar. -->
+    <!-- Info LIMPIA debajo de la foto: la joya respira, el precio se distingue -->
+    <div class="p-3 md:p-4 text-center">
+      <p class="text-[8px] md:text-[9px] text-brand-gold tracking-[0.3em] font-bold uppercase mb-1.5 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+        {{ product.category }}
+      </p>
+      <h3 class="font-serif-elegant text-brand-white text-[13px] md:text-base tracking-wide leading-snug line-clamp-2 min-h-[2.1rem] md:min-h-[2.6rem] flex items-center justify-center transition-colors duration-300 group-hover:text-brand-gold">
+        {{ product.name }}
+      </h3>
+      <div class="mt-2 pt-2.5 border-t border-brand-white/10 group-hover:border-brand-gold/25 transition-colors duration-500">
         <template v-if="!isOutOfStock">
-          <p class="font-sans-luxury text-brand-white/90 text-sm tracking-wide font-medium group-hover:text-brand-gold transition-colors duration-300">
+          <p class="font-sans-luxury text-brand-gold text-sm md:text-base tracking-[0.05em] font-semibold">
             $ {{ product.price.toLocaleString() }}
           </p>
-          <p v-if="fx.formatUsd(product.price)" class="font-sans-luxury text-brand-white/40 text-[10px] tracking-wide mt-1">
+          <p v-if="fx.formatUsd(product.price)" class="font-sans-luxury text-brand-white/45 text-[10px] tracking-wide mt-0.5">
             {{ fx.formatUsd(product.price) }}
           </p>
         </template>
-        <template v-else>
-          <p class="font-sans-luxury text-brand-gold text-sm tracking-wide font-medium">
-            {{ L.t('card.consultPrice') }}
-          </p>
-          <p class="font-sans-luxury text-brand-gold/70 text-[9px] tracking-[0.15em] mt-1.5">
-            {{ L.t('card.madeToOrder') }}
-          </p>
-        </template>
+        <p v-else class="font-sans-luxury text-brand-gold text-sm md:text-base tracking-wide font-semibold">
+          {{ L.t('card.consultPrice') }}
+        </p>
       </div>
-
     </div>
   </RouterLink>
 </template>

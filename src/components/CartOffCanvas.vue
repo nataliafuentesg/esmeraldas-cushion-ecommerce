@@ -34,10 +34,10 @@ watch(isOffCanvasOpen, async (isOpen) => {
   <div v-if="isOffCanvasOpen" @click="closeCart" class="fixed inset-0 bg-brand-black/70 z-40 backdrop-blur-sm"></div>
 
   <div
-    class="fixed top-0 right-0 w-full md:w-[450px] h-full bg-brand-black text-brand-white shadow-2xl z-50 transition-transform duration-500 ease-in-out border-l border-brand-gold/20"
+    class="fixed top-0 right-0 w-full md:w-[450px] h-full bg-brand-black/85 backdrop-blur-2xl text-brand-white shadow-2xl z-50 transition-transform duration-500 ease-in-out border-l border-brand-gold/20"
     :class="{ 'translate-x-0': isOffCanvasOpen, 'translate-x-full': !isOffCanvasOpen }"
   >
-    <header class="p-8 border-b border-brand-white/10 flex justify-between items-center sticky top-0 bg-brand-black z-10">
+    <header class="p-8 border-b border-brand-white/10 flex justify-between items-center sticky top-0 bg-brand-black/50 backdrop-blur-xl z-10">
       <h2 class="text-2xl font-serif-elegant tracking-wide">{{ L.t('cart.title') }}</h2>
       <button @click="closeCart" class="text-brand-white hover:text-brand-gold transition-colors p-2">
         <Icon icon="lucide:x" class="w-6 h-6" />
@@ -93,7 +93,7 @@ watch(isOffCanvasOpen, async (isOpen) => {
       </div>
     </div>
 
-    <div v-if="cartItems.length > 0" class="absolute bottom-0 w-full p-8 bg-brand-black border-t border-brand-white/10">
+    <div v-if="cartItems.length > 0" class="absolute bottom-0 w-full p-8 bg-brand-black/60 backdrop-blur-xl border-t border-brand-white/10">
       <div class="flex justify-between items-end mb-8">
         <span class="font-sans-luxury text-[10px] tracking-[0.3em] text-brand-white/40">{{ L.t('cart.estimatedTotal') }}</span>
         <span class="text-2xl font-serif-elegant text-brand-gold">$ {{ cartTotal.toLocaleString() }}</span>
