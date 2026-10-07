@@ -121,6 +121,19 @@ const router = createRouter({
       name: 'esmeraldas',
       component: () => import('@/views/EsmeraldasView.vue'),
       meta: { title: 'Esmeraldas Personalizadas | Cushion' }
+    },
+    {
+      path: '/cookies',
+      name: 'cookies',
+      component: () => import('@/views/CookiesView.vue'),
+      meta: { title: 'Política de Cookies | Cushion' }
+    },
+    {
+      // Catch-all: cualquier URL que no exista muestra la página 404
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue'),
+      meta: { title: 'Página no encontrada | Cushion' }
     }
   ]
 });

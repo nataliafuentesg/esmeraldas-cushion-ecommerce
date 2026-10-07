@@ -14,6 +14,7 @@ const supportItems = [
     { key: 'footer.link.faq', path: '/faq' },
     { key: 'footer.link.terms', path: '/terminos' },
     { key: 'footer.link.privacy', path: '/privacidad' },
+    { key: 'footer.link.cookies', path: '/cookies' },
 ];
 
 const whatsappLink = 'https://wa.me/573136133822?text=Hola%2C%20me%20gustaría%20personalizar%20una%20joya%20Cushion.';

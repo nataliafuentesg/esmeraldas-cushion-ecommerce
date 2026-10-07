@@ -6,6 +6,7 @@ import Footer from '@/components/FooterApp.vue';
 import CartOffCanvas from '@/components/CartOffCanvas.vue';
 import MobileWhatsAppDock from '@/components/MobileWhatsAppDock.vue';
 import ConciergeWidget from '@/components/ConciergeWidget.vue';
+import CookieBanner from '@/components/CookieBanner.vue';
 import { useCartStore } from '@/stores/cart';
 import { useHead } from '@unhead/vue';
 import { useWhatsAppTracking } from '@/composables/useWhatsAppTracking';
@@ -80,6 +81,8 @@ onMounted(() => {
     <MobileWhatsAppDock v-if="!isAdminRoute" />
     <!-- Widget concierge (escritorio): FAQ, ubicación, buscar pieza, WhatsApp -->
     <ConciergeWidget v-if="!isAdminRoute" />
+    <!-- Aviso de cookies (aparece una vez hasta que el visitante elige) -->
+    <CookieBanner v-if="!isAdminRoute" />
 
   </div>
 </template>

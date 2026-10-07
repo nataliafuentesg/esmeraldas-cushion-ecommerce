@@ -8,6 +8,7 @@ import { Icon } from '@iconify/vue';
 import ProductGallery from '@/components/ProductGallery.vue';
 import RelatedProducts from '@/components/RelatedProducts.vue';
 import ReviewsSection from '@/components/ReviewsSection.vue';
+import SizeGuideDrawer from '@/components/SizeGuideDrawer.vue';
 import { RouterLink } from 'vue-router';
 import { useHead } from '@unhead/vue';
 import { useAnalytics } from '@/composables/useAnalytics';
@@ -33,6 +34,7 @@ const fx = useFxStore();
 const L = useLocaleStore();
 const { trackViewProduct, trackAddToCart, trackWhatsAppClick } = useAnalytics();
 const product = ref(null);
+const sizeDrawer = ref(null); // pestaña lateral de guía de tallas
 const allProducts = ref([]);
 const loading = ref(true);
 
@@ -403,6 +405,8 @@ onUnmounted(() => {
   </div>
 
   <div v-else-if="product" class="bg-brand-black min-h-screen py-6 lg:py-12">
+    <!-- Pestaña lateral de guía de tallas (se abre en el sitio, sin salir del producto) -->
+    <SizeGuideDrawer ref="sizeDrawer" :category="product.category" />
     <div class="container mx-auto px-4 lg:px-20">
 
       <div class="mb-8 md:mb-12">
@@ -534,11 +538,11 @@ onUnmounted(() => {
           <div v-if="needsSize && product.stock > 0" class="mb-6">
             <div class="flex items-center justify-between mb-3">
               <label class="text-brand-white/60 text-[10px] tracking-[0.3em] uppercase">{{ L.t(sizeConfig.label) }}</label>
-              <RouterLink v-if="sizeGuideLink" :to="sizeGuideLink"
+              <button v-if="sizeGuideLink" type="button" @click="sizeDrawer?.open()"
                 class="inline-flex items-center gap-1.5 text-brand-white/40 hover:text-brand-gold text-[10px] tracking-[0.2em] transition-colors group">
                 <Icon icon="lucide:ruler" class="w-3.5 h-3.5 text-brand-gold/60 group-hover:text-brand-gold transition-colors" />
                 {{ L.t('pd.sizeGuide') }}
-              </RouterLink>
+              </button>
             </div>
             <select v-model="selectedSize" @change="sizeError = false"
               class="w-full bg-brand-white/[0.02] border px-4 py-3.5 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors cursor-pointer"
