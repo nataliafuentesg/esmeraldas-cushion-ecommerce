@@ -52,10 +52,10 @@ watch(open, (v) => {
 </script>
 
 <template>
-  <!-- Pestañita en el borde derecho (solo escritorio/tablet) -->
+  <!-- Pestañita en el borde derecho (visible en móvil y escritorio) -->
   <button
     @click="open = true"
-    class="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 items-center gap-2 bg-brand-primary/90 backdrop-blur-md text-brand-black px-2.5 py-4 rounded-l-xl shadow-lg hover:px-3.5 transition-all duration-300"
+    class="flex fixed right-0 top-1/2 -translate-y-1/2 z-40 items-center gap-2 bg-brand-primary/90 backdrop-blur-md text-brand-black px-2 md:px-2.5 py-3.5 md:py-4 rounded-l-xl shadow-lg hover:px-3.5 transition-all duration-300"
     aria-label="Abrir guía de tallas"
   >
     <span class="[writing-mode:vertical-rl] rotate-180 text-[10px] font-bold font-sans-luxury tracking-[0.25em] uppercase">
