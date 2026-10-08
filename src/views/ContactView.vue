@@ -4,6 +4,7 @@ const L = useLocaleStore();
 import { ref } from 'vue';
 import api from '@/api/axios';
 import { useAnalytics } from '@/composables/useAnalytics';
+import ConsentCheckbox from '@/components/ConsentCheckbox.vue';
 
 const { trackContactForm } = useAnalytics();
 
@@ -11,19 +12,23 @@ const form = ref({
   name: '',
   email: '',
   phone: '',
-  message: ''
+  message: '',
+  consent: false,
+  website: '' // honeypot: los humanos lo dejan vacío, los bots lo llenan
 });
 
 const isSent = ref(false);
 const isSubmitting = ref(false);
 
 const submitContact = async () => {
+  // Honeypot: si viene lleno, es un bot → fingimos éxito y no enviamos nada.
+  if (form.value.website) { isSent.value = true; return; }
   isSubmitting.value = true;
   try {
     await api.post('/contact', form.value);
     trackContactForm(); // mide como Lead (Meta + analítica propia)
     isSent.value = true;
-    form.value = { name: '', email: '', phone: '', message: '' }; // Limpiar
+    form.value = { name: '', email: '', phone: '', message: '', consent: false, website: '' }; // Limpiar
   } catch (error) {
     console.error("Error al enviar mensaje:", error);
     alert("Hubo un error al enviar tu mensaje. Intenta de nuevo.");
@@ -70,6 +75,15 @@ const submitContact = async () => {
 
         <textarea v-model="form.message" rows="4" :placeholder="L.t('ct.message')" required
                   class="w-full bg-transparent border-b border-brand-white/20 px-0 py-3 text-brand-white text-sm font-sans-luxury focus:outline-none focus:border-brand-gold transition-colors placeholder:text-brand-white/30 tracking-wider resize-none"></textarea>
+
+        <!-- Honeypot anti-spam (oculto; no lo ven los humanos) -->
+        <input v-model="form.website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true"
+               class="absolute left-[-9999px] w-0 h-0 opacity-0" />
+
+        <!-- Consentimiento de tratamiento de datos (Habeas Data) -->
+        <div class="pt-2">
+          <ConsentCheckbox v-model="form.consent" />
+        </div>
 
         <div class="text-center pt-4">
           <button type="submit" :disabled="isSubmitting"

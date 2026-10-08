@@ -10,6 +10,7 @@ import { getAttribution } from '@/utils/utm';
 import { suggestEmail } from '@/utils/emailSuggest';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { COLOMBIA, DEPARTAMENTOS } from '@/utils/colombia';
+import ConsentCheckbox from '@/components/ConsentCheckbox.vue';
 import api from '@/api/axios';
 
 const cartStore = useCartStore();
@@ -47,6 +48,8 @@ const form = ref({
   billingId: '',        // cédula o NIT
   billingEmail: '',     // correo de facturación
   billingAddress: '',   // dirección de facturación
+  consent: false,       // autorización de tratamiento de datos (Habeas Data)
+  website: '',          // honeypot anti-spam
 });
 
 // Ciudades del departamento seleccionado (cascada)
@@ -113,9 +116,15 @@ onMounted(async () => {
 });
 
 const submitOrder = async () => {
+  // Honeypot: si viene lleno es un bot → no hacemos nada.
+  if (form.value.website) return;
   if (cartStore.items.length === 0) {
     alert(L.t('co.emptyCart'));
     router.push('/coleccion/todas');
+    return;
+  }
+  if (!form.value.consent) {
+    errorMsg.value = L.t('co.consentRequired');
     return;
   }
 
@@ -162,6 +171,7 @@ const submitOrder = async () => {
       phoneNumber: form.value.phoneNumber,
       shippingAddress: fullAddress,
       notes: form.value.notes,
+      consent: form.value.consent, // autorización de tratamiento de datos
       clientId: authStore.isAuthenticated ? authStore.user.id : null,
       // Factura electrónica (opcional). Si la pidieron, mandamos los datos;
       // el correo/dirección caen al de contacto/envío si los dejó vacíos.
@@ -372,6 +382,15 @@ const renderBoldButton = () => {
               <p v-if="fx.formatUsd(total)" class="text-right text-brand-white/40 text-[11px] font-sans-luxury tracking-wide mt-1">
                 {{ fx.formatUsd(total) }} · el cobro se realiza en COP
               </p>
+            </div>
+
+            <!-- Honeypot anti-spam (oculto) -->
+            <input v-model="form.website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true"
+                   class="absolute left-[-9999px] w-0 h-0 opacity-0" />
+
+            <!-- Consentimiento de tratamiento de datos (Habeas Data) -->
+            <div class="mb-5">
+              <ConsentCheckbox v-model="form.consent" />
             </div>
 
             <button type="submit" form="checkout-form" :disabled="isSubmitting || cartStore.items.length === 0" class="w-full bg-brand-white text-brand-black px-6 py-4 text-xs font-bold tracking-wide hover:bg-brand-gold transition-colors duration-300 disabled:opacity-50">

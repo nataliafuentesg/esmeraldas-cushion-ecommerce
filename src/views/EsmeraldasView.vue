@@ -7,6 +7,7 @@ import api from '@/api/axios';
 import { useAnalytics } from '@/composables/useAnalytics';
 import { getAttribution } from '@/utils/utm';
 import { v4 as uuidv4 } from 'uuid';
+import ConsentCheckbox from '@/components/ConsentCheckbox.vue';
 
 const { trackEmeraldForm } = useAnalytics();
 
@@ -21,6 +22,8 @@ const form = ref({
   metalType: '',
   budgetRange: '',
   ideas: '',
+  consent: false,
+  website: '', // honeypot anti-spam
 });
 
 const isSubmitting = ref(false);
@@ -78,8 +81,14 @@ const isValid = computed(() =>
 
 // ── Envío al backend + acción según canal ──────────────────────────────────
 const submitRequest = async (contactMethod) => {
+  // Honeypot: si viene lleno es un bot → fingimos éxito y no enviamos nada.
+  if (form.value.website) { submitted.value = true; return; }
   if (!isValid.value) {
     errorMsg.value = 'Por favor completa al menos tu nombre, correo, la ocasión y el tipo de joya.';
+    return;
+  }
+  if (!form.value.consent) {
+    errorMsg.value = 'Para continuar debes autorizar el tratamiento de tus datos.';
     return;
   }
   isSubmitting.value = true;
@@ -370,6 +379,16 @@ const resetForm = () => {
 
         <!-- ── CTAs ──────────────────────────────────────────────────────── -->
         <div class="border-t border-brand-white/10 pt-10">
+
+          <!-- Honeypot anti-spam (oculto) -->
+          <input v-model="form.website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true"
+                 class="absolute left-[-9999px] w-0 h-0 opacity-0" />
+
+          <!-- Consentimiento de datos (Habeas Data) -->
+          <div class="max-w-md mx-auto mb-8">
+            <ConsentCheckbox v-model="form.consent" />
+          </div>
+
           <p class="text-brand-white/50 font-sans-luxury text-xs text-center mb-8">
             {{ L.t('em.chooseContact') }}
           </p>
