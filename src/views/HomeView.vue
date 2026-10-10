@@ -2,6 +2,7 @@
 import { useHead } from '@unhead/vue';
 import HeroSection from '@/components/HeroSection.vue'
 import CategoryShowcase from '@/components/CategoryShowcase.vue';
+import GemstoneExplorer from '@/components/GemstoneExplorer.vue';
 import NewArrivalsSection from '@/components/NewArrivalsSection.vue';
 import ReviewsSection from '@/components/ReviewsSection.vue';
 import StoreSection from '@/components/StoreSection.vue';
@@ -64,6 +65,8 @@ useHead({
     <HeroSection />
 
     <CategoryShowcase />
+
+    <GemstoneExplorer v-reveal />
 
     <NewArrivalsSection v-reveal />
 

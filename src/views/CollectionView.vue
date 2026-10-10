@@ -12,6 +12,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import { useProductsStore } from '@/stores/products';
 import ProductCard from '@/components/ProductCard.vue';
 import { Icon } from '@iconify/vue';
+import { GEMSTONES, matchesGemstone } from '@/utils/gemstones';
 
 const route = useRoute();
 const router = useRouter();
@@ -23,8 +24,10 @@ const loading = ref(true);
 const displayLimit = ref(12);
 const showBackToTop = ref(false);
 const selectedCategory = ref('Todas');
+const selectedGemstone = ref('todas'); // filtro por piedra preciosa (?piedra=esmeralda)
+const gemstoneFilters = GEMSTONES;
 
-const maxPriceRange = ref(50000000); 
+const maxPriceRange = ref(50000000);
 const selectedMaxPrice = ref(50000000);
 const sortBy = ref('default'); 
 
@@ -132,6 +135,7 @@ const loadData = async () => {
       selectedMaxPrice.value = maxPriceRange.value;
       readCategoryFromUrl();
     }
+    readGemstoneFromUrl();
 
   } catch (error) {
     console.error("Error al cargar la colección:", error);
@@ -160,6 +164,22 @@ const readCategoryFromUrl = () => {
   }
 };
 
+// Lee la piedra del query (?piedra=esmeralda) — viene del acordeón del home.
+const readGemstoneFromUrl = () => {
+  const p = route.query.piedra;
+  selectedGemstone.value = GEMSTONES.some(g => g.id === p) ? p : 'todas';
+};
+
+const setGemstone = (id) => {
+  selectedGemstone.value = id;
+  displayLimit.value = 12;
+  const query = { ...route.query };
+  if (id === 'todas') delete query.piedra; else query.piedra = id;
+  router.replace({ path: route.path, query }).catch(err => {
+    if (err.name !== 'NavigationDuplicated') console.error(err);
+  });
+};
+
 const setCategory = (cat) => {
   selectedCategory.value = cat;
   displayLimit.value = 12; 
@@ -169,7 +189,8 @@ const setCategory = (cat) => {
     newPath = cat === 'Piedras Sueltas' ? '/coleccion/esmeraldas' : `/coleccion/${cat.toLowerCase()}`;
   }
   
-  router.replace(newPath).catch(err => {
+  // Conservamos el query (?piedra=...) al cambiar de categoría
+  router.replace({ path: newPath, query: route.query }).catch(err => {
     if (err.name !== 'NavigationDuplicated') console.error(err);
   });
 };
@@ -185,6 +206,12 @@ const filteredProducts = computed(() => {
     } else {
       list = list.filter(p => p.category && p.category.toLowerCase() === selectedCategory.value.toLowerCase());
     }
+  }
+
+  // Filtro por piedra preciosa (maneja combinadas: una pieza con varias piedras
+  // aparece en cada filtro correspondiente).
+  if (selectedGemstone.value !== 'todas') {
+    list = list.filter(p => matchesGemstone(p, selectedGemstone.value));
   }
 
   const inStock = list.filter(p => p.stock > 0);
@@ -225,6 +252,9 @@ const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
 watch(() => route.params.category, () => {
   readCategoryFromUrl();
+});
+watch(() => route.query.piedra, () => {
+  readGemstoneFromUrl();
 });
 
 onMounted(() => {
@@ -275,16 +305,42 @@ onUnmounted(() => {
       <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16 entry-fade">
         
         <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8">
+
+          <!-- Filtro por PIEDRA PRECIOSA -->
+          <div>
+            <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-5 border-b border-brand-white/10 pb-4">{{ L.t('gem.filterLabel') }}</h3>
+            <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-3 lg:pb-0 hide-scrollbar snap-x px-2 lg:px-0">
+              <li class="shrink-0 snap-center">
+                <button
+                  @click="setGemstone('todas')"
+                  class="w-full text-left flex items-center gap-2 text-[9px] md:text-[10px] tracking-wide px-4 py-2 rounded-full border transition-all duration-300"
+                  :class="selectedGemstone === 'todas' ? 'bg-brand-gold text-brand-black border-brand-gold font-bold' : 'bg-brand-white/[0.02] border-brand-white/10 text-brand-white/55 hover:text-brand-white hover:border-brand-white/30'"
+                >
+                  {{ L.t('gem.all') }}
+                </button>
+              </li>
+              <li v-for="g in gemstoneFilters" :key="g.id" class="shrink-0 snap-center">
+                <button
+                  @click="setGemstone(g.id)"
+                  class="w-full text-left flex items-center gap-2 text-[9px] md:text-[10px] tracking-wide px-4 py-2 rounded-full border transition-all duration-300"
+                  :class="selectedGemstone === g.id ? 'bg-brand-gold text-brand-black border-brand-gold font-bold' : 'bg-brand-white/[0.02] border-brand-white/10 text-brand-white/55 hover:text-brand-white hover:border-brand-white/30'"
+                >
+                  <span class="w-2 h-2 rounded-full shrink-0 ring-1 ring-black/10" :style="{ backgroundColor: g.color }"></span>
+                  {{ L.t(g.key) }}
+                </button>
+              </li>
+            </ul>
+          </div>
+
           <div>
             <h3 class="hidden lg:block text-brand-white font-serif-elegant text-xs tracking-[0.3em] mb-5 border-b border-brand-white/10 pb-4">{{ L.t('col.line') }}</h3>
             <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-3 lg:pb-0 hide-scrollbar snap-x px-2 lg:px-0">
               <li v-for="cat in typeFilters" :key="cat" class="shrink-0 snap-center">
-                <button 
-                  @click="setCategory(cat)" 
-                  class="text-[9px] md:text-[10px] tracking-wide transition-all duration-300 px-4 py-2.5 lg:px-0 lg:py-1.5 border border-brand-white/10 lg:border-0 bg-brand-white/[0.02] lg:bg-transparent flex items-center w-full text-left"
-                  :class="selectedCategory === cat ? 'text-brand-gold border-brand-gold/50 font-bold bg-brand-gold/5' : 'text-brand-white/50 hover:text-brand-white'"
+                <button
+                  @click="setCategory(cat)"
+                  class="text-[9px] md:text-[10px] tracking-wide transition-all duration-300 px-4 py-2 rounded-full border flex items-center w-full text-left"
+                  :class="selectedCategory === cat ? 'bg-brand-gold text-brand-black border-brand-gold font-bold' : 'bg-brand-white/[0.02] border-brand-white/10 text-brand-white/55 hover:text-brand-white hover:border-brand-white/30'"
                 >
-                  <span v-if="selectedCategory === cat" class="hidden lg:inline-block w-1.5 h-1.5 bg-brand-gold rounded-full mr-2 shrink-0"></span>
                   {{ L.catLabel(cat) }}
                 </button>
               </li>
