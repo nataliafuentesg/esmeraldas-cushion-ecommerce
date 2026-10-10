@@ -304,7 +304,7 @@ onUnmounted(() => {
 
       <div v-else class="flex flex-col lg:flex-row gap-8 xl:gap-16 entry-fade">
         
-        <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8">
+        <aside class="w-full lg:w-56 lg:shrink-0 lg:sticky lg:top-24 h-fit z-10 py-2 md:py-0 space-y-8 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-3 filters-scroll">
 
           <!-- Filtro por PIEDRA PRECIOSA -->
           <div>
@@ -365,6 +365,9 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
+
+          <!-- Degradado inferior: señal visual de que hay más filtros para bajar -->
+          <div class="hidden lg:block sticky bottom-0 -mt-8 h-10 bg-gradient-to-t from-brand-black via-brand-black/70 to-transparent pointer-events-none"></div>
         </aside>
 
         <main class="flex-1">
@@ -453,6 +456,14 @@ onUnmounted(() => {
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+
+/* Barra de scroll visible (dorada y delgada) para los filtros del sidebar:
+   así la gente entiende que puede bajar para ver más (precio, etc.). */
+.filters-scroll { scrollbar-width: thin; scrollbar-color: rgba(184, 155, 106, 0.75) rgba(184, 155, 106, 0.14); }
+.filters-scroll::-webkit-scrollbar { width: 8px; }
+.filters-scroll::-webkit-scrollbar-track { background: rgba(184, 155, 106, 0.12); border-radius: 999px; }
+.filters-scroll::-webkit-scrollbar-thumb { background: rgba(184, 155, 106, 0.6); border-radius: 999px; }
+.filters-scroll::-webkit-scrollbar-thumb:hover { background: rgba(184, 155, 106, 0.9); }
 
 .fade-toast-enter-active, .fade-toast-leave-active { transition: opacity 0.4s ease, transform 0.4s ease; }
 .fade-toast-enter-from, .fade-toast-leave-to { opacity: 0; transform: scale(0.9) translateY(10px); }
